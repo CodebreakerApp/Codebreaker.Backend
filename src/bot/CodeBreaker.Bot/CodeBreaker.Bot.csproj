@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..</DockerfileContext>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../mastermind.blazor/src/Shared/BlazorMM.Shared.csproj" />
+    <ProjectReference Include="..\..\shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
-﻿using BlazorMM.Shared.APIModels;
+﻿using CodeBreaker.Shared.APIModels;
 
-namespace MMBot;
+namespace CodeBreaker.Bot;
 
-public class MMGameRunner
+public class CodeBreakerGameRunner
 {
     private readonly HttpClient _httpClient;
     private string? _gameId;
@@ -11,7 +11,7 @@ public class MMGameRunner
     private List<int>? _possibleValues;
     private readonly ILogger _logger;
 
-    public MMGameRunner(HttpClient httpClient, ILogger<MMGameRunner> logger)
+    public CodeBreakerGameRunner(HttpClient httpClient, ILogger<CodeBreakerGameRunner> logger)
     {
         _httpClient = httpClient;
         _logger = logger;

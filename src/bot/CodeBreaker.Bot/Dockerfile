@@ -6,17 +6,17 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["MMBot/MMBot.csproj", "MMBot/"]
-COPY ["mastermind.blazor/src/Shared/BlazorMM.Shared.csproj", "mastermind.blazor/src/Shared/"]
-RUN dotnet restore "MMBot/MMBot.csproj"
+COPY ["bot/CodeBreaker.Bot/CodeBreaker.Bot.csproj", "bot/CodeBreaker.Bot/"]
+COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
+RUN dotnet restore "bot/CodeBreaker.Bot/CodeBreaker.Bot.csproj"
 COPY . .
-WORKDIR "/src/MMBot"
-RUN dotnet build "MMBot.csproj" -c Release -o /app/build
+WORKDIR "/src/bot/CodeBreaker.Bot"
+RUN dotnet build "CodeBreaker.Bot.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MMBot.csproj" -c Release -o /app/publish
+RUN dotnet publish "CodeBreaker.Bot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MMBot.dll"]
+ENTRYPOINT ["dotnet", "CodeBreaker.Bot.dll"]

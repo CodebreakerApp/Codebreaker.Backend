@@ -1,17 +1,17 @@
 ﻿using System.Collections.Concurrent;
 
-namespace MMBot;
+namespace CodeBreaker.Bot;
 
-public class MMTimer
+public class CodeBreakerTimer
 {
-    private readonly MMGameRunner _gameRunner;
+    private readonly CodeBreakerGameRunner _gameRunner;
     private readonly ILogger _logger;
-    private static readonly ConcurrentDictionary<Guid, MMTimer> s_bots = new ConcurrentDictionary<Guid, MMTimer>();
+    private static readonly ConcurrentDictionary<Guid, CodeBreakerTimer> s_bots = new ConcurrentDictionary<Guid, CodeBreakerTimer>();
     private PeriodicTimer? _timer;
     private int _loop = 0;
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public MMTimer(MMGameRunner runner, ILogger<MMTimer> logger)
+    public CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerTimer> logger)
     {
         _gameRunner = runner;
         _logger = logger;
@@ -57,10 +57,10 @@ public class MMTimer
     {
         if (TryGetId(id, out Guid guid))
         {
-            if (s_bots.TryGetValue(guid, out MMTimer? timer))
+            if (s_bots.TryGetValue(guid, out CodeBreakerTimer? timer))
             {
                 timer?.Stop();
-                s_bots.TryRemove(guid, out MMTimer? _);
+                s_bots.TryRemove(guid, out CodeBreakerTimer? _);
             }
             return "thanks";
         }
@@ -88,7 +88,7 @@ public class MMTimer
     {
         if (TryGetId(id, out Guid guid))
         {
-            if (s_bots.TryGetValue(guid, out MMTimer? timer))
+            if (s_bots.TryGetValue(guid, out CodeBreakerTimer? timer))
             {
                 string status = timer?.Status() ?? "id found, but unknown status";
                 return status;

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MMBot\MMBot.csproj" />
+    <ProjectReference Include="..\CodeBreaker.Bot\CodeBreaker.Bot.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-using MMBot;
+
+using CodeBreaker.Bot;
 
 using System.Runtime.CompilerServices;
 
@@ -10,18 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient<MMGameRunner>(options =>
+builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
 {
     options.BaseAddress = new Uri("https://localhost:7053/api/MasterMind/");
 });
-builder.Services.AddScoped<MMTimer>();
+builder.Services.AddScoped<CodeBreakerTimer>();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/start", (MMTimer timer, int? delayseconds, int? loops) =>
+app.MapGet("/start", (CodeBreakerTimer timer, int? delayseconds, int? loops) =>
 {
     string id = timer.Start(delayseconds ?? 60, loops ?? 3);
 
@@ -30,13 +31,13 @@ app.MapGet("/start", (MMTimer timer, int? delayseconds, int? loops) =>
 
 app.MapGet("/status/{id}", (string id) =>
 {
-    string status = MMTimer.Status(id);
+    string status = CodeBreakerTimer.Status(id);
     return Results.Ok(status);
 });
 
 app.MapGet("/stop/{id}", (string id) =>
 {
-    string result = MMTimer.Stop(id);
+    string result = CodeBreakerTimer.Stop(id);
     return Results.Ok(result);
 });
 

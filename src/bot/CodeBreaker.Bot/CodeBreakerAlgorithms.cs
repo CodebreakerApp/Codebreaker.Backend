@@ -1,8 +1,8 @@
-﻿namespace MMBot;
+﻿namespace CodeBreaker.Bot;
 
 public record struct KeyPegWithFlag(int Value, bool Used);
 
-public static class MMAlgorithms
+public static class CodeBreakerAlgorithms
 {
     private const int c0001 = 0b_111111;
     private const int c0010 = 0b_111111_000000;

@@ -2,16 +2,16 @@ using System.Collections;
 
 using Xunit;
 
-namespace MMBot.Tests;
+namespace CodeBreaker.Bot.Tests;
 
-public class MMAlgorithmsTests
+public class CodeBreakerAlgorithmsTests
 {
     [Fact]
     public void SelectPegTestThrowsException()
     {
         Assert.Throws<InvalidOperationException>(() =>
         {
-            MMAlgorithms.SelectPeg(44, 4);
+            CodeBreakerAlgorithms.SelectPeg(44, 4);
         });
     }
 
@@ -22,7 +22,7 @@ public class MMAlgorithmsTests
     [InlineData(0b_000100_000100_000100_000100, 3, 0b_000100)]
     public void SelectPegTest(int code, int number, int expected)
     {
-        int actual = MMAlgorithms.SelectPeg(code, number);
+        int actual = CodeBreakerAlgorithms.SelectPeg(code, number);
         Assert.Equal(expected, actual);
     }
 
@@ -37,7 +37,7 @@ public class MMAlgorithmsTests
         };
         int selection = 0b_000001_010000_000001_000001;
 
-        List<int> actual = MMAlgorithms.HandleBlackMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 1, selection);
         Assert.Equal(2, actual.Count);
     }
 
@@ -52,7 +52,7 @@ public class MMAlgorithmsTests
         };
         int selection = 0b_000001_010000_010000_000001;
 
-        List<int> actual = MMAlgorithms.HandleBlackMatches(toMatch, 2, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 2, selection);
         Assert.Equal(2, actual.Count);
     }
 
@@ -67,7 +67,7 @@ public class MMAlgorithmsTests
         };
         int selection = 0b_000001_100000_010000_000001;
 
-        List<int> actual = MMAlgorithms.HandleBlackMatches(toMatch, 3, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 3, selection);
         Assert.Single(actual);
     }
 
@@ -79,7 +79,7 @@ public class MMAlgorithmsTests
             0b_000100_010000_001000_000010
         };
         int selection = 0b_000001_010000_001000_001000;
-        List<int> actual = MMAlgorithms.HandleBlackMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 1, selection);
         Assert.Empty(actual);
     }
 
@@ -94,7 +94,7 @@ public class MMAlgorithmsTests
         };
         int selection = 0b_000001_010000_000001_000001;
 
-        List<int> actual = MMAlgorithms.HandleWhiteMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleWhiteMatches(toMatch, 1, selection);
         Assert.Equal(2, actual.Count);
     }
 
@@ -103,7 +103,7 @@ public class MMAlgorithmsTests
     {
         int value = 0b_000100_010000_000001_100000;
         string[] expected = { "red", "blue", "black", "yellow" };
-        string[] actual = MMAlgorithms.IntToColors(value);
+        string[] actual = CodeBreakerAlgorithms.IntToColors(value);
         Assert.Equal(expected, actual);
     }
 
