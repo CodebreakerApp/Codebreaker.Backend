@@ -6,17 +6,17 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["api/MM.APIs/MM.APIs.csproj", "api/MM.APIs/"]
-COPY ["shared/mastermindlib/MastermindLib.csproj", "shared/mastermindlib/"]
-RUN dotnet restore "api/MM.APIs/MM.APIs.csproj"
+COPY ["api/CodeBreaker.APIs/CodeBreaker.APIs.csproj", "api/CodeBreaker.APIs/"]
+COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
+RUN dotnet restore "api/CodeBreaker.APIs/CodeBreaker.APIs.csproj"
 COPY . .
-WORKDIR "/src/api/MM.APIs"
-RUN dotnet build "MM.APIs.csproj" -c Release -o /app/build
+WORKDIR "/src/api/CodeBreaker.APIs"
+RUN dotnet build "CodeBreaker.APIs.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MM.APIs.csproj" -c Release -o /app/publish
+RUN dotnet publish "CodeBreaker.APIs.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MM.APIs.dll"]
+ENTRYPOINT ["dotnet", "CodeBreaker.APIs.dll"]
