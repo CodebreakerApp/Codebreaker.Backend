@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<IMastermindContext, MastermindContext>(options =>
+builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration.GetSection("MMAPIs").GetConnectionString("MastermindConnection");
     options.UseCosmos(connectionString, "Mastermind");

@@ -12,11 +12,12 @@ public class GameService
     private readonly IGameInitializer _gameInitializer;
     private readonly GameManager _gameManager;
     private readonly ILogger _logger;
-    private readonly IMastermindContext _efContext;
+    private readonly ICodeBreakerContext _efContext;
+
     public GameService(
         IGameInitializer gameInitializer, 
         GameManager gameManager,
-        IMastermindContext context,
+        ICodeBreakerContext context,
         ILogger<GameService> logger)
     {
         _gameInitializer = gameInitializer;
@@ -42,7 +43,7 @@ public class GameService
 
         if (move.MoveNumber > 12)
         {
-            MasterMindGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+            CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
             await _efContext.AddGameAsync(efGame); 
             
             result = result with { Completed = true };
@@ -82,7 +83,7 @@ public class GameService
             result.KeyPegs.Add(keyPeg);
         }
 
-        MasterMindGameMove dataMove = new(
+        CodeBreakerGameMove dataMove = new(
             Guid.NewGuid().ToString(), 
             game.GameId, 
             move.MoveNumber, 
@@ -95,7 +96,7 @@ public class GameService
         if (result.KeyPegs.Count(s => s == black) == 4)
         {
             result = result with { Won = true };
-            MasterMindGame efGame = new MasterMindGame(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+            CodeBreakerGame efGame = new CodeBreakerGame(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
             await _efContext.AddGameAsync(efGame);
         }
         
