@@ -1,6 +1,4 @@
-﻿
-
-namespace MM.APIs.Services;
+﻿namespace CodeBreaker.APIs.Services;
 
 public class GameManager
 {

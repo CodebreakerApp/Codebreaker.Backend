@@ -1,4 +1,4 @@
-﻿namespace MM.Shared.APIModels;
+﻿namespace CodeBreaker.Shared.APIModels;
 
 public record struct CreateGameRequest(string Name);
 

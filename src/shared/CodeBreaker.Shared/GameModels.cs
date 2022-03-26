@@ -1,4 +1,4 @@
-﻿namespace MM.Shared;  
+﻿namespace CodeBreaker.Shared;  
 
 public record GameMove(string GameId, int MoveNumber, IList<string> CodePegs)
 {

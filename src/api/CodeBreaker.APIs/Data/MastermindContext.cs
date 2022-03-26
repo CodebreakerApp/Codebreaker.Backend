@@ -1,4 +1,4 @@
-﻿namespace MM.APIs.Data;
+﻿namespace CodeBreaker.APIs.Data;
 
 public class MastermindContext : DbContext, IMastermindContext
 {

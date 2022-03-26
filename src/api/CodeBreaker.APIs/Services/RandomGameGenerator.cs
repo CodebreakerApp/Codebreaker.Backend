@@ -1,4 +1,4 @@
-﻿namespace MM.APIs.Services;
+﻿namespace CodeBreaker.APIs.Services;
 
 public interface IGameInitializer
 {

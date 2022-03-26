@@ -1,9 +1,9 @@
-global using MM.Shared;
+global using CodeBreaker.Shared;
 global using System.Collections.Concurrent;
 global using Microsoft.EntityFrameworkCore;
-global using MM.APIs.Data;
-global using MM.Shared.APIModels;
-global using MM.APIs.Services;
+global using CodeBreaker.APIs.Data;
+global using CodeBreaker.Shared.APIModels;
+global using CodeBreaker.APIs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

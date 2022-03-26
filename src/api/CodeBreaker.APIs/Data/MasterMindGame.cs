@@ -1,4 +1,4 @@
-﻿namespace MM.APIs.Data;
+﻿namespace CodeBreaker.APIs.Data;
 
 public record MasterMindGame(string MasterMindGameId, string Code, string User, DateTime Time)
 {
