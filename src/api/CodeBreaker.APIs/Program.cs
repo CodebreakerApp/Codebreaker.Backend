@@ -13,8 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
-    string connectionString = builder.Configuration.GetSection("MMAPIs").GetConnectionString("MastermindConnection");
-    options.UseCosmos(connectionString, "Mastermind");
+    string connectionString = builder.Configuration.GetSection("CodeBreakerAPI").GetConnectionString("CodeBreakerConnection");
+    options.UseCosmos(connectionString, "CodeBreaker");
 });
 builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
 builder.Services.AddSingleton<GameManager>();
