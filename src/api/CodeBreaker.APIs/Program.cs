@@ -20,7 +20,21 @@ builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
 builder.Services.AddSingleton<GameManager>();
 builder.Services.AddTransient<GameService>();
 
+const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowCodeBreakerOrigins,
+        builder =>
+        {
+            builder.AllowAnyOrigin() //.WithOrigins("https://localhost:7229", "http://localhost:5229")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors(AllowCodeBreakerOrigins);
 
 app.UseSwagger();
 app.UseSwaggerUI();
