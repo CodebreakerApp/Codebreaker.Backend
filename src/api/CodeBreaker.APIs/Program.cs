@@ -39,14 +39,14 @@ app.UseCors(AllowCodeBreakerOrigins);
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapPost("/start", async (GameService service, CreateGameRequest request) =>
+app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) =>
 {
     string id = await service.StartGameAsync(request.Name);
 
     return Results.Ok(new CreateGameResponse(id));
 });
 
-app.MapPost("/move", async (GameService service, MoveRequest request) =>
+app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 {
     GameMove move = new(request.Id, request.MoveNumber, request.CodePegs.ToList());
     var result = await service.SetMoveAsync(move);
