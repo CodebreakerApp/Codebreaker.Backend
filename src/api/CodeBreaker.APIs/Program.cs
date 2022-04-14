@@ -44,7 +44,8 @@ app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) 
     string id = await service.StartGameAsync(request.Name);
 
     return Results.Ok(new CreateGameResponse(id));
-});
+}).WithDisplayName("PostStart")
+.Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
 app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 {
@@ -52,6 +53,7 @@ app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
     var result = await service.SetMoveAsync(move);
     MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
     return Results.Ok(response);
-});
+}).WithDisplayName("PostMove")
+.Produces<MoveResponse>(StatusCodes.Status200OK);
 
 app.Run();
