@@ -159,4 +159,3 @@ public record struct KeyPeg(string Color)
 }
 
 public record struct Move(string GameId, int MoveNumber, IList<CodePeg> Codes, IList<KeyPeg> Keys);
-

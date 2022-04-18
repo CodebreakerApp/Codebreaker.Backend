@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
+WebApplication? app = null;
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -13,11 +14,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
 {
-    options.BaseAddress = new Uri("https://localhost:7053/api/MasterMind/");
+    // running with tye?
+    Uri? apiUri = builder.Configuration.GetServiceUri("codebreaker-apis");
+    
+    if (apiUri is null)
+    {
+        apiUri = new("http://localhost:9400/");
+    }
+    Uri uri = new(apiUri, "v1/");
+    app?.Logger.LogInformation("Using URI {uri} to access the API service", uri);
+    options.BaseAddress = uri;
 });
 builder.Services.AddScoped<CodeBreakerTimer>();
 
-var app = builder.Build();
+app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -40,6 +50,5 @@ app.MapGet("/stop/{id}", (string id) =>
     string result = CodeBreakerTimer.Stop(id);
     return Results.Ok(result);
 });
-
 
 app.Run();

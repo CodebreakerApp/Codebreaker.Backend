@@ -6,10 +6,10 @@ public class CodeBreakerTimer
 {
     private readonly CodeBreakerGameRunner _gameRunner;
     private readonly ILogger _logger;
-    private static readonly ConcurrentDictionary<Guid, CodeBreakerTimer> s_bots = new ConcurrentDictionary<Guid, CodeBreakerTimer>();
+    private static readonly ConcurrentDictionary<Guid, CodeBreakerTimer> s_bots = new();
     private PeriodicTimer? _timer;
     private int _loop = 0;
-    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private CancellationTokenSource _cancellationTokenSource = new();
 
     public CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerTimer> logger)
     {
@@ -18,26 +18,36 @@ public class CodeBreakerTimer
     }
 
     public string Start(int delaySeconds, int loops)
-    { 
-        _logger.LogInformation("Starting MMGameRunner");
+    {
+        _logger.LogInformation("Starting CodeBreakerGameRunner");
         Guid id = Guid.NewGuid();
         s_bots.TryAdd(id, this);
 
         _timer = new PeriodicTimer(TimeSpan.FromSeconds(delaySeconds));
         var _ = Task.Factory.StartNew(async () =>
         {
-            do
+            try
             {
-                _logger.LogInformation("bot - waiting for tick in loop {loop}", _loop);
-                bool letsgo = await _timer.WaitForNextTickAsync(_cancellationTokenSource.Token);
-                if (letsgo)
+                do
                 {
-                    _logger.LogInformation("bot - tick activated in loop {loop}", _loop);
-                    await _gameRunner.StartGameAsync();
-                    await _gameRunner.SetMovesAsync();
-                    _loop++;
-                }
-            } while (_loop < loops);
+                    _logger.LogInformation("bot - waiting for tick with loop {loop}", _loop);
+
+                    // simulate some waiting time
+                    bool letsgo = await _timer.WaitForNextTickAsync(_cancellationTokenSource.Token);
+                    if (letsgo)
+                    {
+                        _logger.LogInformation("bot - tick activated with loop {loop}", _loop);
+                        await _gameRunner.StartGameAsync();
+                        await _gameRunner.SetMovesAsync();
+                        _loop++;
+                    }
+
+                } while (_loop < loops);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
 
         }, TaskCreationOptions.LongRunning);
         return id.ToString();
@@ -62,7 +72,7 @@ public class CodeBreakerTimer
                 timer?.Stop();
                 s_bots.TryRemove(guid, out CodeBreakerTimer? _);
             }
-            return "thanks";
+            return "bye for now";
         }
         else
         {
