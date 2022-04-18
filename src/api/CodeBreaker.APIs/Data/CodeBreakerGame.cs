@@ -8,3 +8,10 @@ internal record CodeBreakerGame(string CodeBreakerGameId, string Code, string Us
 internal record CodeBreakerMove(int MoveNumber, string Moves, string Keys);
 
 internal record CodeBreakerGameMove(string Id, string CodeBreakerGameId, int MoveNumber, string Move, DateTime Time, string Keys, string Code);
+
+internal record GamesInformationDetail(DateTime Date)
+{
+    public List<CodeBreakerGame> Games { get; init; } = new List<CodeBreakerGame>();
+}
+
+internal record GamesInfo(DateTime Time, string User, int NumberMoves);

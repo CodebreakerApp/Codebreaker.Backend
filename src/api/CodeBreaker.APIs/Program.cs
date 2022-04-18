@@ -59,4 +59,27 @@ app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 }).WithDisplayName("PostMove")
 .Produces<MoveResponse>(StatusCodes.Status200OK);
 
+app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date, bool? detail) =>
+{
+    bool definedDetail = detail ?? false;
+    DateTime definedDate = date ?? DateTime.Today;
+
+    app.Logger.LogInformation("Requesting games for {date}", definedDate);
+
+    definedDate = definedDate.Date;
+    if (definedDetail)
+    {
+        var games = await context.GetGamesDetailsAsync(definedDate);
+        return Results.Ok(games);
+    }
+    else
+    {
+        var games = await context.GetGamesAsync(definedDate);
+        return Results.Ok(games);
+    }
+}).WithDisplayName("GetReport")
+.Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK)
+.Produces<GamesInformationDetail>(StatusCodes.Status200OK);
+
+
 app.Run();

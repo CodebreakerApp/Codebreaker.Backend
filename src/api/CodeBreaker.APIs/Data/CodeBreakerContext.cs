@@ -44,4 +44,31 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
             throw;
         }
     }
+
+    public async Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
+    {
+        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
+        
+        var games = await Games.AsNoTracking()
+            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
+            .OrderByDescending(g => g.Time)
+            .ToListAsync();
+
+        return new GamesInformationDetail(date) { Games = games };        
+    }
+
+    public async Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date)
+    {
+        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
+
+        var games = await Games.AsNoTracking()
+            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
+            .OrderByDescending(g => g.Time)
+            .Select(g => new { g.Time, g.User, g.Moves })
+            .ToListAsync();
+
+        var games2 = games.Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count)).ToList();
+
+        return games2;
+    }
 }
