@@ -4,6 +4,9 @@ global using Microsoft.EntityFrameworkCore;
 global using CodeBreaker.APIs.Data;
 global using CodeBreaker.Shared.APIModels;
 global using CodeBreaker.APIs.Services;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration.GetSection("CodeBreakerAPI").GetConnectionString("CodeBreakerConnection");
-    options.UseCosmos(connectionString, "CodeBreaker");
+    options.UseCosmos(connectionString, "codebreaker");
 });
 builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
 builder.Services.AddSingleton<GameManager>();

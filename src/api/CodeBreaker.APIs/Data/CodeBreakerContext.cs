@@ -1,6 +1,6 @@
 ﻿namespace CodeBreaker.APIs.Data;
 
-public class CodeBreakerContext : DbContext, ICodeBreakerContext
+internal class CodeBreakerContext : DbContext, ICodeBreakerContext
 {
     private readonly ILogger _logger;
     public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger)

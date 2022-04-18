@@ -1,6 +1,6 @@
 ﻿namespace CodeBreaker.APIs.Data;
 
-public interface ICodeBreakerContext
+internal interface ICodeBreakerContext
 {
     Task AddGameAsync(CodeBreakerGame game);
     Task AddMoveAsync(CodeBreakerGameMove move);

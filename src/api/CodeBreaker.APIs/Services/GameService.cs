@@ -2,7 +2,7 @@
 
 public record KeyPegWithFlag(string Value, bool Used);
 
-public class GameService
+internal class GameService
 {
     private const string black = nameof(black);
     private const string white = nameof(white);
