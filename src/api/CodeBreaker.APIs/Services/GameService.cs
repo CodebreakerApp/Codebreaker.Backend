@@ -37,71 +37,79 @@ internal class GameService
 
     public async Task<GameMoveResult> SetMoveAsync(GameMove move)
     {
-        GameMoveResult result = new(move.GameId, move.MoveNumber);
-
-        var game = _gameManager.GetGame(move.GameId);
-
-        if (move.MoveNumber > 12)
+        try
         {
-            CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
-            await _efContext.AddGameAsync(efGame); 
-            
-            result = result with { Completed = true };
+            GameMoveResult result = new(move.GameId, move.MoveNumber);
+
+            var game = _gameManager.GetGame(move.GameId);
+
+            if (move.MoveNumber > 12)
+            {
+                CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                await _efContext.AddGameAsync(efGame);
+
+                result = result with { Completed = true };
+                return result;
+            }
+
+            List<string> codes = new(game.Code); // temporary corrects
+            List<string> moves = new(move.CodePegs);
+            List<int> blackHits = new();
+            List<string> keyPegs = new(); // the final information for the keys
+
+            // first check for the correct position
+            for (int i = 0; i < Holes; i++)
+            {
+                if (codes[i] == move.CodePegs[i])
+                {
+                    keyPegs.Add(black);
+                    blackHits.Add(i);
+                }
+            }
+
+            // remove the moves that may not be checked when checking corrects for wrong position
+            for (int i = blackHits.Count - 1; i >= 0; i--)
+            {
+                codes.RemoveAt(blackHits[i]);
+                moves.RemoveAt(blackHits[i]);
+            }
+
+            // second check for corrects with the wrong position
+            keyPegs = GetWhiteKeyPegs(codes, moves, keyPegs);
+
+            // sort the pegs, no hint about the position
+            keyPegs.Sort();
+
+            foreach (var keyPeg in keyPegs)
+            {
+                result.KeyPegs.Add(keyPeg);
+            }
+
+            CodeBreakerGameMove dataMove = new(
+                Guid.NewGuid().ToString(),
+                game.GameId,
+                move.MoveNumber,
+                string.Join("..", move.CodePegs),
+                DateTime.Now,
+                string.Join(".", result.KeyPegs),
+                string.Join("..", game.Code));
+            await _efContext.AddMoveAsync(dataMove);
+
+            if (result.KeyPegs.Count(s => s == black) == 4)
+            {
+                result = result with { Won = true };
+                CodeBreakerGame efGame = new CodeBreakerGame(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                await _efContext.AddGameAsync(efGame);
+            }
+
+            _logger.LogInformation("Received a move with {move}, returing {result}", move, result);
             return result;
         }
-
-        List<string> codes = new(game.Code); // temporary corrects
-        List<string> moves = new(move.CodePegs);
-        List<int> blackHits = new();
-        List<string> keyPegs = new(); // the final information for the keys
-
-        // first check for the correct position
-        for (int i = 0; i < Holes; i++)
+        catch (Exception ex)
         {
-            if (codes[i] == move.CodePegs[i])
-            {
-                keyPegs.Add(black);
-                blackHits.Add(i);
-            }
+            _logger.LogError(ex, ex.Message);
+            throw;
         }
-
-        // remove the moves that may not be checked when checking corrects for wrong position
-        for (int i = blackHits.Count - 1; i >= 0; i--)
-        {
-            codes.RemoveAt(blackHits[i]);
-            moves.RemoveAt(blackHits[i]); 
-        }
-
-        // second check for corrects with the wrong position
-        keyPegs = GetWhiteKeyPegs(codes, moves, keyPegs);
-
-        // sort the pegs, no hint about the position
-        keyPegs.Sort();
-
-        foreach (var keyPeg in keyPegs)
-        {
-            result.KeyPegs.Add(keyPeg);
-        }
-
-        CodeBreakerGameMove dataMove = new(
-            Guid.NewGuid().ToString(), 
-            game.GameId, 
-            move.MoveNumber, 
-            string.Join("..", move.CodePegs),
-            DateTime.Now,
-            string.Join(".", result.KeyPegs),
-            string.Join("..", game.Code));
-        await _efContext.AddMoveAsync(dataMove);
-
-        if (result.KeyPegs.Count(s => s == black) == 4)
-        {
-            result = result with { Won = true };
-            CodeBreakerGame efGame = new CodeBreakerGame(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
-            await _efContext.AddGameAsync(efGame);
-        }
-        
-        _logger.LogInformation("Received a move with {move}, returing {result}", move, result);
-        return result;
     }
 
     private List<string> GetWhiteKeyPegs(List<string> codes, List<string> moves, List<string> keyPegs)
