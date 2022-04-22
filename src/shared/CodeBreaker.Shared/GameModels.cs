@@ -22,4 +22,22 @@ public record Game(string GameId, string Name, IReadOnlyList<string> Code)
         string codes = string.Join("..", Code);
         return $"{GameId} for {Name}, {codes}";
     }
+
+    public virtual bool Equals(Game? other)
+    {
+        if (other is null) return false;
+        
+        if (EqualityContract == other.EqualityContract &&
+            GameId == other.GameId &&
+            Name == other.Name)
+        {
+            return Code.SequenceEqual(other.Code);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override int GetHashCode() => GameId.GetHashCode();
 }
