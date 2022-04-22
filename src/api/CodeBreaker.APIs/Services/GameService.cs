@@ -1,4 +1,6 @@
-﻿namespace CodeBreaker.APIs.Services;
+﻿using Microsoft.Azure.Cosmos.Serialization.HybridRow;
+
+namespace CodeBreaker.APIs.Services;
 
 public record KeyPegWithFlag(string Value, bool Used);
 
@@ -10,13 +12,13 @@ internal class GameService
     private const int Holes = 4;
 
     private readonly IGameInitializer _gameInitializer;
-    private readonly GameManager _gameManager;
+    private readonly GameCache _gameManager;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public GameService(
         IGameInitializer gameInitializer, 
-        GameManager gameManager,
+        GameCache gameManager,
         ICodeBreakerContext context,
         ILogger<GameService> logger)
     {
@@ -26,13 +28,25 @@ internal class GameService
         _efContext = context;
     }
 
-    public Task<string> StartGameAsync(string name)
+    public async Task<string> StartGameAsync(string username)
     {
         string[] code = _gameInitializer.GetColors(Holes);
-        Game game = new(Guid.NewGuid().ToString(), name, code);
+        Game game = new(Guid.NewGuid().ToString(), username, code);
         _gameManager.SetGame(game);
+
+        // write the start of the game as initial move to the data store
+        CodeBreakerGameMove initialMove = new(
+            Guid.NewGuid().ToString(),
+            game.GameId,
+            game.Name,
+            DateTime.Now);
+
+        // write the move to the data store
+        await _efContext.AddMoveAsync(initialMove);
+
         _logger.LogInformation("Started a game with this information {game}", game);
-        return Task.FromResult(game.GameId);
+
+        return game.GameId;
     }
 
     public async Task<GameMoveResult> SetMoveAsync(GameMove move)
@@ -42,20 +56,30 @@ internal class GameService
             GameMoveResult result = new(move.GameId, move.MoveNumber);
 
             var game = _gameManager.GetGame(move.GameId);
+            if (game is null)
+            {
+                // game is not in the cache, so we need to get it from the data store
+                var dbGame = await _efContext.GetGameAsync(move.GameId);
+                if (dbGame is null)
+                {
+                    throw new GameException("Game id not found");
+                }
+                game = dbGame.ToGame();
+            }
 
             if (move.MoveNumber > 12)
             {
-                CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
-                await _efContext.AddGameAsync(efGame);
+                CodeBreakerGame dataGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                await _efContext.UpdateGameAsync(dataGame);
 
                 result = result with { Completed = true };
                 return result;
             }
 
-            List<string> codes = new(game.Code); // temporary corrects
-            List<string> moves = new(move.CodePegs);
-            List<int> blackHits = new();
-            List<string> keyPegs = new(); // the final information for the keys
+            List<string> codes = new(game.Code); // copy the codes from the game to check the codes that are already calculated
+            List<string> moves = new(move.CodePegs); // copy the moves to check the moves that are already calculated
+            List<int> blackHits = new(); // correct positions where blacks are found
+            List<string> keyPegs = new(); // the final information for the keys, black and white pegs are added
 
             // first check for the correct position
             for (int i = 0; i < Holes; i++)
@@ -88,18 +112,22 @@ internal class GameService
             CodeBreakerGameMove dataMove = new(
                 Guid.NewGuid().ToString(),
                 game.GameId,
+                game.Name,
                 move.MoveNumber,
                 string.Join("..", move.CodePegs),
                 DateTime.Now,
                 string.Join(".", result.KeyPegs),
                 string.Join("..", game.Code));
+            
+            // write the move to the data store
             await _efContext.AddMoveAsync(dataMove);
 
+            // write the complete game to the data store if it finished
             if (result.KeyPegs.Count(s => s == black) == 4)
             {
                 result = result with { Won = true };
-                CodeBreakerGame efGame = new CodeBreakerGame(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
-                await _efContext.AddGameAsync(efGame);
+                CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                await _efContext.UpdateGameAsync(efGame);
             }
 
             _logger.LogInformation("Received a move with {move}, returing {result}", move, result);

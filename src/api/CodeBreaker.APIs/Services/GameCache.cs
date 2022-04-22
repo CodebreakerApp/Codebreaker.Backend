@@ -1,11 +1,11 @@
 ﻿namespace CodeBreaker.APIs.Services;
 
-internal class GameManager
+internal class GameCache
 {
     private readonly ConcurrentDictionary<string, Game> _games = new();
     private readonly ILogger _logger;
 
-    public GameManager(ILogger<GameManager> logger)
+    public GameCache(ILogger<GameCache> logger)
     {
         _logger = logger;
     }
