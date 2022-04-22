@@ -7,25 +7,37 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         : base(options) 
     {
         _logger = logger;
-        // this.Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultContainer("CodeBreakerContainer");
-        modelBuilder.Entity<CodeBreakerGame>().HasPartitionKey(g => g.CodeBreakerGameId);
-        modelBuilder.Entity<CodeBreakerGameMove>().HasPartitionKey(m => m.CodeBreakerGameId);
+        modelBuilder.Entity<CodeBreakerGame>()
+            .HasPartitionKey(g => g.CodeBreakerGameId);
+        modelBuilder.Entity<CodeBreakerGameMove>()
+            .HasPartitionKey(m => m.CodeBreakerGameId);
     }
 
     public DbSet<CodeBreakerGame> Games => Set<CodeBreakerGame>();
     public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
 
-    public async Task AddGameAsync(CodeBreakerGame game)
+    public async Task InitGameAsync(CodeBreakerGame game)
     {
-        var gameMoves = await Moves.Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId).ToListAsync();
-        var moves = gameMoves.Select(m => new CodeBreakerMove(m.MoveNumber, m.Move, m.Keys)).ToList();
-        game = game with { Moves = moves };
         Games.Add(game);
+        await SaveChangesAsync();
+        _logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
+    }
+    
+    public async Task UpdateGameAsync(CodeBreakerGame game)
+    {
+        var gameMoves = await Moves
+            .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
+            .ToListAsync();
+        var moves = gameMoves.Select(
+            m => new CodeBreakerMove(m.MoveNumber, m.Move, m.Keys))
+            .ToList();
+        game = game with { Moves = moves };
+        Games.Update(game);
         Moves.RemoveRange(gameMoves);
         int records = await SaveChangesAsync();
         _logger.LogInformation("added/updated {records} records", records);
@@ -44,12 +56,19 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
             throw;
         }
     }
+    
+    public async Task<CodeBreakerGame?> GetGameAsync(string gameId)
+    {
+        var game = await Games.SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
+        return game;
+    }
 
     public async Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
     {
         // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
         
-        var games = await Games.AsNoTracking()
+        var games = await Games
+            .AsNoTracking()
             .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
             .OrderByDescending(g => g.Time)
             .ToListAsync();
@@ -61,7 +80,8 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
     {
         // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
 
-        var games = await Games.AsNoTracking()
+        var games = await Games
+            .AsNoTracking()
             .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
             .OrderByDescending(g => g.Time)
             .Select(g => new { g.Time, g.User, g.Moves })

@@ -1,9 +1,11 @@
 global using CodeBreaker.Shared;
 global using System.Collections.Concurrent;
 global using Microsoft.EntityFrameworkCore;
+global using CodeBreaker.APIs;
 global using CodeBreaker.APIs.Data;
 global using CodeBreaker.Shared.APIModels;
 global using CodeBreaker.APIs.Services;
+global using CodeBreaker.APIs.Extensions;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
@@ -20,7 +22,7 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     options.UseCosmos(connectionString, "codebreaker");
 });
 builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
-builder.Services.AddSingleton<GameManager>();
+builder.Services.AddSingleton<GameCache>();
 builder.Services.AddTransient<GameService>();
 
 const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
@@ -52,12 +54,20 @@ app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) 
 
 app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 {
-    GameMove move = new(request.Id, request.MoveNumber, request.CodePegs.ToList());
-    var result = await service.SetMoveAsync(move);
-    MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
-    return Results.Ok(response);
+    try
+    {
+        GameMove move = new(request.Id, request.MoveNumber, request.CodePegs.ToList());
+        var result = await service.SetMoveAsync(move);
+        MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
+        return Results.Ok(response);
+    }
+    catch (GameException)
+    {
+        return Results.UnprocessableEntity(request);
+    }
 }).WithDisplayName("PostMove")
-.Produces<MoveResponse>(StatusCodes.Status200OK);
+.Produces<MoveResponse>(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status422UnprocessableEntity);
 
 app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date, bool? detail) =>
 {
@@ -80,6 +90,5 @@ app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date, bool
 }).WithDisplayName("GetReport")
 .Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK)
 .Produces<GamesInformationDetail>(StatusCodes.Status200OK);
-
 
 app.Run();
