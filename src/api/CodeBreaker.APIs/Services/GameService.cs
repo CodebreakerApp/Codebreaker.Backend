@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Serialization.HybridRow;
-
-namespace CodeBreaker.APIs.Services;
+﻿namespace CodeBreaker.APIs.Services;
 
 public record KeyPegWithFlag(string Value, bool Used);
 
@@ -38,7 +36,6 @@ internal class GameService
         CodeBreakerGameMove initialMove = new(
             Guid.NewGuid().ToString(),
             game.GameId,
-            game.Name,
             DateTime.Now);
 
         // write the move to the data store
@@ -112,7 +109,6 @@ internal class GameService
             CodeBreakerGameMove dataMove = new(
                 Guid.NewGuid().ToString(),
                 game.GameId,
-                game.Name,
                 move.MoveNumber,
                 string.Join("..", move.CodePegs),
                 DateTime.Now,
