@@ -19,7 +19,10 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
     
     if (apiUri is null)
     {
-        apiUri = new("http://localhost:9400/");
+        string? codebreakeruri = builder.Configuration.GetSection("CodeBreakerBot")["APIUri"];
+        if (codebreakeruri is null) throw new InvalidOperationException("APIURI not retrieved");
+
+        apiUri = new Uri(codebreakeruri);
     }
     Uri uri = new(apiUri, "v1/");
     app?.Logger.LogInformation("Using URI {uri} to access the API service", uri);
