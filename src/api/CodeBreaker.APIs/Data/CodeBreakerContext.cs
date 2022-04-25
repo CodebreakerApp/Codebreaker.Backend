@@ -30,17 +30,25 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
     
     public async Task UpdateGameAsync(CodeBreakerGame game)
     {
-        var gameMoves = await Moves
-            .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
-            .ToListAsync();
-        var moves = gameMoves.Select(
-            m => new CodeBreakerMove(m.MoveNumber, m.Move, m.Keys))
-            .ToList();
-        game = game with { Moves = moves };
-        Games.Update(game);
-        Moves.RemoveRange(gameMoves);
-        int records = await SaveChangesAsync();
-        _logger.LogInformation("added/updated {records} records", records);
+        try
+        {
+            var gameMoves = await Moves
+                .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
+                .ToListAsync();
+            var moves = gameMoves.Select(
+                m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys))
+                .ToList();
+            game = game with { Moves = moves };
+            Games.Update(game);
+            Moves.RemoveRange(gameMoves);
+            int records = await SaveChangesAsync();
+            _logger.LogInformation("added/updated {records} records", records);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 
     public async Task AddMoveAsync(CodeBreakerGameMove move)

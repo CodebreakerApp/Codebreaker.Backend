@@ -5,7 +5,7 @@ internal record CodeBreakerGame(string CodeBreakerGameId, string Code, string Us
     public List<CodeBreakerMove> Moves { get; init; } = new();
 }
 
-internal record CodeBreakerMove(int MoveNumber, string Moves, string Keys);
+internal record CodeBreakerMove(string CodeBreakerGameId, int MoveNumber, string Moves, string Keys);
 
 internal record CodeBreakerGameMove(string Id, string CodeBreakerGameId, int MoveNumber, string Move, DateTime Time, string Keys, string Code)
 {

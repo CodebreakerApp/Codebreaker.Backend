@@ -32,14 +32,7 @@ internal class GameService
         Game game = new(Guid.NewGuid().ToString(), username, code);
         _gameManager.SetGame(game);
 
-        // write the start of the game as initial move to the data store
-        CodeBreakerGameMove initialMove = new(
-            Guid.NewGuid().ToString(),
-            game.GameId,
-            DateTime.Now);
-
-        // write the move to the data store
-        await _efContext.AddMoveAsync(initialMove);
+        await _efContext.InitGameAsync(game.ToDataGame());
 
         _logger.LogInformation("Started a game with this information {game}", game);
 
@@ -66,7 +59,7 @@ internal class GameService
 
             if (move.MoveNumber > 12)
             {
-                CodeBreakerGame dataGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                CodeBreakerGame dataGame = game.ToDataGame();
                 await _efContext.UpdateGameAsync(dataGame);
 
                 result = result with { Completed = true };
