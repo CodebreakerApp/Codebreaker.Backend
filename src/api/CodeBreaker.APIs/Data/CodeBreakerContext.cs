@@ -47,6 +47,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
+            throw;
         }
     }
 
