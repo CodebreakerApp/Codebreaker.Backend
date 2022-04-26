@@ -34,7 +34,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
         });
 });
-builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 var app = builder.Build();
 
