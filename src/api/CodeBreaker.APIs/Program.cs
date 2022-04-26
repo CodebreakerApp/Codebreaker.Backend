@@ -12,8 +12,6 @@ using System.Runtime.CompilerServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
@@ -36,6 +34,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
         });
 });
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
