@@ -13,7 +13,7 @@ internal class GameCache
     public void SetGame(Game game)
     {
         _games.TryAdd(game.GameId, game);
-        _logger.LogInformation("new game set, currently {gamecount} active", _games.Count());
+        _logger.GameCached(_games.Count);
     }
 
     /// <summary>
