@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 WebApplication? app = null;
 
 // Add services to the container.
@@ -25,7 +26,7 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
         apiUri = new Uri(codebreakeruri);
     }
     Uri uri = new(apiUri, "v1/");
-    app?.Logger.LogInformation("Using URI {uri} to access the API service", uri);
+    app?.Logger.UsingUri(uri.ToString());
     options.BaseAddress = uri;
 });
 builder.Services.AddScoped<CodeBreakerTimer>();
@@ -40,18 +41,18 @@ app.MapGet("/start", (CodeBreakerTimer timer, int? delayseconds, int? loops) =>
     string id = timer.Start(delayseconds ?? 60, loops ?? 3);
 
     return Results.Accepted($"/status/{id}", id);
-});
+}).Produces(StatusCodes.Status202Accepted);
 
 app.MapGet("/status/{id}", (string id) =>
 {
     string status = CodeBreakerTimer.Status(id);
     return Results.Ok(status);
-});
+}).Produces(StatusCodes.Status200OK);
 
 app.MapGet("/stop/{id}", (string id) =>
 {
     string result = CodeBreakerTimer.Stop(id);
     return Results.Ok(result);
-});
+}).Produces(StatusCodes.Status200OK);
 
 app.Run();
