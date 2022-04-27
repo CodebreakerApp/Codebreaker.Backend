@@ -46,7 +46,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.Error(ex, ex.Message);
             throw;
         }
     }
@@ -60,7 +60,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.Error(ex, ex.Message);
             throw;
         }
     }

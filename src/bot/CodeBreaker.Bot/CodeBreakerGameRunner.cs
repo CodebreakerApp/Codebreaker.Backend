@@ -80,7 +80,7 @@ public class CodeBreakerGameRunner
         {
             (var colorNames, var selection) = GetNextMoves();
             MoveRequest moveRequest = new(_gameId, _moveNumber++, colorNames);
-            _logger.LogInformation("Sending move {move}", moveRequest);
+            _logger.SendMove(moveRequest.ToString(), _gameId);
 
             var responseMessage = await _httpClient.PostAsJsonAsync("move", moveRequest);
             responseMessage.EnsureSuccessStatusCode();
@@ -88,7 +88,7 @@ public class CodeBreakerGameRunner
 
             if (response.Won)
             {
-                _logger.LogInformation("We matched it!!!!");
+                _logger.Matched(_moveNumber, _gameId);
                 break;
             }
 
@@ -107,18 +107,18 @@ public class CodeBreakerGameRunner
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
-                _logger.LogInformation("reduced the possible values to {count} with black hits", _possibleValues.Count);
+                _logger.ReducedPossibleValues(_possibleValues.Count, "black", _gameId);
             }
             if (whiteHits > 0)
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(whiteHits + blackHits, selection);
-                _logger.LogInformation("reduced the possible values to {count} with white hits", _possibleValues.Count);
+                _logger.ReducedPossibleValues(_possibleValues.Count, "white", _gameId);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(1));  // thinking delay
         } while (_moveNumber > 12 || !response.Won);
 
-        _logger.LogInformation("Finished game run with {number}", _moveNumber);
+        _logger.FinishedRun(_moveNumber, _gameId);
     }
 
     private (string[] Colors, int Selection) GetNextMoves()

@@ -61,6 +61,19 @@ public static class CodeBreakerAlgorithms
         return result;
     }
 
+    public static List<int> HandleNoMatches(this IList<int> values, int selection)
+    {
+        List<int> newValues = new(values.Count);
+        foreach (var value in values)
+        {
+            if (value == selection)
+            {
+                newValues.Add(value);
+            }
+        }   
+        return newValues;
+    }
+
     public static List<int> HandleWhiteMatches(this IList<int> values, int allHits, int selection)
     {
         List<int> newValues = new(values.Count);

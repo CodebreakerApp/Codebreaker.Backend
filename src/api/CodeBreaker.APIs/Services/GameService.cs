@@ -34,7 +34,7 @@ internal class GameService
 
         await _efContext.InitGameAsync(game.ToDataGame());
 
-        _logger.LogInformation("Started a game with this information {game}", game);
+        _logger.GameStarted(game.ToString());
 
         return game.GameId;
     }
@@ -119,12 +119,12 @@ internal class GameService
                 await _efContext.UpdateGameAsync(efGame);
             }
 
-            _logger.LogInformation("Received a move with {move}, returing {result}", move, result);
+            _logger.SetMove(move.ToString(), result.ToString());
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.Error(ex, ex.Message);
             throw;
         }
     }

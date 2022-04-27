@@ -46,7 +46,7 @@ public class CodeBreakerTimer
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.Error(ex, ex.Message);
             }
 
         }, TaskCreationOptions.LongRunning);
