@@ -1,6 +1,4 @@
-﻿using CodeBreaker.Shared.APIModels;
-
-namespace CodeBreaker.Bot;
+﻿namespace CodeBreaker.Bot;
 
 public class CodeBreakerGameRunner
 {

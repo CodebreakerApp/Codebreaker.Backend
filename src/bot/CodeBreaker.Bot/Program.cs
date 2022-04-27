@@ -1,12 +1,16 @@
-
-using CodeBreaker.Bot;
+global using Microsoft.ApplicationInsights.Extensibility;
+global using CodeBreaker.Shared.APIModels;
+global using CodeBreaker.Bot;
+global using System.Collections.Concurrent;
 
 using System.Runtime.CompilerServices;
+using CodeBreaker.APIs;
 
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 WebApplication? app = null;
 
 // Add services to the container.

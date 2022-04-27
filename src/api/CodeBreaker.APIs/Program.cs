@@ -6,6 +6,7 @@ global using CodeBreaker.APIs.Data;
 global using CodeBreaker.Shared.APIModels;
 global using CodeBreaker.APIs.Services;
 global using CodeBreaker.APIs.Extensions;
+global using Microsoft.ApplicationInsights.Extensibility;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
@@ -13,6 +14,8 @@ using System.Runtime.CompilerServices;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
@@ -34,7 +37,6 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
         });
 });
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 var app = builder.Build();
 
