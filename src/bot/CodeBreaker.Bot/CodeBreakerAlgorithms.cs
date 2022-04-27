@@ -4,11 +4,13 @@ public record struct KeyPegWithFlag(int Value, bool Used);
 
 public static class CodeBreakerAlgorithms
 {
+    // definitions to mask the different pegs
     private const int c0001 = 0b_111111;
     private const int c0010 = 0b_111111_000000;
     private const int c0100 = 0b_111111_000000_000000;
     private const int c1000 = 0b_111111_000000_000000_000000;
 
+    // Convert the int representation of four pegs to an array of CodeColors names
     public static string[] IntToColors(this int value)
     {
         int i1 = (value >> 0) & 0b111111;
@@ -27,6 +29,14 @@ public static class CodeBreakerAlgorithms
         return colorNames;
     }
 
+    /// <summary>
+    /// Reduces the possible values based on the black matches with the selection
+    /// </summary>
+    /// <param name="values">The list of possible moves</param>
+    /// <param name="blackHits">The number of black hits with the selection</param>
+    /// <param name="selection">The key pegs of the selected move</param>
+    /// <returns>The remaining possible moves</returns>
+    /// <exception cref="ArgumentException"></exception>
     public static List<int> HandleBlackMatches(this IList<int> values, int blackHits, int selection)
     {
         if (blackHits < 1 || blackHits > 3)
@@ -61,20 +71,14 @@ public static class CodeBreakerAlgorithms
         return result;
     }
 
-    public static List<int> HandleNoMatches(this IList<int> values, int selection)
-    {
-        List<int> newValues = new(values.Count);
-        foreach (var value in values)
-        {
-            if (value == selection)
-            {
-                newValues.Add(value);
-            }
-        }   
-        return newValues;
-    }
-
-    public static List<int> HandleWhiteMatches(this IList<int> values, int allHits, int selection)
+    /// <summary>
+    /// Reduces the possible values based on the white matches with the selection
+    /// </summary>
+    /// <param name="values">The possible values</param>
+    /// <param name="whiteHits">The number of white hits with the selection</param>
+    /// <param name="selection">The selected pegs</param>
+    /// <returns>The remaining possbile values</returns>
+    public static List<int> HandleWhiteMatches(this IList<int> values, int whiteHits, int selection)
     {
         List<int> newValues = new(values.Count);
         foreach (var value in values)
@@ -107,7 +111,7 @@ public static class CodeBreakerAlgorithms
                 }
 
             }
-            if (matchCount == allHits)
+            if (matchCount == whiteHits)
             {
                 newValues.Add(value);
             }
@@ -116,37 +120,40 @@ public static class CodeBreakerAlgorithms
         return newValues;
     }
 
-    public static short ColorToBits(this string color)
+    // TODO: implement and create unit test before using this API
+    /// <summary>
+    /// Reduces the possible values if no selection was correct
+    /// </summary>
+    /// <param name="values">The possible values</param>
+    /// <param name="selection">The selected pegs</param>
+    /// <returns>The remaining possbile values</returns>
+    public static List<int> HandleNoMatches(this IList<int> values, int selection)
     {
-        return color switch
+        List<int> newValues = new(values.Count);
+        foreach (var value in values)
         {
-            "black" => 1,
-            "white" => 2,
-            "red" => 4,
-            "green" => 8,
-            "blue" => 16,
-            "yellow" => 32,
-            _ => throw new InvalidOperationException("invalid color string")
-        };
+            if (value == selection)
+            {
+                newValues.Add(value);
+            }
+        }
+        return newValues;
     }
 
-    public static string BitsToColorString(this int s) => s switch
-    {
-        1 => "black",
-        2 => "white",
-        4 => "red",
-        8 => "green",
-        16 => "blue",
-        32 => "yellow",
-        _ => throw new InvalidOperationException("invalid color number")
-    };
-
-    public static int SelectPeg(this int code, int pegNumber) => pegNumber switch
-    {
-        0 => code & 0b111111,
-        1 => (code >> 6) & 0b111111,
-        2 => (code >> 12) & 0b111111,
-        3 => (code >> 18) & 0b111111,
-        _ => throw new InvalidOperationException("invalid peg number")
-    };
+    /// <summary>
+    /// Get the int representation of one peg from the int representaiton of four pegs
+    /// </summary>
+    /// <param name="code">The int value representing four pegs</param>
+    /// <param name="pegNumber">The peg number to retrieve from the int representation</param>
+    /// <returns>The int value of the selected peg</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static int SelectPeg(this int code, int pegNumber) => 
+        pegNumber switch
+        {
+            0 => code & 0b111111,
+            1 => (code >> 6) & 0b111111,
+            2 => (code >> 12) & 0b111111,
+            3 => (code >> 18) & 0b111111,
+            _ => throw new InvalidOperationException("invalid peg number")
+        };
 }

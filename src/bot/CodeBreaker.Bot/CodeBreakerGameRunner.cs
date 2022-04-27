@@ -67,7 +67,15 @@ public class CodeBreakerGameRunner
         _gameId = response.Id;
     }
 
-    public async Task SetMovesAsync(int thinkSeconds)
+    /// <summary>
+    /// Sends moves to the API server
+    /// Moves are delayed by thinkSeconds before setting the next move
+    /// Finishes when the game is over
+    /// </summary>
+    /// <param name="thinkSeconds">The seconds to simulate thinking before setting the next move</param>
+    /// <returns>a task</returns>
+    /// <exception cref="InvalidOperationException">throws if initialization was not done, or with invalid game state</exception>
+    public async Task RunAsync(int thinkSeconds)
     {
         if (_gameId is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
@@ -119,6 +127,11 @@ public class CodeBreakerGameRunner
         _logger.FinishedRun(_moveNumber, _gameId);
     }
 
+    /// <summary>
+    /// Get the values for the next move
+    /// </summary>
+    /// <returns>A string and int representation for the next moves</returns>
+    /// <exception cref="InvalidOperationException">Throws if there are no calculated possible values left to chose from</exception>
     private (string[] Colors, int Selection) GetNextMoves()
     {
         if (_possibleValues?.Count is null or 0) throw new InvalidOperationException("invalid number of possible values - 0");

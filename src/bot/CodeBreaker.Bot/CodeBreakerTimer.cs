@@ -36,7 +36,7 @@ public class CodeBreakerTimer
                     {
                         _logger.TimerTickFired(_loop);
                         await _gameRunner.StartGameAsync();
-                        await _gameRunner.SetMovesAsync(thinkSeconds);
+                        await _gameRunner.RunAsync(thinkSeconds);
                         _loop++;
                     }
 
