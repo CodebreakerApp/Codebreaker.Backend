@@ -40,9 +40,9 @@ app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/start", (CodeBreakerTimer timer, int? delayseconds, int? loops) =>
+app.MapGet("/start", (CodeBreakerTimer timer, int? delaySecondsBetweenGames, int? numberGames, int? thinkSeconds) =>
 {
-    string id = timer.Start(delayseconds ?? 60, loops ?? 3);
+    string id = timer.Start(delaySecondsBetweenGames ?? 60, numberGames ?? 3, thinkSeconds ?? 3);
 
     return Results.Accepted($"/status/{id}", id);
 }).Produces(StatusCodes.Status202Accepted);

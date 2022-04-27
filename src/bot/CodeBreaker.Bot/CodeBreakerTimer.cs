@@ -15,13 +15,13 @@ public class CodeBreakerTimer
         _logger = logger;
     }
 
-    public string Start(int delaySeconds, int loops)
+    public string Start(int delaySecondsBetweenGames, int numberGames, int thinkSeconds)
     {
         _logger.LogInformation("Starting CodeBreakerGameRunner");
         Guid id = Guid.NewGuid();
         s_bots.TryAdd(id, this);
 
-        _timer = new PeriodicTimer(TimeSpan.FromSeconds(delaySeconds));
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(delaySecondsBetweenGames));
         var _ = Task.Factory.StartNew(async () =>
         {
             try
@@ -36,11 +36,11 @@ public class CodeBreakerTimer
                     {
                         _logger.LogInformation("bot - tick activated with loop {loop}", _loop);
                         await _gameRunner.StartGameAsync();
-                        await _gameRunner.SetMovesAsync();
+                        await _gameRunner.SetMovesAsync(thinkSeconds);
                         _loop++;
                     }
 
-                } while (_loop < loops);
+                } while (_loop < numberGames);
             }
             catch (HttpRequestException ex)
             {

@@ -67,7 +67,7 @@ public class CodeBreakerGameRunner
         _gameId = response.Id;
     }
 
-    public async Task SetMovesAsync()
+    public async Task SetMovesAsync(int thinkSeconds)
     {
         if (_gameId is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
@@ -113,7 +113,7 @@ public class CodeBreakerGameRunner
                 _logger.ReducedPossibleValues(_possibleValues.Count, "white", _gameId);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(1));  // thinking delay
+            await Task.Delay(TimeSpan.FromSeconds(thinkSeconds));  // thinking delay
         } while (_moveNumber > 12 || !response.Won);
 
         _logger.FinishedRun(_moveNumber, _gameId);
