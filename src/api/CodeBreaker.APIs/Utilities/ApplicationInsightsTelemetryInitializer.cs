@@ -1,5 +1,4 @@
-﻿using Microsoft.ApplicationInsights.Channel;
-using Microsoft.ApplicationInsights.Extensibility;
+﻿
 
 namespace CodeBreaker.APIs;
 

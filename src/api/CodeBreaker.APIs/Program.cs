@@ -1,12 +1,15 @@
-global using CodeBreaker.Shared;
-global using System.Collections.Concurrent;
-global using Microsoft.EntityFrameworkCore;
 global using CodeBreaker.APIs;
 global using CodeBreaker.APIs.Data;
-global using CodeBreaker.Shared.APIModels;
-global using CodeBreaker.APIs.Services;
 global using CodeBreaker.APIs.Extensions;
+global using CodeBreaker.APIs.Services;
+global using CodeBreaker.Shared;
+global using CodeBreaker.Shared.APIModels;
+
+global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
+global using Microsoft.EntityFrameworkCore;
+
+global using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
