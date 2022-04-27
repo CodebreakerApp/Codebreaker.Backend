@@ -37,4 +37,22 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "Using URI {uri} to access the API service")]
     public static partial void UsingUri(this ILogger logger, string uri);
+
+    [LoggerMessage(
+        EventId = 4005,
+        Level = LogLevel.Information,
+        Message = "Start CodeBreakerGameRunner")]
+    public static partial void StartGameRunner(this ILogger logger);
+
+    [LoggerMessage
+        (EventId = 4006,
+        Level = LogLevel.Trace,
+        Message = "Waiting for next timer tick in loop {loop}")]
+    public static partial void WaitingForNextTick(this ILogger logger, int loop);
+
+    [LoggerMessage
+    (EventId = 4007,
+    Level = LogLevel.Trace,
+    Message = "Timer tick fired in loop {loop}")]
+    public static partial void TimerTickFired(this ILogger logger, int loop);
 }

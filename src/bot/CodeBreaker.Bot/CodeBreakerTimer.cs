@@ -17,7 +17,7 @@ public class CodeBreakerTimer
 
     public string Start(int delaySecondsBetweenGames, int numberGames, int thinkSeconds)
     {
-        _logger.LogInformation("Starting CodeBreakerGameRunner");
+        _logger.StartGameRunner();
         Guid id = Guid.NewGuid();
         s_bots.TryAdd(id, this);
 
@@ -28,13 +28,13 @@ public class CodeBreakerTimer
             {
                 do
                 {
-                    _logger.LogInformation("bot - waiting for tick with loop {loop}", _loop);
+                    _logger.WaitingForNextTick(_loop);
 
                     // simulate some waiting time
                     bool letsgo = await _timer.WaitForNextTickAsync(_cancellationTokenSource.Token);
                     if (letsgo)
                     {
-                        _logger.LogInformation("bot - tick activated with loop {loop}", _loop);
+                        _logger.TimerTickFired(_loop);
                         await _gameRunner.StartGameAsync();
                         await _gameRunner.SetMovesAsync(thinkSeconds);
                         _loop++;
