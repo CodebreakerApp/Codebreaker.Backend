@@ -10,9 +10,13 @@ global using Microsoft.ApplicationInsights.Extensibility;
 global using Microsoft.EntityFrameworkCore;
 
 global using System.Collections.Concurrent;
+global using System.Diagnostics;
+
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
+
+ActivitySource activitySource = new ActivitySource("CNinnovation.CodeBreaker.API");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +54,12 @@ app.UseSwaggerUI();
 
 app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) =>
 {
+    using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
+    
     string id = await service.StartGameAsync(request.Name);
+    activity?.AddBaggage("GameId", id);
+    activity?.AddBaggage("Name", request.Name);
+    activity?.AddEvent(new ActivityEvent("Game started"));
 
     return Results.Ok(new CreateGameResponse(id));
 }).WithDisplayName("PostStart")
@@ -60,13 +69,17 @@ app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 {
     try
     {
+        using var activity = activitySource.StartActivity("Game Move", ActivityKind.Server);
+        activity?.AddBaggage("GameId", request.Id);
+
         GameMove move = new(request.Id, request.MoveNumber, request.CodePegs.ToList());
         var result = await service.SetMoveAsync(move);
         MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
         return Results.Ok(response);
     }
-    catch (GameException)
+    catch (GameException ex)
     {
+        app.Logger.Error(ex, ex.Message);
         return Results.UnprocessableEntity(request);
     }
 }).WithDisplayName("PostMove")

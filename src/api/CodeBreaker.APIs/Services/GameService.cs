@@ -10,18 +10,18 @@ internal class GameService
     private const int Holes = 4;
 
     private readonly IGameInitializer _gameInitializer;
-    private readonly GameCache _gameManager;
+    private readonly GameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public GameService(
         IGameInitializer gameInitializer, 
-        GameCache gameManager,
+        GameCache gameCache,
         ICodeBreakerContext context,
         ILogger<GameService> logger)
     {
         _gameInitializer = gameInitializer;
-        _gameManager = gameManager;
+        _gameCache = gameCache;
         _logger = logger;
         _efContext = context;
     }
@@ -30,7 +30,7 @@ internal class GameService
     {
         string[] code = _gameInitializer.GetColors(Holes);
         Game game = new(Guid.NewGuid().ToString(), username, code);
-        _gameManager.SetGame(game);
+        _gameCache.SetGame(game);
 
         await _efContext.InitGameAsync(game.ToDataGame());
 
@@ -45,13 +45,16 @@ internal class GameService
         {
             GameMoveResult result = new(move.GameId, move.MoveNumber);
 
-            var game = _gameManager.GetGame(move.GameId);
+            var game = _gameCache.GetGame(move.GameId);
             if (game is null)
             {
+                _logger.GameNotCached(move.GameId);
+
                 // game is not in the cache, so we need to get it from the data store
                 var dbGame = await _efContext.GetGameAsync(move.GameId);
                 if (dbGame is null)
                 {
+                    _logger.GameIdNotFound(move.GameId);
                     throw new GameException("Game id not found");
                 }
                 game = dbGame.ToGame();
