@@ -31,4 +31,16 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "New game cached, currently {count} games active")]
     public static partial void GameCached(this ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 4004,
+        Level = LogLevel.Warning,
+        Message = "Game {id} not retrieved from cache")]
+    public static partial void GameNotCached(this ILogger logger, string id);
+
+    [LoggerMessage(
+        EventId = 4005,
+        Level = LogLevel.Warning,
+        Message = "Game {id} not found in database")]
+    public static partial void GameIdNotFound(this ILogger logger, string id);
 }
