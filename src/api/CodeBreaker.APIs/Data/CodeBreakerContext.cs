@@ -96,10 +96,10 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
             .Where(g => g.Moves.Count > 0)
             .OrderByDescending(g => g.Time)
             .Take(50)
-            .Select(g => new { g.Time, g.User, g.Moves })
+            .Select(g => new { g.Time, g.User, g.Moves, g.CodeBreakerGameId })
             .ToListAsync();
 
-        var games2 = games.Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count)).ToList();
+        var games2 = games.Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
 
         return games2;
     }
