@@ -99,18 +99,27 @@ app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date) =>
 }).WithDisplayName("GetReport")
 .Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK);
 
-app.MapGet("/v1/reportdetail", async (CodeBreakerContext context, DateTime? date) =>
+app.MapGet("/v1/reportdetail/{id}", async (CodeBreakerContext context, string id) =>
 {
-    DateTime definedDate = date ?? DateTime.Today;
+    app.Logger.DetailedGameReport(id);
 
-    app.Logger.GameReport(definedDate.ToString("yyyy-MM-dd"));
-
-
-    definedDate = definedDate.Date;
-
-    var games = await context.GetGamesDetailsAsync(definedDate);
+    var games = await context.GetGameDetailAsync(id);
     return Results.Ok(games);
 }).WithDisplayName("GetReportDetail")
-.Produces<GamesInformationDetail>(StatusCodes.Status200OK);
+.Produces<CodeBreakerGame>(StatusCodes.Status200OK);
+
+//app.MapGet("/v1/reportdetail", async (CodeBreakerContext context, DateTime? date) =>
+//{
+//    DateTime definedDate = date ?? DateTime.Today;
+
+//    app.Logger.GameReport(definedDate.ToString("yyyy-MM-dd"));
+
+
+//    definedDate = definedDate.Date;
+
+//    var games = await context.GetGamesDetailsAsync(definedDate);
+//    return Results.Ok(games);
+//}).WithDisplayName("GetReportDetail")
+//.Produces<GamesInformationDetail>(StatusCodes.Status200OK);
 
 app.Run();

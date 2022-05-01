@@ -39,6 +39,11 @@ internal class TestContext : ICodeBreakerContext
     {
         return Task.FromResult<IEnumerable<GamesInfo>>(null!);
     }
+
+    public Task<CodeBreakerGame?> GetGameDetailAsync(string gameId)
+    {
+        return Task.FromResult<CodeBreakerGame?>(null);
+    }
 }
 
 public class TestGameInitializer : IGameInitializer

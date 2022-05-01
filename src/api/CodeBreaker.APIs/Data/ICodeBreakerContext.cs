@@ -11,4 +11,5 @@ internal interface ICodeBreakerContext
     // report
     Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date);
     Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date);
+    Task<CodeBreakerGame?> GetGameDetailAsync(string gameId);
 }
