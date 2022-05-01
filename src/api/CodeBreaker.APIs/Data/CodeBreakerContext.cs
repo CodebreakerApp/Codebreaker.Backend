@@ -93,13 +93,14 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         var games = await Games
             .AsNoTracking()
             .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
-            .Where(g => g.Moves.Count > 0)
             .OrderByDescending(g => g.Time)
             .Take(50)
             .Select(g => new { g.Time, g.User, g.Moves, g.CodeBreakerGameId })
             .ToListAsync();
 
-        var games2 = games.Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
+        var games2 = games
+            .Where(g => g.Moves.Count > 0)
+            .Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
 
         return games2;
     }
