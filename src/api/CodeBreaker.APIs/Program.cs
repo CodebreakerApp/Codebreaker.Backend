@@ -55,7 +55,7 @@ app.UseSwaggerUI();
 app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) =>
 {
     using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
-    
+
     string id = await service.StartGameAsync(request.Name);
     activity?.AddBaggage("GameId", id);
     activity?.AddBaggage("Name", request.Name);
@@ -86,26 +86,31 @@ app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
 .Produces<MoveResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status422UnprocessableEntity);
 
-app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date, bool? detail) =>
+app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date) =>
 {
-    bool definedDetail = detail ?? false;
     DateTime definedDate = date ?? DateTime.Today;
 
-    app.Logger.LogInformation("Requesting games for {date}", definedDate);
+    app.Logger.GameReport(definedDate.ToString("yyyy-MM-dd"));
 
     definedDate = definedDate.Date;
-    if (definedDetail)
-    {
-        var games = await context.GetGamesDetailsAsync(definedDate);
-        return Results.Ok(games);
-    }
-    else
-    {
-        var games = await context.GetGamesAsync(definedDate);
-        return Results.Ok(games);
-    }
+
+    var games = await context.GetGamesAsync(definedDate);
+    return Results.Ok(games);
 }).WithDisplayName("GetReport")
-.Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK)
+.Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK);
+
+app.MapGet("/v1/reportdetail", async (CodeBreakerContext context, DateTime? date) =>
+{
+    DateTime definedDate = date ?? DateTime.Today;
+
+    app.Logger.GameReport(definedDate.ToString("yyyy-MM-dd"));
+
+
+    definedDate = definedDate.Date;
+
+    var games = await context.GetGamesDetailsAsync(definedDate);
+    return Results.Ok(games);
+}).WithDisplayName("GetReportDetail")
 .Produces<GamesInformationDetail>(StatusCodes.Status200OK);
 
 app.Run();

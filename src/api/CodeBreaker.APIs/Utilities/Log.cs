@@ -43,4 +43,16 @@ public static partial class Log
         Level = LogLevel.Warning,
         Message = "Game {id} not found in database")]
     public static partial void GameIdNotFound(this ILogger logger, string id);
+
+    [LoggerMessage(
+        EventId = 4006,
+        Level = LogLevel.Information,
+        Message = "Requesting game report for {date}")]
+    public static partial void GameReport(this ILogger logger, string date);
+
+    [LoggerMessage(
+        EventId = 4006,
+        Level = LogLevel.Information,
+        Message = "Requesting detailed game report for {date}")]
+    public static partial void DetailedGameReport(this ILogger logger, string date);
 }
