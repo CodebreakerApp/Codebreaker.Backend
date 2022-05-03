@@ -23,9 +23,16 @@ internal class GameCache
     /// <exception cref="KeyNotFoundException" />
     /// <returns>a Game object</returns>
     /// <see cref="Game"/>
-    public Game GetGame(string id)
+    public Game? GetGame(string id)
     {
-        return _games[id];
+        if (_games.TryGetValue(id, out var game))
+        {
+            return game;
+        }
+        else
+        {
+            return default;
+        }
     }
 
     public void DeleteGame(string id)
