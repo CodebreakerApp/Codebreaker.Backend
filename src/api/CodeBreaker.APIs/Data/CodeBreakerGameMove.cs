@@ -6,4 +6,3 @@ internal record CodeBreakerGameMove(string Id, string CodeBreakerGameId, int Mov
     public CodeBreakerGameMove(string Id, string CodeBreakerGameId, DateTime Time)
         : this(Id, CodeBreakerGameId, MoveNumber: 0, Move: string.Empty, Time, Keys: string.Empty, Code: string.Empty) { }
 }
-
