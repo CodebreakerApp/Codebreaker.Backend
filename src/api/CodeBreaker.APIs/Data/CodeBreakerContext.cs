@@ -67,7 +67,9 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
     
     public async Task<CodeBreakerGame?> GetGameAsync(string gameId)
     {
-        var game = await Games.SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
+        var game = await Games
+            .AsNoTracking()
+            .SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
         return game;
     }
 
