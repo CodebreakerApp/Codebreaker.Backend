@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2fa07316-b442-4f12-979b-91a7cba7ff13</UserSecretsId>
-    <DefineConstants>UsePrometheus</DefineConstants>
+    <DefineConstants>USEPROMETHEUS</DefineConstants>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <ApplicationInsightsResourceId>/subscriptions/7221029f-b7dc-4ab8-b117-111900d0d73c/resourceGroups/codebreaker/providers/microsoft.insights/components/codebreakerinsights</ApplicationInsightsResourceId>

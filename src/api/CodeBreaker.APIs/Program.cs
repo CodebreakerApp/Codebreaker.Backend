@@ -12,8 +12,10 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
 
+#if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
+#endif
 
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
@@ -25,7 +27,7 @@ Meter meter = new("CodeBreaker.APIs", "1.0.0");
 Counter<int> gamesStarted = meter.CreateCounter<int>("games-started", "games", "the number of games started");
 Counter<int> movesDone = meter.CreateCounter<int>("moves-done", "moves", "the number of moves done");
 
-#if UsePrometheus
+#if USEPROMETHEUS
 using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
     .AddMeter("CodeBreaker.APIs")
     .AddPrometheusExporter(opt =>
