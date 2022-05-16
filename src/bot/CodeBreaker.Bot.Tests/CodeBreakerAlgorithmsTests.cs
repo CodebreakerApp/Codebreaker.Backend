@@ -107,6 +107,20 @@ public class CodeBreakerAlgorithmsTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void HandleNoMatchesTest()
+    {
+        List<int> toMatch = new()
+        {
+            0b_010000_100000_100000_100000,  // miss
+            0b_010000_100000_010000_100000,  // miss
+            0b_001000_001000_001000_001000   // hit
+        };
+        int selection = 0b_000100_010000_000001_100000;
+        List<int> actual = CodeBreakerAlgorithms.HandleNoMatches(toMatch, selection);
+        Assert.Single(actual);
+    }
+
     //private IEnumerable<string> _values;
     //public MMAlgorithmsTests()
     //{

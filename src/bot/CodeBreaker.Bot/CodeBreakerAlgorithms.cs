@@ -109,7 +109,6 @@ public static class CodeBreakerAlgorithms
                         matches[i] = matches[i] with { Used = true };
                     }
                 }
-
             }
             if (matchCount == whiteHits)
             {
@@ -120,7 +119,6 @@ public static class CodeBreakerAlgorithms
         return newValues;
     }
 
-    // TODO: implement and create unit test before using this API
     /// <summary>
     /// Reduces the possible values if no selection was correct
     /// </summary>
@@ -129,10 +127,26 @@ public static class CodeBreakerAlgorithms
     /// <returns>The remaining possbile values</returns>
     public static List<int> HandleNoMatches(this IList<int> values, int selection)
     {
+        static bool Contains(int[] selections, int value)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (selections.Contains(value.SelectPeg(i)))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         List<int> newValues = new(values.Count);
+        int[] selections = Enumerable.Range(0, 4)
+            .Select(i => selection.SelectPeg(i))
+            .ToArray();
+
         foreach (var value in values)
         {
-            if (value == selection)
+            if (!Contains(selections, value))
             {
                 newValues.Add(value);
             }
