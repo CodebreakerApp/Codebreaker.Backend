@@ -110,6 +110,11 @@ public class CodeBreakerGameRunner
                 throw new InvalidOperationException($"more than 4 whites is not possible: {whiteHits}");
             }
 
+            if (blackHits == 0 && whiteHits == 0)
+            {
+                _possibleValues = _possibleValues.HandleNoMatches(selection);
+                _logger.ReducedPossibleValues(_possibleValues.Count, "none", _gameId);
+            }
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
