@@ -50,12 +50,6 @@ public static partial class Log
         Message = "Requesting game report for {date}")]
     public static partial void GameReport(this ILogger logger, string date);
 
-    //[LoggerMessage(
-    //    EventId = 4006,
-    //    Level = LogLevel.Information,
-    //    Message = "Requesting detailed game report for {date}")]
-    //public static partial void DetailedGameReport(this ILogger logger, string date);
-
     [LoggerMessage(
         EventId = 4007,
         Level = LogLevel.Information,

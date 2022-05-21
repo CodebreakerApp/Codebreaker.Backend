@@ -1,6 +1,4 @@
-﻿
-
-namespace CodeBreaker.APIs;
+﻿namespace CodeBreaker.APIs;
 
 public class ApplicationInsightsTelemetryInitializer : ITelemetryInitializer
 {
