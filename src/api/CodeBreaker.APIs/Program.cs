@@ -81,7 +81,7 @@ app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) 
     activity?.AddBaggage("Name", request.Name);
     activity?.AddEvent(new ActivityEvent("Game started"));
 
-    return Results.Ok(new CreateGameResponse(id));
+    return Results.Ok(new CreateGameResponse(id, new CreateGameOptions(NumberFields: 4, MaxMoves: 12, "black", "white", "red", "green", "blue", "yellow")));
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
