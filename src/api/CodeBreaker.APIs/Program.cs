@@ -15,6 +15,8 @@ global using System.Diagnostics;
 #if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
+
+using System.Configuration;
 #endif
 
 using System.Diagnostics.Metrics;
@@ -45,7 +47,8 @@ builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetr
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
-    string connectionString = builder.Configuration.GetSection("CodeBreakerAPI").GetConnectionString("CodeBreakerConnection");
+    string? connectionString = builder.Configuration.GetSection("CodeBreakerAPI").GetConnectionString("CodeBreakerConnection");
+    if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
 });
 builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
