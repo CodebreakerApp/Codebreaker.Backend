@@ -9,13 +9,13 @@ internal class GameService
 
     private const int Holes = 4;
 
-    private readonly IGameInitializer _gameInitializer;
+    private readonly IGameInitializer<string> _gameInitializer;
     private readonly GameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public GameService(
-        IGameInitializer gameInitializer, 
+        IGameInitializer<string> gameInitializer, 
         GameCache gameCache,
         ICodeBreakerContext context,
         ILogger<GameService> logger)
@@ -26,10 +26,10 @@ internal class GameService
         _efContext = context;
     }
 
-    public async Task<string> StartGameAsync(string username)
+    public async Task<string> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameInitializer.GetColors(Holes);
-        Game game = new(Guid.NewGuid().ToString(), username, code);
+        string[] code = _gameInitializer.GetColors();
+        Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
         _gameCache.SetGame(game);
 
         await _efContext.InitGameAsync(game.ToDataGame());
@@ -118,7 +118,7 @@ internal class GameService
             if (result.KeyPegs.Count(s => s == black) == 4)
             {
                 result = result with { Won = true };
-                CodeBreakerGame efGame = new(game.GameId, string.Join("..", game.Code), game.Name, DateTime.Now);
+                CodeBreakerGame efGame = new(game.GameId, GameTypes.Game6x4, string.Join("..", game.Code), game.Name, DateTime.Now);
                 await _efContext.UpdateGameAsync(efGame);
             }
 

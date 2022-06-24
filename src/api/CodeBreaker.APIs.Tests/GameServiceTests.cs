@@ -46,9 +46,9 @@ internal class TestContext : ICodeBreakerContext
     }
 }
 
-public class TestGameInitializer : IGameInitializer
+public class TestGameInitializer : IGameInitializer<string>
 {
-    public string[] GetColors(int holes) =>
+    public string[] GetColors() =>
         new string[] { "red", "green", "blue", "red" };
 }
 
@@ -83,7 +83,7 @@ public class GameServiceTests
         string[] expected = { "white", "white", "white" };
         string[] code = { "green", "yellow", "green", "black" };
         GameService gameService = new GameService(new TestDataGameInitializer(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<GameService>());
-        string gameId = await gameService.StartGameAsync("user");
+        string gameId = await gameService.StartGameAsync("user", GameTypes.Game6x4);
 
         GameMove move = new(gameId, 1, new[] { "yellow", "green", "black", "blue" });
         var result = await gameService.SetMoveAsync(move);
@@ -96,7 +96,7 @@ public class GameServiceTests
     [Theory]
     public async Task SetMoveAsync(string c1, string c2, string c3, string c4, params string[] expected)
     {
-        _gameId = await _gameService.StartGameAsync("user");
+        _gameId = await _gameService.StartGameAsync("user", GameTypes.Game6x4);
 
         List<string> codePegs = new(new string[] { c1, c2, c3, c4 });
 
@@ -111,7 +111,7 @@ public class GameServiceTests
     public async Task SetMoveAsync2(string[] code, string[] inputData, string[] results)
     {
         GameService gameService = new GameService(new TestDataGameInitializer(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<GameService>());
-        string gameId = await gameService.StartGameAsync("user");
+        string gameId = await gameService.StartGameAsync("user", GameTypes.Game6x4);
 
         string[] expected = results;
         List<string> codePegs = new(inputData);
@@ -123,14 +123,14 @@ public class GameServiceTests
     }
 }
 
-public class TestDataGameInitializer : IGameInitializer
+public class TestDataGameInitializer : IGameInitializer<string>
 {
     private string[] _colors;
     public TestDataGameInitializer(string[] colors)
     {
         _colors = colors;
     }
-    public string[] GetColors(int holes)
+    public string[] GetColors()
     {
         return _colors;
     }

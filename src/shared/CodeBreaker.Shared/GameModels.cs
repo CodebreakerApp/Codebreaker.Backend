@@ -14,7 +14,7 @@ public record GameMoveResult(string GameId, int MoveNumber, bool Completed = fal
 
 public record GameStatus(GameMove Move, GameMoveResult Result);
 
-public record Game(string GameId, string Name, IReadOnlyList<string> Code)
+public record Game(string GameId, string GameType, string Name, IReadOnlyList<string> Code)
 {
     public IReadOnlyList<GameStatus> Status { get; } = new List<GameStatus>();
     public override string ToString()

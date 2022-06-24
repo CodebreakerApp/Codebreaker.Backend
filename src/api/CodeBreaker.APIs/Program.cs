@@ -55,7 +55,7 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
 });
-builder.Services.AddTransient<IGameInitializer, RandomGameGenerator>();
+builder.Services.AddTransient<IGameInitializer<string>, Random6x4GameGenerator>();
 builder.Services.AddSingleton<GameCache>();
 builder.Services.AddTransient<GameService>();
 
@@ -83,12 +83,12 @@ app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) 
     using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
     gamesStarted.Add(1);
 
-    string id = await service.StartGameAsync(request.Name);
+    string id = await service.StartGameAsync(request.Name, GameTypes.Game6x4);
     activity?.AddBaggage("GameId", id);
     activity?.AddBaggage("Name", request.Name);
     activity?.AddEvent(new ActivityEvent("Game started"));
 
-    return Results.Ok(new CreateGameResponse(id, new CreateGameOptions(NumberFields: 4, MaxMoves: 12, "black", "white", "red", "green", "blue", "yellow")));
+    return Results.Ok(new CreateGameResponse(id, new CreateGameOptions(GameTypes.Game6x4, NumberFields: 4, MaxMoves: 12, "black", "white", "red", "green", "blue", "yellow")));
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
