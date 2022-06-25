@@ -2,25 +2,25 @@
 
 public record KeyPegWithFlag(string Value, bool Used);
 
-internal class GameService
+internal class Game6x4Service
 {
     private const string black = nameof(black);
     private const string white = nameof(white);
 
     private const int Holes = 4;
 
-    private readonly IGameInitializer<string> _gameInitializer;
+    private readonly RandomGame6x4Generator _gameGenerator;
     private readonly GameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
-    public GameService(
-        IGameInitializer<string> gameInitializer, 
+    public Game6x4Service(
+        RandomGame6x4Generator gameGenerator,
         GameCache gameCache,
         ICodeBreakerContext context,
-        ILogger<GameService> logger)
+        ILogger<Game6x4Service> logger)
     {
-        _gameInitializer = gameInitializer;
+        _gameGenerator = gameGenerator;
         _gameCache = gameCache;
         _logger = logger;
         _efContext = context;
@@ -28,7 +28,7 @@ internal class GameService
 
     public async Task<string> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameInitializer.GetColors();
+        string[] code = _gameGenerator.GetPegs();
         Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
         _gameCache.SetGame(game);
 

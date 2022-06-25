@@ -46,11 +46,11 @@ internal class TestContext : ICodeBreakerContext
     }
 }
 
-public class TestGameInitializer : IGameInitializer<string>
-{
-    public string[] GetColors() =>
-        new string[] { "red", "green", "blue", "red" };
-}
+//public class TestGameInitializer : IGameInitializer<string>
+//{
+//    public string[] GetColors() =>
+//        new string[] { "red", "green", "blue", "red" };
+//}
 
 public class TestLogger<T> : ILogger<T>, IDisposable
 {
@@ -69,12 +69,12 @@ public class TestLogger<T> : ILogger<T>, IDisposable
 
 public class GameServiceTests
 {
-    private GameService _gameService;
+    private Game6x4Service _gameService;
     private string? _gameId;
 
     public GameServiceTests()
     {
-        _gameService = new GameService(new TestGameInitializer(), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<GameService>());
+        _gameService = new Game6x4Service(new TestRandomGame6x4RedGreenBlueRedGenerator(), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<Game6x4Service>());
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class GameServiceTests
     {
         string[] expected = { "white", "white", "white" };
         string[] code = { "green", "yellow", "green", "black" };
-        GameService gameService = new GameService(new TestDataGameInitializer(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<GameService>());
+        Game6x4Service gameService = new Game6x4Service(new TestRandomGame6x4Generator(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<Game6x4Service>());
         string gameId = await gameService.StartGameAsync("user", GameTypes.Game6x4);
 
         GameMove move = new(gameId, 1, new[] { "yellow", "green", "black", "blue" });
@@ -110,7 +110,7 @@ public class GameServiceTests
     [ClassData(typeof(TestData))]
     public async Task SetMoveAsync2(string[] code, string[] inputData, string[] results)
     {
-        GameService gameService = new GameService(new TestDataGameInitializer(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<GameService>());
+        Game6x4Service gameService = new Game6x4Service(new TestRandomGame6x4Generator(code), new GameCache(new TestLogger<GameCache>()), new TestContext(), new TestLogger<Game6x4Service>());
         string gameId = await gameService.StartGameAsync("user", GameTypes.Game6x4);
 
         string[] expected = results;
@@ -123,17 +123,14 @@ public class GameServiceTests
     }
 }
 
-public class TestDataGameInitializer : IGameInitializer<string>
+public record TestRandomGame6x4RedGreenBlueRedGenerator() : RandomGame6x4Generator
 {
-    private string[] _colors;
-    public TestDataGameInitializer(string[] colors)
-    {
-        _colors = colors;
-    }
-    public string[] GetColors()
-    {
-        return _colors;
-    }
+    public override string[] GetPegs() => new string[] { "red", "green", "blue", "red" };
+}
+
+public record TestRandomGame6x4Generator(string[] Codes) : RandomGame6x4Generator
+{
+    public override string[] GetPegs() => Codes;
 }
 
 public class TestData : IEnumerable<object[]>
@@ -142,13 +139,13 @@ public class TestData : IEnumerable<object[]>
     {
         yield return new object[]
         {
-            new string[] { "green", "blue", "green", "yellow" },  // code
+            new string[] { "green", "blue", "green", "yellow" }, // code
             new string[] { "green", "green", "black", "white" }, // inputdata
             new string[] { "black", "white" } // results
         };
         yield return new object[]
         {
-            new string[] { "red", "blue", "black", "white" },  // code
+            new string[] { "red", "blue", "black", "white" }, // code
             new string[] { "black", "black", "red", "yellow" }, // inputdata
             new string[] { "white", "white" } // results
         };
@@ -168,4 +165,3 @@ public class TestData : IEnumerable<object[]>
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
-

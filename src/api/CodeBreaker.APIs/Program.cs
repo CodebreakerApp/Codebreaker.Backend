@@ -55,9 +55,10 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
 });
-builder.Services.AddTransient<IGameInitializer<string>, Random6x4GameGenerator>();
+builder.Services.AddSingleton<RandomGame6x4Generator>();
+builder.Services.AddSingleton<RandomGame8x5Generator>();
 builder.Services.AddSingleton<GameCache>();
-builder.Services.AddTransient<GameService>();
+builder.Services.AddTransient<Game6x4Service>();
 
 const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
 builder.Services.AddCors(options =>
@@ -78,7 +79,7 @@ app.UseCors(AllowCodeBreakerOrigins);
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) =>
+app.MapPost("/v1/start", async (Game6x4Service service, CreateGameRequest request) =>
 {
     using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
     gamesStarted.Add(1);
@@ -92,7 +93,7 @@ app.MapPost("/v1/start", async (GameService service, CreateGameRequest request) 
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
-app.MapPost("/v1/move", async (GameService service, MoveRequest request) =>
+app.MapPost("/v1/move", async (Game6x4Service service, MoveRequest request) =>
 {
     try
     {

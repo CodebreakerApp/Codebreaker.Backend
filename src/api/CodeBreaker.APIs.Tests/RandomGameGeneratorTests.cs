@@ -10,7 +10,7 @@ public class RandomGameGeneratorTests
     [Fact]
     public void StartGameReturnsRandomEnoughValues()
     {
-        Random6x4GameGenerator generator = new();
+        RandomGame6x4Generator generator = new();
 
         string[] colorList = { "white", "red", "green", "blue", "black", "yellow" };
         bool[] colorMatches = new bool[colorList.Length];
@@ -19,7 +19,7 @@ public class RandomGameGeneratorTests
         do
         {
             iterations++;
-            string[] colors = generator.GetColors();
+            string[] colors = generator.GetPegs();
             for (int i = 0; i < colorList.Length; i++)
             {
                 if (colors.Contains(colorList[i]))
