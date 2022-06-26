@@ -29,9 +29,8 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
 
         apiUri = new Uri(codebreakeruri);
     }
-    Uri uri = new(apiUri, "v1/");
-    app?.Logger.UsingUri(uri.ToString());
-    options.BaseAddress = uri;
+    app?.Logger.UsingUri(apiUri.ToString());
+    options.BaseAddress = apiUri;
 });
 builder.Services.AddScoped<CodeBreakerTimer>();
 

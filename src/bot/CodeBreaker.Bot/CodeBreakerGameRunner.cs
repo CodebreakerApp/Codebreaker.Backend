@@ -60,7 +60,7 @@ public class CodeBreakerGameRunner
 
         CreateGameRequest request = new("Bot");
 
-        var responseMessage = await _httpClient.PostAsJsonAsync("start", request);
+        var responseMessage = await _httpClient.PostAsJsonAsync("start/6x4", request);
         responseMessage.EnsureSuccessStatusCode();
         var response = await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
         _moveNumber = 1;
@@ -88,7 +88,7 @@ public class CodeBreakerGameRunner
             MoveRequest moveRequest = new(_gameId, _moveNumber++, colorNames);
             _logger.SendMove(moveRequest.ToString(), _gameId);
 
-            var responseMessage = await _httpClient.PostAsJsonAsync("move", moveRequest);
+            var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
             responseMessage.EnsureSuccessStatusCode();
             response = await responseMessage.Content.ReadFromJsonAsync<MoveResponse>();
 
