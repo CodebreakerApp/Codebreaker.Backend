@@ -55,8 +55,8 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
 });
-builder.Services.AddSingleton<RandomGame6x4Generator>();
-builder.Services.AddSingleton<RandomGame8x5Generator>();
+builder.Services.AddSingleton<RandomGame6x4>();
+builder.Services.AddSingleton<RandomGame8x5>();
 builder.Services.AddSingleton<GameCache>();
 builder.Services.AddTransient<Game6x4Service>();
 
@@ -66,7 +66,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: AllowCodeBreakerOrigins,
         builder =>
         {
-            builder.AllowAnyOrigin() //.WithOrigins("https://localhost:7229", "http://localhost:5229")
+            builder.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
         });

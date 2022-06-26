@@ -1,34 +1,44 @@
-﻿namespace CodeBreaker.APIs.Services;
+﻿using static CodeBreaker.Shared.CodeBreakerColors;
+
+namespace CodeBreaker.APIs.Services;
 
 public record KeyPegWithFlag(string Value, bool Used);
 
-internal class Game6x4Service
+internal class Game6x4Service : IGameService
 {
-    private const string black = nameof(black);
-    private const string white = nameof(white);
-
-    private const int Holes = 4;
-
-    private readonly RandomGame6x4Generator _gameGenerator;
+    private int _holes;
+    private readonly RandomGame6x4 _gameGenerator;
+    private readonly GameAlgorithm _gameAlgorithm;
     private readonly GameCache _gameCache;
-    private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
+    private readonly ILogger _logger;
+
 
     public Game6x4Service(
-        RandomGame6x4Generator gameGenerator,
+        RandomGame6x4 gameGenerator,
+        GameAlgorithm gameAlgorithm,
         GameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game6x4Service> logger)
     {
         _gameGenerator = gameGenerator;
+        _gameAlgorithm = gameAlgorithm;
         _gameCache = gameCache;
         _logger = logger;
         _efContext = context;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="gameType"></param>
+    /// <returns></returns>
     public async Task<string> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameGenerator.GetPegs();
+        string[] code = _gameGenerator.GetCode();
+        _holes = _gameGenerator.Holes;
+        
         Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
         _gameCache.SetGame(game);
 
@@ -39,90 +49,45 @@ internal class Game6x4Service
         return game.GameId;
     }
 
-    public async Task<GameMoveResult> SetMoveAsync(GameMove move)
-    {
+    public async Task<GameMoveResult> SetMoveAsync(GameMove guess)
+    {       
+        async Task<Game> GetGameFromDatabaseAsync()
+        {
+            var dbGame = await _efContext.GetGameAsync(guess.GameId);
+            if (dbGame is null)
+            {
+                _logger.GameIdNotFound(guess.GameId);
+                throw new GameException("Game id not found");
+            }
+            return dbGame.ToGame();
+        }
+        
         try
         {
-            GameMoveResult result = new(move.GameId, move.MoveNumber);
-
-            var game = _gameCache.GetGame(move.GameId);
+            // get server-side game information from the in-process cache or the database
+            var game = _gameCache.GetGame(guess.GameId);
             if (game is null)
             {
-                _logger.GameNotCached(move.GameId);
-
+                _logger.GameNotCached(guess.GameId);
                 // game is not in the cache, so we need to get it from the data store
-                var dbGame = await _efContext.GetGameAsync(move.GameId);
-                if (dbGame is null)
-                {
-                    _logger.GameIdNotFound(move.GameId);
-                    throw new GameException("Game id not found");
-                }
-                game = dbGame.ToGame();
+                game = await GetGameFromDatabaseAsync();
             }
 
-            if (move.MoveNumber > 12)
-            {
-                CodeBreakerGame dataGame = game.ToDataGame();
-                await _efContext.UpdateGameAsync(dataGame);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMoveAsync(game, guess, _holes);
 
-                result = result with { Completed = true };
+            // write the move to the data store
+            if (dataMove is not null)
+            {
+                await _efContext.AddMoveAsync(dataMove);
+            }
+
+            if (result.Completed)
+            {
+                await _efContext.UpdateGameAsync(dataGame);
                 return result;
             }
 
-            List<string> codes = new(game.Code); // copy the codes from the game to check the codes that are already calculated
-            List<string> moves = new(move.CodePegs); // copy the moves to check the moves that are already calculated
-            List<int> blackHits = new(); // correct positions where blacks are found
-            List<string> keyPegs = new(); // the final information for the keys, black and white pegs are added
-
-            // first check for the correct position
-            for (int i = 0; i < Holes; i++)
-            {
-                if (codes[i] == move.CodePegs[i])
-                {
-                    keyPegs.Add(black);
-                    blackHits.Add(i);
-                }
-            }
-
-            // remove the moves that may not be checked when checking corrects for wrong position
-            for (int i = blackHits.Count - 1; i >= 0; i--)
-            {
-                codes.RemoveAt(blackHits[i]);
-                moves.RemoveAt(blackHits[i]);
-            }
-
-            // second check for corrects with the wrong position
-            keyPegs = GetWhiteKeyPegs(codes, moves, keyPegs);
-
-            // sort the pegs, no hint about the position
-            keyPegs.Sort();
-
-            foreach (var keyPeg in keyPegs)
-            {
-                result.KeyPegs.Add(keyPeg);
-            }
-
-            CodeBreakerGameMove dataMove = new(
-                Guid.NewGuid().ToString(),
-                game.GameId,
-                move.MoveNumber,
-                string.Join("..", move.CodePegs),
-                DateTime.Now,
-                string.Join(".", result.KeyPegs),
-                string.Join("..", game.Code));
-            
-            // write the move to the data store
-            await _efContext.AddMoveAsync(dataMove);
-
-            // write the complete game to the data store if it finished
-            if (result.KeyPegs.Count(s => s == black) == 4)
-            {
-                result = result with { Won = true };
-                CodeBreakerGame efGame = new(game.GameId, GameTypes.Game6x4, string.Join("..", game.Code), game.Name, DateTime.Now);
-                await _efContext.UpdateGameAsync(efGame);
-            }
-
-            _logger.SetMove(move.ToString(), result.ToString());
+            _logger.SetMove(guess.ToString(), result.ToString());
             return result;
         }
         catch (Exception ex)
@@ -130,30 +95,5 @@ internal class Game6x4Service
             _logger.Error(ex, ex.Message);
             throw;
         }
-    }
-
-    private List<string> GetWhiteKeyPegs(List<string> codes, List<string> moves, List<string> keyPegs)
-    {
-        List<KeyPegWithFlag> tempCode = new(codes.Select(c => new KeyPegWithFlag(c, false)).ToArray());
-        List<KeyPegWithFlag> tempMoves = new(moves.Select(m => new KeyPegWithFlag(m, false)).ToArray());
-
-        for (int i = 0; i < tempCode.Count; i++)
-        {
-            int j = 0;
-            bool pegAdded = false;
-            while (j < tempMoves.Count && !pegAdded)
-            {
-                if (!tempCode[i].Used && !tempMoves[j].Used && tempCode[i].Value == tempMoves[j].Value)
-                {
-                    keyPegs.Add(white);
-                    tempCode[i] = tempCode[i] with { Used = true };
-                    tempMoves[j] = tempMoves[j] with { Used = true };
-                    pegAdded = true;
-                }
-                j++;
-            }
-        }
-
-        return keyPegs;
     }
 }
