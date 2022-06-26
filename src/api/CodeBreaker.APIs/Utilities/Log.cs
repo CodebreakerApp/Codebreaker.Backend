@@ -7,7 +7,13 @@ public static partial class Log
         Level = LogLevel.Error,
         Message = "{message}")]
     public static partial void Error(this ILogger logger, Exception ex, string message);
-    
+
+    [LoggerMessage(
+        EventId = 3001,
+        Level = LogLevel.Error,
+        Message = "Move number does not match - received: `{receivedMoveNumber}`, expected: `{serverSideMoveNumber}`")]
+    public static partial void MismatchMoveNumber(this ILogger logger, int receivedMoveNumber, int serverSideMoveNumber);
+        
     [LoggerMessage(
         EventId = 4000,
         Level = LogLevel.Information,
