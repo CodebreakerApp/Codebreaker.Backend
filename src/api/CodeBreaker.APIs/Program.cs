@@ -21,6 +21,7 @@ using System.Configuration;
 
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 
@@ -58,7 +59,9 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
 builder.Services.AddSingleton<RandomGame6x4>();
 builder.Services.AddSingleton<RandomGame8x5>();
 builder.Services.AddSingleton<GameCache>();
-builder.Services.AddTransient<Game6x4Service>();
+builder.Services.AddScoped<Game6x4Service>();
+builder.Services.AddScoped<Game8x5Service>();
+builder.Services.AddScoped<GameAlgorithm>();
 
 const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
 builder.Services.AddCors(options =>
@@ -79,8 +82,16 @@ app.UseCors(AllowCodeBreakerOrigins);
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapPost("/v1/start", async (Game6x4Service service, CreateGameRequest request) =>
+app.MapPost("/start/{gameType}", async (CreateGameRequest request, string gameType, string? apiVersion) =>
 {
+    using var scope = app.Services.CreateScope();
+
+    IGameService? service = GetGameService(scope.ServiceProvider, gameType);
+    if (service is null)
+    {
+        return Results.BadRequest("invalid game type");
+    }
+
     using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
     gamesStarted.Add(1);
 
@@ -93,10 +104,20 @@ app.MapPost("/v1/start", async (Game6x4Service service, CreateGameRequest reques
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
-app.MapPost("/v1/move", async (Game6x4Service service, MoveRequest request) =>
+app.MapPost("/move/{gameType}", async (MoveRequest request, string gameType, string? apiVersion) =>
 {
     try
     {
+        // TODO: get game type from the game id, it should not be necessary to pass it with this request
+
+        using var scope = app.Services.CreateScope();
+
+        IGameService? service = GetGameService(scope.ServiceProvider, gameType);
+        if (service is null)
+        {
+            return Results.BadRequest("invalid game type");
+        }
+
         using var activity = activitySource.StartActivity("Game Move", ActivityKind.Server);
         activity?.AddBaggage("GameId", request.Id);
         movesDone.Add(1);
@@ -113,9 +134,10 @@ app.MapPost("/v1/move", async (Game6x4Service service, MoveRequest request) =>
     }
 }).WithDisplayName("PostMove")
 .Produces<MoveResponse>(StatusCodes.Status200OK)
-.Produces(StatusCodes.Status422UnprocessableEntity);
+.Produces(StatusCodes.Status422UnprocessableEntity)
+.Produces(StatusCodes.Status400BadRequest);
 
-app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date) =>
+app.MapGet("/report", async (CodeBreakerContext context, DateTime? date, string? apiVersion) =>
 {
     DateTime definedDate = date ?? DateTime.Today;
 
@@ -128,7 +150,7 @@ app.MapGet("/v1/report", async (CodeBreakerContext context, DateTime? date) =>
 }).WithDisplayName("GetReport")
 .Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK);
 
-app.MapGet("/v1/reportdetail/{id}", async (CodeBreakerContext context, string id) =>
+app.MapGet("/reportdetail/{id}", async (CodeBreakerContext context, string id, string? apiVersion) =>
 {
     app.Logger.DetailedGameReport(id);
 
@@ -136,5 +158,19 @@ app.MapGet("/v1/reportdetail/{id}", async (CodeBreakerContext context, string id
     return Results.Ok(games);
 }).WithDisplayName("GetReportDetail")
 .Produces<CodeBreakerGame>(StatusCodes.Status200OK);
-
 app.Run();
+
+IGameService? GetGameService(IServiceProvider provider, string gameType)
+{
+    if (gameType == "random")
+    {
+        gameType = new string[] { "6x4", "8x5" }[Random.Shared.Next(2)];
+    }
+
+    return gameType switch
+    {
+        "6x4" => provider.GetRequiredService<Game6x4Service>(),
+        "8x5" => provider.GetRequiredService<Game8x5Service>(),
+        _ => null
+    };
+}
