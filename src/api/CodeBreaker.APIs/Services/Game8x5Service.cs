@@ -3,14 +3,14 @@
 internal class Game8x5Service : IGameService
 {
     private int _holes;
-    private readonly RandomGame8x5 _gameGenerator;
+    private readonly Game8x5Definition _gameGenerator;
     private readonly GameAlgorithm _gameAlgorithm;
     private readonly GameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public Game8x5Service(
-        RandomGame8x5 gameGenerator,
+        Game8x5Definition gameGenerator,
         GameAlgorithm gameAlgorithm,
         GameCache gameCache,
         ICodeBreakerContext context,
@@ -31,7 +31,7 @@ internal class Game8x5Service : IGameService
     /// <returns></returns>
     public async Task<string> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameGenerator.GetCode();
+        string[] code = _gameGenerator.CreateRandomCode();
         _holes = _gameGenerator.Holes;
         
         Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
@@ -67,7 +67,7 @@ internal class Game8x5Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMoveAsync(game, guess, _holes);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _holes);
 
             // write the move to the data store
             if (dataMove is not null)

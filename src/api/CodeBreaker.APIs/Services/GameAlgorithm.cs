@@ -3,7 +3,7 @@
 namespace CodeBreaker.APIs.Services;
 
 // algorithm for the simple string type (which covers many types). When (color and shapes) games are implemented, this might change to a generic type, or the name of the class might change
-public class GameAlgorithm
+internal class GameAlgorithm
 {
     private readonly ILogger _logger;
     public GameAlgorithm(ILogger<GameAlgorithm> logger)
@@ -11,7 +11,7 @@ public class GameAlgorithm
         _logger = logger;
     }
 
-    internal (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMoveAsync(Game game, GameMove guess, int holes)
+    internal (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMove(Game game, GameMove guess, int holes)
     {
         GameMoveResult result = new(guess.GameId, guess.MoveNumber);
 

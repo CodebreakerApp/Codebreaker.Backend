@@ -36,7 +36,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
                 .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
                 .ToListAsync();
             var moves = gameMoves.Select(
-                m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys))
+                m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys, DateTime.Now))
                 .ToList();
             game = game with { Moves = moves };
             Games.Update(game);
