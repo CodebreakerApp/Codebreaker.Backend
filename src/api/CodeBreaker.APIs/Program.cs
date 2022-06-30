@@ -56,8 +56,8 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
 });
-builder.Services.AddSingleton<RandomGame6x4>();
-builder.Services.AddSingleton<RandomGame8x5>();
+builder.Services.AddSingleton<Game6x4Definition>();
+builder.Services.AddSingleton<Game8x5Definition>();
 builder.Services.AddSingleton<GameCache>();
 builder.Services.AddScoped<Game6x4Service>();
 builder.Services.AddScoped<Game8x5Service>();

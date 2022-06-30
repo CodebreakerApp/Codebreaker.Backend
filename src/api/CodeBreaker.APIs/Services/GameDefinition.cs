@@ -19,7 +19,7 @@ public interface IGame<out T>
     /// Get the code for the game
     /// </summary>
     /// <returns>the correct code for the game</returns>
-    T[] GetCode();
+    T[] CreateRandomCode();
 }
 
 /// <summary>
@@ -28,10 +28,10 @@ public interface IGame<out T>
 /// <typeparam name="T"></typeparam>
 /// <param name="Holes">number of holes</param>
 /// <param name="Colors">list of color names, numbers, or forms and colors</param>
-public record RandomGame<T>(string TypeName, int Holes, T[] Colors) : 
+public record GameDefinition<T>(string TypeName, int Holes, T[] Colors) : 
     IGame<T>
 {
-    public virtual T[] GetCode()
+    public virtual T[] CreateRandomCode()
     {
         T[] pegs = new T[Holes];
         for (int i = 0; i < Holes; i++)
@@ -43,13 +43,13 @@ public record RandomGame<T>(string TypeName, int Holes, T[] Colors) :
     }
 }
  
-public record RandomGame6x4() : 
-    RandomGame<string>("6x4Game", 4, new string[] { Black, White, Red, Green, Blue, Yellow }),
+public record Game6x4Definition() : 
+    GameDefinition<string>("6x4Game", 4, new string[] { Black, White, Red, Green, Blue, Yellow }),
     IGame<string>;
 
-public record RandomGame8x5() :
-    RandomGame<string>("8x5Game", 5,
+public record Game8x5Definition() :
+    GameDefinition<string>("8x5Game", 5,
         new string[] { Black, White, Red, Blue, Green, Yellow, Violet, LightBlue });
 
-public record RandomGame6x4Mini() :
-    RandomGame<string>("6x4MiniGame", 4, new string[] { Black, White, Red, Green, Blue, Yellow });
+public record Game6x4MiniDefinitition() :
+    GameDefinition<string>("6x4MiniGame", 4, new string[] { Black, White, Red, Green, Blue, Yellow });
