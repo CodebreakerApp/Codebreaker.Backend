@@ -2,7 +2,7 @@
 
 public record struct CreateGameRequest(string Name);
 
-public record struct CreateGameOptions(string GameType, int NumberFields, int MaxMoves, params string[] Colors);
+public record struct CreateGameOptions(string GameType, int Holes, int MaxMoves, params string[] Colors);
 public record struct CreateGameResponse(string Id, CreateGameOptions GameOptions);
 
 public record struct MoveRequest(string Id, int MoveNumber, IEnumerable<string> CodePegs)

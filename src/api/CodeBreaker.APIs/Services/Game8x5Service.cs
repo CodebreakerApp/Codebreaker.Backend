@@ -3,20 +3,20 @@
 internal class Game8x5Service : IGameService
 {
     private int _holes;
-    private readonly Game8x5Definition _gameGenerator;
+    private readonly Game8x5Definition _gameDefinition;
     private readonly GameAlgorithm _gameAlgorithm;
     private readonly GameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public Game8x5Service(
-        Game8x5Definition gameGenerator,
+        Game8x5Definition gameDefinition,
         GameAlgorithm gameAlgorithm,
         GameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game8x5Service> logger)
     {
-        _gameGenerator = gameGenerator;
+        _gameDefinition = gameDefinition;
         _gameAlgorithm = gameAlgorithm;
         _gameCache = gameCache;
         _logger = logger;
@@ -29,19 +29,19 @@ internal class Game8x5Service : IGameService
     /// <param name="username"></param>
     /// <param name="gameType"></param>
     /// <returns></returns>
-    public async Task<string> StartGameAsync(string username, string gameType)
+    public async Task<Game> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameGenerator.CreateRandomCode();
-        _holes = _gameGenerator.Holes;
+        string[] code = _gameDefinition.CreateRandomCode();
+        _holes = _gameDefinition.Holes;
         
-        Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
+        Game game = new(Guid.NewGuid().ToString(), gameType, username, code, _gameDefinition.Colors, _gameDefinition.Holes, _gameDefinition.MaxMoves, DateTime.Now);
         _gameCache.SetGame(game);
 
         await _efContext.InitGameAsync(game.ToDataGame());
 
         _logger.GameStarted(game.ToString());
 
-        return game.GameId;
+        return game;
     }
 
     public async Task<GameMoveResult> SetMoveAsync(GameMove guess)
@@ -67,7 +67,7 @@ internal class Game8x5Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _holes);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess);
 
             // write the move to the data store
             if (dataMove is not null)
