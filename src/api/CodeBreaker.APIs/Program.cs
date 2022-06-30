@@ -102,7 +102,7 @@ app.MapPost("/start/{gameType}", async (CreateGameRequest request, string gameTy
     activity?.AddBaggage("Name", request.Name);
     activity?.AddEvent(new ActivityEvent("Game started"));
 
-    return Results.Ok(new CreateGameResponse(game.GameId, new CreateGameOptions(GameTypes.Game6x4, NumberFields: 4, MaxMoves: 12, Black, White, Red, "green", "blue", "yellow")));
+    return Results.Ok(new CreateGameResponse(game.GameId, new CreateGameOptions(GameTypes.Game6x4, Holes: game.Holes, MaxMoves: game.MaxMoves, game.ColorList.ToArray())));
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 

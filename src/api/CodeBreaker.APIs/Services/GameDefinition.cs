@@ -28,7 +28,7 @@ public interface IGame<out T>
 /// <typeparam name="T"></typeparam>
 /// <param name="Holes">number of holes</param>
 /// <param name="Colors">list of color names, numbers, or forms and colors</param>
-public record GameDefinition<T>(string TypeName, int Holes, T[] Colors) : 
+public record GameDefinition<T>(string TypeName, int Holes, int MaxMoves, T[] Colors) : 
     IGame<T>
 {
     public virtual T[] CreateRandomCode()
@@ -53,12 +53,16 @@ public record GameDefinition<T>(string TypeName, int Holes, T[] Colors) :
 }
  
 public record Game6x4Definition() : 
-    GameDefinition<string>("6x4Game", 4, new string[] { Black, White, Red, Green, Blue, Yellow }),
+    GameDefinition<string>("6x4Game", Holes: 4, MaxMoves: 12, 
+        new string[] { Black, White, Red, Green, Blue, Yellow }),
     IGame<string>;
 
 public record Game8x5Definition() :
-    GameDefinition<string>("8x5Game", 5,
-        new string[] { Black, White, Red, Blue, Green, Yellow, Violet, LightBlue });
+    GameDefinition<string>("8x5Game", Holes: 5, MaxMoves: 12,
+        new string[] { Black, White, Red, Blue, Green, Yellow, Violet, LightBlue }),
+    IGame<string>;
 
 public record Game6x4MiniDefinitition() :
-    GameDefinition<string>("6x4MiniGame", 4, new string[] { Black, White, Red, Green, Blue, Yellow });
+    GameDefinition<string>("6x4MiniGame", Holes: 4, MaxMoves: 12,
+        new string[] { Black, White, Red, Green, Blue, Yellow }),
+    IGame<string>;

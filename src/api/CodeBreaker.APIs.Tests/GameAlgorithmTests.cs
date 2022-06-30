@@ -36,7 +36,7 @@ public class GameAlgorithmTests
         string gameId = Guid.NewGuid().ToString();
         Game6x4Definition definition = new();
 
-        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, DateTime.Now);
+        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
         GameAlgorithm algorithm = new GameAlgorithm(new TestLogger<GameAlgorithm>());
 
         
@@ -55,7 +55,7 @@ public class GameAlgorithmTests
         string gameId = Guid.NewGuid().ToString();
         string[] code = new[] { Red, Green, Blue, Red };
         Game6x4Definition definition = new();
-        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, DateTime.Now);
+        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
 
 
         List<string> codePegs = new(new string[] { guess1, guess2, guess3, guess4 });
@@ -73,7 +73,7 @@ public class GameAlgorithmTests
     {
         string gameId = Guid.NewGuid().ToString();
         Game6x4Definition definition = new();
-        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, DateTime.Now);
+        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
         
         GameMove guess = new(gameId, 1, guesses);
 

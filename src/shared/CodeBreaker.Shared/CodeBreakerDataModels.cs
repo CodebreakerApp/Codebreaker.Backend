@@ -1,7 +1,7 @@
 ﻿namespace CodeBreaker.Shared;
 
 // EF Core model to store the game data
-public record CodeBreakerGame(string CodeBreakerGameId, string GameType, string Code, string User, int Holes, string[] ColorList, DateTime Time)
+public record CodeBreakerGame(string CodeBreakerGameId, string GameType, string Code, string User, int Holes, string[] ColorList, int MaxMoves, DateTime Time)
 {  
     public List<CodeBreakerMove> Moves { get; init; } = new();
 }
