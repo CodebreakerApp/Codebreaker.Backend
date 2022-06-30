@@ -67,7 +67,7 @@ internal class Game8x5Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMoveAsync(game, guess, _holes);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _holes);
 
             // write the move to the data store
             if (dataMove is not null)
