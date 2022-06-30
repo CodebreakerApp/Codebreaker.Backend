@@ -6,7 +6,7 @@ public record KeyPegWithFlag(string Value, bool Used);
 
 internal class Game6x4Service : IGameService
 {
-    private readonly Game8x5Definition _gameDefinition;
+    private readonly Game6x4Definition _gameDefinition;
     private readonly GameAlgorithm _gameAlgorithm;
     private readonly GameCache _gameCache;
     private readonly ICodeBreakerContext _efContext;
