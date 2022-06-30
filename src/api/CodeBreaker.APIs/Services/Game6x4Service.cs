@@ -6,8 +6,7 @@ public record KeyPegWithFlag(string Value, bool Used);
 
 internal class Game6x4Service : IGameService
 {
-    private int _holes;
-    private readonly RandomGame6x4 _gameGenerator;
+    private readonly Game8x5Definition _gameDefinition;
     private readonly GameAlgorithm _gameAlgorithm;
     private readonly GameCache _gameCache;
     private readonly ICodeBreakerContext _efContext;
@@ -15,13 +14,13 @@ internal class Game6x4Service : IGameService
 
 
     public Game6x4Service(
-        RandomGame6x4 gameGenerator,
+        Game8x5Definition gameDefinition,
         GameAlgorithm gameAlgorithm,
         GameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game6x4Service> logger)
     {
-        _gameGenerator = gameGenerator;
+        _gameDefinition = gameDefinition;
         _gameAlgorithm = gameAlgorithm;
         _gameCache = gameCache;
         _logger = logger;
@@ -36,8 +35,7 @@ internal class Game6x4Service : IGameService
     /// <returns></returns>
     public async Task<string> StartGameAsync(string username, string gameType)
     {
-        string[] code = _gameGenerator.GetCode();
-        _holes = _gameGenerator.Holes;
+        string[] code = _gameDefinition.CreateRandomCode();
         
         Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
         _gameCache.SetGame(game);
@@ -73,7 +71,7 @@ internal class Game6x4Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _holes);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _gameDefinition.Holes);
 
             // write the move to the data store
             if (dataMove is not null)
