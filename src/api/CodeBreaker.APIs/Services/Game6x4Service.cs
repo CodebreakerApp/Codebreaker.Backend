@@ -33,18 +33,18 @@ internal class Game6x4Service : IGameService
     /// <param name="username"></param>
     /// <param name="gameType"></param>
     /// <returns></returns>
-    public async Task<string> StartGameAsync(string username, string gameType)
+    public async Task<Game> StartGameAsync(string username, string gameType)
     {
         string[] code = _gameDefinition.CreateRandomCode();
-        
-        Game game = new(Guid.NewGuid().ToString(), gameType, username, code);
+
+        Game game = new(Guid.NewGuid().ToString(), gameType, username, code, _gameDefinition.Colors, _gameDefinition.Holes, DateTime.Now);
         _gameCache.SetGame(game);
 
         await _efContext.InitGameAsync(game.ToDataGame());
 
         _logger.GameStarted(game.ToString());
 
-        return game.GameId;
+        return game;
     }
 
     public async Task<GameMoveResult> SetMoveAsync(GameMove guess)
@@ -71,7 +71,7 @@ internal class Game6x4Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess, _gameDefinition.Holes);
+            (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess);
 
             // write the move to the data store
             if (dataMove is not null)

@@ -11,7 +11,7 @@ internal class GameAlgorithm
         _logger = logger;
     }
 
-    internal (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMove(Game game, GameMove guess, int holes)
+    internal (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMove(Game game, GameMove guess)
     {
         GameMoveResult result = new(guess.GameId, guess.MoveNumber);
 
@@ -31,7 +31,7 @@ internal class GameAlgorithm
         List<string> keyPegs = new(); // the final information for the keys, black and white pegs are added
 
         // first check for the correct position
-        for (int i = 0; i < holes; i++)
+        for (int i = 0; i < game.Holes; i++)
         {
             if (codes[i] == guess.GuessPegs[i])
             {

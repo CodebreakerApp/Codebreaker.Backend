@@ -41,6 +41,15 @@ public record GameDefinition<T>(string TypeName, int Holes, T[] Colors) :
         }
         return pegs;
     }
+
+    public static GameDefinition<string> GetGameDefinition(string TypeName) =>
+        TypeName switch
+        {
+            "6x4Game" => new Game6x4Definition(),
+            "8x5Game" => new Game8x5Definition(),
+            "6x4MiniGame" => new Game6x4MiniDefinitition(),
+            _ => throw new InvalidOperationException("not yet supported")
+        };
 }
  
 public record Game6x4Definition() : 

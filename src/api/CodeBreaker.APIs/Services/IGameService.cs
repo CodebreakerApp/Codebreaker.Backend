@@ -2,6 +2,6 @@
 
 internal interface IGameService
 {
-    Task<string> StartGameAsync(string username, string gameType);
+    Task<Game> StartGameAsync(string username, string gameType);
     Task<GameMoveResult> SetMoveAsync(GameMove guess);
 }

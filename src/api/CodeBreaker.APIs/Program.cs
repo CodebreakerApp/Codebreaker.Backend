@@ -12,6 +12,8 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
 
+using static CodeBreaker.Shared.CodeBreakerColors;
+
 #if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
@@ -95,12 +97,12 @@ app.MapPost("/start/{gameType}", async (CreateGameRequest request, string gameTy
     using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
     gamesStarted.Add(1);
 
-    string id = await service.StartGameAsync(request.Name, GameTypes.Game6x4);
-    activity?.AddBaggage("GameId", id);
+    Game game = await service.StartGameAsync(request.Name, GameTypes.Game6x4);
+    activity?.AddBaggage("GameId", game.GameId);
     activity?.AddBaggage("Name", request.Name);
     activity?.AddEvent(new ActivityEvent("Game started"));
 
-    return Results.Ok(new CreateGameResponse(id, new CreateGameOptions(GameTypes.Game6x4, NumberFields: 4, MaxMoves: 12, "black", "white", "red", "green", "blue", "yellow")));
+    return Results.Ok(new CreateGameResponse(game.GameId, new CreateGameOptions(GameTypes.Game6x4, NumberFields: 4, MaxMoves: 12, Black, White, Red, "green", "blue", "yellow")));
 }).WithDisplayName("PostStart")
 .Produces<CreateGameResponse>(StatusCodes.Status200OK);
 
