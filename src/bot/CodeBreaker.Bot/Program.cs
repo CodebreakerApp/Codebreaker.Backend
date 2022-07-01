@@ -3,6 +3,8 @@ global using CodeBreaker.Shared.APIModels;
 global using CodeBreaker.Bot;
 global using System.Collections.Concurrent;
 
+global using static CodeBreaker.Shared.CodeBreakerColors;
+
 using System.Runtime.CompilerServices;
 using CodeBreaker.APIs;
 

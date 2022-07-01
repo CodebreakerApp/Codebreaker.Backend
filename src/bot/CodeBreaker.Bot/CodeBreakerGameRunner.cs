@@ -98,13 +98,13 @@ public class CodeBreakerGameRunner
                 break;
             }
 
-            int blackHits = response.KeyPegs?.Count(s => s == "black") ?? 0;
+            int blackHits = response.KeyPegs?.Count(s => s == Black) ?? 0;
             if (blackHits >= 4)
             {
                 throw new InvalidOperationException($"4 or more blacks but won was not set: {blackHits}");
             }
 
-            int whiteHits = response.KeyPegs?.Count(s => s == "white") ?? 0;
+            int whiteHits = response.KeyPegs?.Count(s => s == White) ?? 0;
             if (whiteHits > 4)
             {
                 throw new InvalidOperationException($"more than 4 whites is not possible: {whiteHits}");
@@ -118,12 +118,12 @@ public class CodeBreakerGameRunner
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "black", _gameId);
+                _logger.ReducedPossibleValues(_possibleValues.Count, Black, _gameId);
             }
             if (whiteHits > 0)
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(whiteHits + blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "white", _gameId);
+                _logger.ReducedPossibleValues(_possibleValues.Count, White, _gameId);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(thinkSeconds));  // thinking delay
@@ -150,18 +150,18 @@ public class CodeBreakerGameRunner
 
 public enum CodeColors
 {
-    black = 1,
-    white = 2,
-    red = 4,
-    green = 8,
-    blue = 16,
-    yellow = 32
+    Black = 1,
+    White = 2,
+    Red = 4,
+    Green = 8,
+    Blue = 16,
+    Yellow = 32
 }
 
 public enum KeyColors
 {
-    black,
-    white
+    Black,
+    White
 }
 
 public record struct CodePeg(string Color)
