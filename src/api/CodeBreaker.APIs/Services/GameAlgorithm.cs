@@ -70,7 +70,7 @@ internal class GameAlgorithm
         // write the complete game to the data store if it finished
         if (result.KeyPegs.Count(s => s == Black) == 4)
         {
-            result = result with { Won = true };
+            result = result with { Won = true, Completed = true };
             dataGame = game.ToDataGame();
         }
 
