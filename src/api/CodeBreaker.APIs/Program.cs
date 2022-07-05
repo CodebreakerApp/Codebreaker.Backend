@@ -1,5 +1,6 @@
 global using CodeBreaker.APIs;
 global using CodeBreaker.APIs.Data;
+global using CodeBreaker.APIs.Exceptions;
 global using CodeBreaker.APIs.Extensions;
 global using CodeBreaker.APIs.Services;
 global using CodeBreaker.Shared;
@@ -12,7 +13,6 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
 
-using static CodeBreaker.Shared.CodeBreakerColors;
 
 #if USEPROMETHEUS
 using OpenTelemetry;
@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 Meter meter = new("CodeBreaker.APIs", "1.0.0");
@@ -60,10 +61,10 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
 });
 builder.Services.AddSingleton<Game6x4Definition>();
 builder.Services.AddSingleton<Game8x5Definition>();
-builder.Services.AddSingleton<GameCache>();
+builder.Services.AddSingleton<IGameCache, GameCache>();
 builder.Services.AddScoped<Game6x4Service>();
 builder.Services.AddScoped<Game8x5Service>();
-builder.Services.AddScoped<GameAlgorithm>();
+builder.Services.AddScoped<IGameAlgorithm, GameAlgorithm>();
 
 const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
 builder.Services.AddCors(options =>
@@ -128,6 +129,10 @@ app.MapPost("/move/{gameType}", async (MoveRequest request, string gameType, str
         var result = await service.SetMoveAsync(move);
         MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
         return Results.Ok(response);
+    }
+    catch (GameMoveException ex)
+    {
+        return Results.BadRequest(ex.Message);
     }
     catch (GameException ex)
     {

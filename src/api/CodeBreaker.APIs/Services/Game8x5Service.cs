@@ -4,15 +4,15 @@ internal class Game8x5Service : IGameService
 {
     private int _holes;
     private readonly Game8x5Definition _gameDefinition;
-    private readonly GameAlgorithm _gameAlgorithm;
-    private readonly GameCache _gameCache;
+    private readonly IGameAlgorithm _gameAlgorithm;
+    private readonly IGameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
 
     public Game8x5Service(
         Game8x5Definition gameDefinition,
-        GameAlgorithm gameAlgorithm,
-        GameCache gameCache,
+        IGameAlgorithm gameAlgorithm,
+        IGameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game8x5Service> logger)
     {

@@ -42,6 +42,14 @@ public record GameDefinition<T>(string TypeName, int Holes, int MaxMoves, T[] Co
         return pegs;
     }
 
+    /// <summary>
+    /// Get a concrete GameXXXDefinition based on a string.
+    /// Use this method only if the game definition is needed based on a string.
+    /// If you know the definition you need, use the constructor of the concrete type.
+    /// </summary>
+    /// <param name="TypeName">The string specified by the game defintion</param>
+    /// <returns>A concrete GameDefinition derived type</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static GameDefinition<string> GetGameDefinition(string TypeName) =>
         TypeName switch
         {

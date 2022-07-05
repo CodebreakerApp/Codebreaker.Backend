@@ -3,7 +3,7 @@
 namespace CodeBreaker.APIs.Services;
 
 // algorithm for the simple string type (which covers many types). When (color and shapes) games are implemented, this might change to a generic type, or the name of the class might change
-internal class GameAlgorithm
+internal class GameAlgorithm : IGameAlgorithm
 {
     private readonly ILogger _logger;
     public GameAlgorithm(ILogger<GameAlgorithm> logger)
@@ -11,8 +11,14 @@ internal class GameAlgorithm
         _logger = logger;
     }
 
-    internal (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMove(Game game, GameMove guess)
+    public (GameMoveResult Result, CodeBreakerGame DataGame, CodeBreakerGameMove? Move) SetMove(Game game, GameMove guess)
     {
+        if (game.Holes != guess.GuessPegs.Count)
+        {
+            _logger.MoveWithInvalidGuesses(guess.GuessPegs.Count, game.Holes);
+            throw new ArgumentException($"Invalid guess number {guess.GuessPegs.Count} for {game.Holes} holes");
+        }
+
         GameMoveResult result = new(guess.GameId, guess.MoveNumber);
 
         // TODO: check for mismatch of moves! if (guess.MoveNumber != game.codd)
@@ -65,7 +71,7 @@ internal class GameAlgorithm
             string.Join("..", guess.GuessPegs),
             DateTime.Now,
             string.Join(".", result.KeyPegs),
-            string.Join("..", game.Code));;
+            string.Join("..", game.Code)); ;
 
         // write the complete game to the data store if it finished
         if (result.KeyPegs.Count(s => s == Black) == 4)
