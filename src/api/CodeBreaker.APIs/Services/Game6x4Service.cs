@@ -1,22 +1,20 @@
-﻿using static CodeBreaker.Shared.CodeBreakerColors;
-
-namespace CodeBreaker.APIs.Services;
+﻿namespace CodeBreaker.APIs.Services;
 
 public record KeyPegWithFlag(string Value, bool Used);
 
 internal class Game6x4Service : IGameService
 {
     private readonly Game6x4Definition _gameDefinition;
-    private readonly GameAlgorithm _gameAlgorithm;
-    private readonly GameCache _gameCache;
+    private readonly IGameAlgorithm _gameAlgorithm;
+    private readonly IGameCache _gameCache;
     private readonly ICodeBreakerContext _efContext;
     private readonly ILogger _logger;
 
 
     public Game6x4Service(
         Game6x4Definition gameDefinition,
-        GameAlgorithm gameAlgorithm,
-        GameCache gameCache,
+        IGameAlgorithm gameAlgorithm,
+        IGameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game6x4Service> logger)
     {
@@ -69,6 +67,14 @@ internal class Game6x4Service : IGameService
                 _logger.GameNotCached(guess.GameId);
                 // game is not in the cache, so we need to get it from the data store
                 game = await GetGameFromDatabaseAsync();
+            }
+
+            // TODO: probably not needed, checked with algorithm - change the implementation with the Minimal API when removing this check here,
+            // TODO: and change the unit test to test the check in the algorithm class
+            if (guess.GuessPegs.Count != game.Holes)
+            {
+                _logger.MoveWithInvalidGuesses(guess.GuessPegs.Count, game.Holes);
+                throw new GameMoveException("The number of guesses must equal the number of holes");
             }
 
             (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess);

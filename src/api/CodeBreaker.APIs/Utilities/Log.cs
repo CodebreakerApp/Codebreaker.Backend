@@ -13,7 +13,13 @@ public static partial class Log
         Level = LogLevel.Error,
         Message = "Move number does not match - received: `{receivedMoveNumber}`, expected: `{serverSideMoveNumber}`")]
     public static partial void MismatchMoveNumber(this ILogger logger, int receivedMoveNumber, int serverSideMoveNumber);
-        
+
+    [LoggerMessage(
+        EventId = 3002,
+        Level = LogLevel.Warning,
+        Message = "Invalid number of guesses received: `{guesses}`, expected {expectedGuesses}")]
+    public static partial void MoveWithInvalidGuesses(this ILogger logger, int guesses, int expectedGuesses);
+
     [LoggerMessage(
         EventId = 4000,
         Level = LogLevel.Information,
