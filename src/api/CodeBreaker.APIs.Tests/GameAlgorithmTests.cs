@@ -2,8 +2,6 @@ using CodeBreaker.APIs.Data;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.Shared;
 
-using Microsoft.Extensions.Logging;
-
 using System.Collections;
 
 using Xunit;
@@ -11,20 +9,6 @@ using Xunit;
 using static CodeBreaker.Shared.CodeBreakerColors;
 
 namespace CodeBreaker.APIs.Tests;
-
-public class TestLogger<T> : ILogger<T>, IDisposable
-{
-    public IDisposable? BeginScope<TState>(TState state) where TState: notnull => 
-        this;
-    
-    public void Dispose() { }
-
-    public bool IsEnabled(LogLevel logLevel) => true;
-
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-    {
-    }
-}
 
 public class GameAlgorithmTests
 {
