@@ -1,6 +1,11 @@
 using CodeBreaker.APIs.Data;
+using CodeBreaker.APIs.Exceptions;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.Shared;
+
+using Microsoft.Extensions.Logging;
+
+using Moq;
 
 using System.Collections;
 
@@ -66,6 +71,25 @@ public class GameAlgorithmTests
         var result = algorithm.SetMove(game, guess);
         string[] actual = result.Result.KeyPegs.ToArray();
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void ShouldThrowOnInvalidGuessCount()
+    {
+        string[] code = { "Black", "Black", "Black", "Black" };
+        string[] guesses = { "Black" };
+        string gameId = Guid.NewGuid().ToString();
+        Game6x4Definition definition = new();
+        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
+
+        GameMove guess = new(gameId, 1, guesses);
+
+        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
+
+        Assert.Throws<ArgumentException>(() =>
+        {
+            algorithm.SetMove(game, guess);
+        });
     }
 }
 
