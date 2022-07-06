@@ -21,6 +21,12 @@ public static partial class Log
     public static partial void MoveWithInvalidGuesses(this ILogger logger, int guesses, int expectedGuesses);
 
     [LoggerMessage(
+        EventId = 3003,
+        Level = LogLevel.Warning,
+        Message = "Invalid guess values: `{guesses}`")]
+    public static partial void MoveWithInvalidGuessValues(this ILogger logger, string guesses);
+
+    [LoggerMessage(
         EventId = 4000,
         Level = LogLevel.Information,
         Message = "Started a game `{game}`")]

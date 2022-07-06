@@ -91,6 +91,25 @@ public class GameAlgorithmTests
             algorithm.SetMove(game, guess);
         });
     }
+
+    [Fact]
+    public void ShouldThrowOnInvalidGuessValues()
+    {
+        string[] code = { "Black", "Black", "Black", "Black" };
+        string[] guesses = { "Black", "Der", "Blue", "Yellow" };
+        string gameId = Guid.NewGuid().ToString();
+        Game6x4Definition definition = new();
+        Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
+
+        GameMove guess = new(gameId, 1, guesses);
+
+        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
+
+        Assert.Throws<ArgumentException>(() =>
+        {
+            algorithm.SetMove(game, guess);
+        });
+    }
 }
 
 public class TestData : IEnumerable<object[]>
