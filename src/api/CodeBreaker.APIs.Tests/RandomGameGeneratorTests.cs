@@ -12,7 +12,7 @@ public class RandomGameGeneratorTests
     {
         Game6x4Definition generator = new();
 
-        string[] colorList = { "white", "red", "green", "blue", "black", "yellow" };
+        string[] colorList = { "White", "Red", "Green", "Blue", "Black", "Yellow" };
         bool[] colorMatches = new bool[colorList.Length];
         bool allColors = false;
         int iterations = 0;
@@ -28,7 +28,7 @@ public class RandomGameGeneratorTests
                     allColors = colorMatches.All(c => c);
                 }
             }
-        } while (!allColors);
+        } while (!allColors && iterations < 120);
         Assert.True(iterations < 100);
     }
 }
