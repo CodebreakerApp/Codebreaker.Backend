@@ -69,14 +69,6 @@ internal class Game6x4Service : IGameService
                 game = await GetGameFromDatabaseAsync();
             }
 
-            // TODO: probably not needed, checked with algorithm - change the implementation with the Minimal API when removing this check here,
-            // TODO: and change the unit test to test the check in the algorithm class
-            if (guess.GuessPegs.Count != game.Holes)
-            {
-                _logger.MoveWithInvalidGuesses(guess.GuessPegs.Count, game.Holes);
-                throw new GameMoveException("The number of guesses must equal the number of holes");
-            }
-
             (GameMoveResult result, CodeBreakerGame dataGame, CodeBreakerGameMove? dataMove) = _gameAlgorithm.SetMove(game, guess);
 
             // write the move to the data store

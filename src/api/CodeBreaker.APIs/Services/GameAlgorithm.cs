@@ -19,6 +19,13 @@ internal class GameAlgorithm : IGameAlgorithm
             throw new ArgumentException($"Invalid guess number {guess.GuessPegs.Count} for {game.Holes} holes");
         }
 
+        if (guess.GuessPegs.Except(game.ColorList).Any())
+        {
+            string invalidGuesses = string.Join('_', guess.GuessPegs.Except(game.ColorList).ToArray());
+            _logger.MoveWithInvalidGuessValues(invalidGuesses);
+            throw new ArgumentException($"Invalid guess values {invalidGuesses}");
+        }
+
         GameMoveResult result = new(guess.GameId, guess.MoveNumber);
 
         // TODO: check for mismatch of moves! if (guess.MoveNumber != game.codd)

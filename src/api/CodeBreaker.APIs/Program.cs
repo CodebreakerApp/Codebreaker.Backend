@@ -130,7 +130,7 @@ app.MapPost("/move/{gameType}", async (MoveRequest request, string gameType, str
         MoveResponse response = new(result.GameId, result.Completed, result.Won, result.KeyPegs);
         return Results.Ok(response);
     }
-    catch (GameMoveException ex)
+    catch (ArgumentException ex)
     {
         return Results.BadRequest(ex.Message);
     }
