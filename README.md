@@ -13,3 +13,30 @@
 * Blazor app to show who played (currently, in the future games can be played using Blazor)
 * WinUI app to play games calling the API
 * WPF app to play games calling the API
+
+## Azure Services in use
+
+* Azure Container Apps
+* Azure Cosmos DB
+
+## To be defined and developed
+
+* Authentication
+* Database cleanup-service - running with a timer to cleanup the database
+* SignalR service showing live information about running games (Notification about game moves and results via Azure Event Grid)
+* .NET MAUI client app
+
+
+## Azure Services that need to be used
+
+* Azure Message Queue (an alternative trigger for the Bot)
+* Azure App Configuration
+* Azure Key Vault
+* Azure Active Directory B2C
+* Azure Event Grid
+
+## Alternative Implementations
+
+* Platform Uno app
+* Avalonia app
+* Services using Dapr
