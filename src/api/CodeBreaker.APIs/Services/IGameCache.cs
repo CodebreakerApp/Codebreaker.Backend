@@ -2,8 +2,10 @@
 {
     internal interface IGameCache
     {
-        void DeleteGame(string id);
-        Game? GetGame(string id);
+        void DeleteGame(Guid id);
+
+        Game? GetGame(Guid id);
+
         void SetGame(Game game);
     }
 }

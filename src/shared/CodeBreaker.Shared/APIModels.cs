@@ -3,14 +3,14 @@
 public record struct CreateGameRequest(string Name);
 
 public record struct CreateGameOptions(string GameType, int Holes, int MaxMoves, params string[] Colors);
-public record struct CreateGameResponse(string Id, CreateGameOptions GameOptions);
+public record struct CreateGameResponse(Guid Id, CreateGameOptions GameOptions);
 
-public record struct MoveRequest(string Id, int MoveNumber, IEnumerable<string> CodePegs)
+public record struct MoveRequest(Guid Id, int MoveNumber, IEnumerable<string> CodePegs)
 {
     public override string ToString() => $"{Id}, {MoveNumber}. {string.Join("..", CodePegs)}";
 }
 
-public record struct MoveResponse(string Id, bool Completed = false, bool Won = false, IEnumerable<string>? KeyPegs = null)
+public record struct MoveResponse(Guid Id, bool Completed = false, bool Won = false, IEnumerable<string>? KeyPegs = null)
 {
     public override string ToString()
     {

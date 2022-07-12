@@ -35,7 +35,7 @@ internal class Game6x4Service : IGameService
     {
         string[] code = _gameDefinition.CreateRandomCode();
 
-        Game game = new(Guid.NewGuid().ToString(), gameType, username, code, _gameDefinition.Colors, _gameDefinition.Holes, _gameDefinition.MaxMoves, DateTime.Now);
+        Game game = new(Guid.NewGuid(), gameType, username, code, _gameDefinition.Colors, _gameDefinition.Holes, _gameDefinition.MaxMoves, DateTime.Now);
         _gameCache.SetGame(game);
 
         await _efContext.InitGameAsync(game.ToDataGame());

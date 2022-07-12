@@ -54,13 +54,13 @@ public static partial class Log
         EventId = 4004,
         Level = LogLevel.Warning,
         Message = "Game {id} not retrieved from cache")]
-    public static partial void GameNotCached(this ILogger logger, string id);
+    public static partial void GameNotCached(this ILogger logger, Guid id);
 
     [LoggerMessage(
         EventId = 4005,
         Level = LogLevel.Warning,
         Message = "Game {id} not found in database")]
-    public static partial void GameIdNotFound(this ILogger logger, string id);
+    public static partial void GameIdNotFound(this ILogger logger, Guid id);
 
     [LoggerMessage(
         EventId = 4006,
@@ -72,5 +72,5 @@ public static partial class Log
         EventId = 4007,
         Level = LogLevel.Information,
         Message = "Requesting detailed game report for {id}")]
-    public static partial void DetailedGameReport(this ILogger logger, string id);
+    public static partial void DetailedGameReport(this ILogger logger, Guid id);
 }

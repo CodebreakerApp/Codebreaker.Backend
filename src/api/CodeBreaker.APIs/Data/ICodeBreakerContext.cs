@@ -6,10 +6,10 @@ internal interface ICodeBreakerContext
     Task InitGameAsync(CodeBreakerGame game);
     Task UpdateGameAsync(CodeBreakerGame game);
     Task AddMoveAsync(CodeBreakerGameMove move);
-    Task<CodeBreakerGame?> GetGameAsync(string gameId);
+    Task<CodeBreakerGame?> GetGameAsync(Guid gameId);
 
     // report
     Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date);
     Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date);
-    Task<CodeBreakerGame?> GetGameDetailAsync(string gameId);
+    Task<CodeBreakerGame?> GetGameDetailAsync(Guid gameId);
 }

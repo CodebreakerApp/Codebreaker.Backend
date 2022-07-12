@@ -2,7 +2,7 @@
 
 internal class GameCache : IGameCache
 {
-    private readonly ConcurrentDictionary<string, Game> _games = new();
+    private readonly ConcurrentDictionary<Guid, Game> _games = new();
     private readonly ILogger _logger;
 
     public GameCache(ILogger<GameCache> logger)
@@ -23,7 +23,7 @@ internal class GameCache : IGameCache
     /// <exception cref="KeyNotFoundException" />
     /// <returns>a Game object</returns>
     /// <see cref="Game"/>
-    public Game? GetGame(string id)
+    public Game? GetGame(Guid id)
     {
         if (_games.TryGetValue(id, out var game))
         {
@@ -35,7 +35,7 @@ internal class GameCache : IGameCache
         }
     }
 
-    public void DeleteGame(string id)
+    public void DeleteGame(Guid id)
     {
         _games.TryRemove(id, out _);
     }

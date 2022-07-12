@@ -3,7 +3,7 @@
 public class CodeBreakerGameRunner
 {
     private readonly HttpClient _httpClient;
-    private string? _gameId;
+    private Guid? _gameId;
     private int _moveNumber = 0;
     private readonly List<Move> _moves = new();
     private List<int>? _possibleValues;
@@ -77,16 +77,17 @@ public class CodeBreakerGameRunner
     /// <exception cref="InvalidOperationException">throws if initialization was not done, or with invalid game state</exception>
     public async Task RunAsync(int thinkSeconds)
     {
-        if (_gameId is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
+        //if (_gameId is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
+        Guid gameId = _gameId ?? throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
 
         MoveResponse response;
 
         do
         {
             (var colorNames, var selection) = GetNextMoves();
-            MoveRequest moveRequest = new(_gameId, _moveNumber++, colorNames);
-            _logger.SendMove(moveRequest.ToString(), _gameId);
+            MoveRequest moveRequest = new(gameId, _moveNumber++, colorNames);
+            _logger.SendMove(moveRequest.ToString(), gameId.ToString());
 
             var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
             responseMessage.EnsureSuccessStatusCode();
@@ -94,7 +95,7 @@ public class CodeBreakerGameRunner
 
             if (response.Won)
             {
-                _logger.Matched(_moveNumber, _gameId);
+                _logger.Matched(_moveNumber, gameId.ToString());
                 break;
             }
 
@@ -113,23 +114,23 @@ public class CodeBreakerGameRunner
             if (blackHits == 0 && whiteHits == 0)
             {
                 _possibleValues = _possibleValues.HandleNoMatches(selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "none", _gameId);
+                _logger.ReducedPossibleValues(_possibleValues.Count, "none", gameId.ToString());
             }
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, Black, _gameId);
+                _logger.ReducedPossibleValues(_possibleValues.Count, Black, gameId.ToString());
             }
             if (whiteHits > 0)
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(whiteHits + blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, White, _gameId);
+                _logger.ReducedPossibleValues(_possibleValues.Count, White, gameId.ToString());
             }
 
             await Task.Delay(TimeSpan.FromSeconds(thinkSeconds));  // thinking delay
         } while (_moveNumber > 12 || !response.Won);
 
-        _logger.FinishedRun(_moveNumber, _gameId);
+        _logger.FinishedRun(_moveNumber, gameId.ToString());
     }
 
     /// <summary>
