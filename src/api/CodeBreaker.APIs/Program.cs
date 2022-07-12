@@ -99,7 +99,7 @@ app.MapPost("/start/{gameType}", async (CreateGameRequest request, string gameTy
     gamesStarted.Add(1);
 
     Game game = await service.StartGameAsync(request.Name, GameTypes.Game6x4);
-    activity?.AddBaggage("GameId", game.GameId);
+    activity?.AddBaggage("GameId", game.GameId.ToString());
     activity?.AddBaggage("Name", request.Name);
     activity?.AddEvent(new ActivityEvent("Game started"));
 
@@ -122,7 +122,7 @@ app.MapPost("/move/{gameType}", async (MoveRequest request, string gameType, str
         }
 
         using var activity = activitySource.StartActivity("Game Move", ActivityKind.Server);
-        activity?.AddBaggage("GameId", request.Id);
+        activity?.AddBaggage("GameId", request.Id.ToString());
         movesDone.Add(1);
 
         GameMove move = new(request.Id, request.MoveNumber, request.CodePegs.ToList());
@@ -157,7 +157,7 @@ app.MapGet("/report", async (CodeBreakerContext context, DateTime? date, string?
 }).WithDisplayName("GetReport")
 .Produces<IEnumerable<GamesInfo>>(StatusCodes.Status200OK);
 
-app.MapGet("/reportdetail/{id}", async (CodeBreakerContext context, string id, string? apiVersion) =>
+app.MapGet("/reportdetail/{id}", async (CodeBreakerContext context, Guid id, string? apiVersion) =>
 {
     app.Logger.DetailedGameReport(id);
 

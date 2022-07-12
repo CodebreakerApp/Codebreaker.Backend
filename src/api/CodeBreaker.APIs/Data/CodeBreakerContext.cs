@@ -65,7 +65,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         }
     }
     
-    public async Task<CodeBreakerGame?> GetGameAsync(string gameId)
+    public async Task<CodeBreakerGame?> GetGameAsync(Guid gameId)
     {
         var game = await Games
             .AsNoTracking()
@@ -107,7 +107,7 @@ internal class CodeBreakerContext : DbContext, ICodeBreakerContext
         return games2;
     }
 
-    public async Task<CodeBreakerGame?> GetGameDetailAsync(string gameId)
+    public async Task<CodeBreakerGame?> GetGameDetailAsync(Guid gameId)
     {
         var game = await Games
             .AsNoTracking()

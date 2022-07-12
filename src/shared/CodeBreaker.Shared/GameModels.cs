@@ -24,12 +24,12 @@ public static class GameTypes
     public const string Game8x5 = nameof(Game8x5);
 }
 
-public record GameMove(string GameId, int MoveNumber, IList<string> GuessPegs)
+public record GameMove(Guid GameId, int MoveNumber, IList<string> GuessPegs)
 {
     public override string ToString() => $"{GameId}.{MoveNumber}, {string.Join("..", GuessPegs)}";
 }
 
-public record GameMoveResult(string GameId, int MoveNumber, bool Completed = false, bool Won = false)
+public record GameMoveResult(Guid GameId, int MoveNumber, bool Completed = false, bool Won = false)
 {
     public override string ToString() => $"{string.Join(".", KeyPegs)}";
 
@@ -38,7 +38,7 @@ public record GameMoveResult(string GameId, int MoveNumber, bool Completed = fal
 
 public record GameStatus(GameMove Move, GameMoveResult Result);
 
-public record Game(string GameId, string GameType, string Name, IReadOnlyList<string> Code, IReadOnlyList<string> ColorList, int Holes, int MaxMoves, DateTime StartTime)
+public record Game(Guid GameId, string GameType, string Name, IReadOnlyList<string> Code, IReadOnlyList<string> ColorList, int Holes, int MaxMoves, DateTime StartTime)
 {
     public IReadOnlyList<GameStatus> Status { get; } = new List<GameStatus>();
     public override string ToString()

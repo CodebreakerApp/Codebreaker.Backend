@@ -28,7 +28,7 @@ public class GameClient
         return response;
     }
 
-    public async Task<(bool Completed, bool Won, string[] KeyPegs)> SetMoveAsync(string gameId, int moveNumber, params string[] colorNames)
+    public async Task<(bool Completed, bool Won, string[] KeyPegs)> SetMoveAsync(Guid gameId, int moveNumber, params string[] colorNames)
     {
         MoveRequest moveRequest = new(gameId, moveNumber, colorNames);
 
@@ -50,7 +50,7 @@ public class GameClient
         return await _httpClient.GetFromJsonAsync<IEnumerable<GamesInfo>>(requestUri);
     }
 
-    public async Task<CodeBreakerGame?> GetDetailedReportAsync(string id)
+    public async Task<CodeBreakerGame?> GetDetailedReportAsync(Guid id)
     {
         string requestUri = $"/reportdetail/{id}";
 

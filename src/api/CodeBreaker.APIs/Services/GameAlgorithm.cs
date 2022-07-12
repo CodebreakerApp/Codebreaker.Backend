@@ -6,6 +6,7 @@ namespace CodeBreaker.APIs.Services;
 internal class GameAlgorithm : IGameAlgorithm
 {
     private readonly ILogger _logger;
+
     public GameAlgorithm(ILogger<GameAlgorithm> logger)
     {
         _logger = logger;
@@ -72,7 +73,7 @@ internal class GameAlgorithm : IGameAlgorithm
         }
 
         CodeBreakerGameMove dataMove = new(
-            Guid.NewGuid().ToString(),
+            Guid.NewGuid(),
             game.GameId,
             guess.MoveNumber,
             string.Join("..", guess.GuessPegs),
@@ -93,8 +94,8 @@ internal class GameAlgorithm : IGameAlgorithm
 
     private List<string> GetWhiteKeyPegs(List<string> codes, List<string> moves, List<string> keyPegs)
     {
-        List<KeyPegWithFlag> tempCode = new(codes.Select(c => new KeyPegWithFlag(c, false)).ToArray());
-        List<KeyPegWithFlag> tempMoves = new(moves.Select(m => new KeyPegWithFlag(m, false)).ToArray());
+        List<KeyPegWithFlag> tempCode = new(codes.Select(c => new KeyPegWithFlag(c, false)));
+        List<KeyPegWithFlag> tempMoves = new(moves.Select(m => new KeyPegWithFlag(m, false)));
 
         for (int i = 0; i < tempCode.Count; i++)
         {
