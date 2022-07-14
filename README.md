@@ -6,10 +6,16 @@
 
 [![Codebreaker Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/azure-static-web-apps-ambitious-smoke-0612ff603.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/azure-static-web-apps-ambitious-smoke-0612ff603.yml)
 
-## Codebreaker Apps and Services
+[Guidelines](guidelines.md)
+
+## Codebreaker Services
 
 * REST API to play games, writes information to Cosmos
 * Bot who plays games calling the API. The bot can be invoked calling commands from a REST API
+* REST API for reporting
+
+## Codebreaker Client apps
+
 * Blazor app to show who played (currently, in the future games can be played using Blazor)
 * WinUI app to play games calling the API
 * WPF app to play games calling the API
@@ -25,7 +31,6 @@
 * Database cleanup-service - running with a timer to cleanup the database
 * SignalR service showing live information about running games (Notification about game moves and results via Azure Event Grid)
 * .NET MAUI client app
-
 
 ## Azure Services that need to be used
 
