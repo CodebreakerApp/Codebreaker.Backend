@@ -15,7 +15,7 @@ public class CodeBreakerGameRunner
         _logger = logger;
     }
 
-    private List<int> InitializePossibleValues()
+    private static List<int> InitializePossibleValues()
     {
         static List<int> Create8Colors(int shift)
         {

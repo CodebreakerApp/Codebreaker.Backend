@@ -7,7 +7,7 @@ public class CodeBreakerTimer
     private static readonly ConcurrentDictionary<Guid, CodeBreakerTimer> s_bots = new();
     private PeriodicTimer? _timer;
     private int _loop = 0;
-    private CancellationTokenSource _cancellationTokenSource = new();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerTimer> logger)
     {
@@ -18,7 +18,7 @@ public class CodeBreakerTimer
     public string Start(int delaySecondsBetweenGames, int numberGames, int thinkSeconds)
     {
         _logger.StartGameRunner();
-        Guid id = Guid.NewGuid();
+        var id = Guid.NewGuid();
         s_bots.TryAdd(id, this);
 
         _timer = new PeriodicTimer(TimeSpan.FromSeconds(delaySecondsBetweenGames));
