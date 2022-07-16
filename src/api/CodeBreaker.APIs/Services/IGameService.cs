@@ -1,7 +1,18 @@
-﻿namespace CodeBreaker.APIs.Services;
+﻿using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+using CodeBreaker.Shared.Models.Data;
 
-internal interface IGameService
+namespace CodeBreaker.APIs.Services
 {
-    Task<Game> StartGameAsync(string username, string gameType);
-    Task<GameMoveResult> SetMoveAsync(GameMove guess);
+    public interface IGameService
+    {
+        ValueTask<Game?> GetAsync(Guid id);
+        
+        IAsyncEnumerable<Game> GetByDate(DateOnly date);
+
+        Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory);
+
+        Task CancelAsync(Guid id);
+
+        Task DeleteAsync(Guid id);
+    }
 }

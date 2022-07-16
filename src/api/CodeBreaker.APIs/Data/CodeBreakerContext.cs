@@ -1,117 +1,139 @@
-﻿namespace CodeBreaker.APIs.Data;
+﻿using CodeBreaker.APIs.Data.DbConfiguration;
+using CodeBreaker.Shared.Models.Data;
+using CodeBreaker.Shared.Models.Report;
+using System.Reflection;
 
-internal class CodeBreakerContext : DbContext, ICodeBreakerContext
+namespace CodeBreaker.APIs.Data;
+
+public class CodeBreakerContext : DbContext//, ICodeBreakerContext
 {
     private readonly ILogger _logger;
-    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger)
-        : base(options) 
+
+    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger) : base(options) 
     {
         _logger = logger;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultContainer("CodeBreakerContainer");
-        modelBuilder.Entity<CodeBreakerGame>()
-            .HasPartitionKey(g => g.CodeBreakerGameId);
-        modelBuilder.Entity<CodeBreakerGameMove>()
-            .HasPartitionKey(m => m.CodeBreakerGameId);
+        modelBuilder.HasDefaultContainer("GameContainer");// "CodeBreakerContainer");
+        //modelBuilder.Entity<CodeBreakerGame>()
+        //    .HasPartitionKey(g => g.CodeBreakerGameId);
+        //modelBuilder.Entity<CodeBreakerGameMove>()
+        //    .HasPartitionKey(m => m.CodeBreakerGameId);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameDbConfiguration).Assembly);
     }
 
-    public DbSet<CodeBreakerGame> Games => Set<CodeBreakerGame>();
-    public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
+    public DbSet<Game> Games => Set<Game>();
 
-    public async Task InitGameAsync(CodeBreakerGame game)
+    //public DbSet<Move> Moves => Set<Move>();
+
+    //public DbSet<CodeBreakerGame> Games => Set<CodeBreakerGame>();
+
+    //public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
+
+    public Task InitGameAsync(Shared.Models.Data.Game game)
     {
-        Games.Add(game);
-        await SaveChangesAsync();
-        _logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
+        throw new NotImplementedException();
+
+        //Games.Add(game);
+        //await SaveChangesAsync();
+        //_logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
     }
     
-    public async Task UpdateGameAsync(CodeBreakerGame game)
+    public Task UpdateGameAsync(Shared.Models.Data.Game game)
     {
-        try
-        {
-            var gameMoves = await Moves
-                .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
-                .ToListAsync();
-            var moves = gameMoves.Select(
-                m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys, DateTime.Now))
-                .ToList();
-            game = game with { Moves = moves };
-            Games.Update(game);
-            Moves.RemoveRange(gameMoves);
-            int records = await SaveChangesAsync();
-            _logger.LogInformation("added/updated {records} records", records);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, ex.Message);
-            throw;
-        }
+        throw new NotImplementedException();
+        //try
+        //{
+        //    var gameMoves = await Moves
+        //        .Where(m => m.GameId == game.CodeBreakerGameId)
+        //        .ToListAsync();
+        //    var moves = gameMoves.Select(
+        //        m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys, DateTime.Now))
+        //        .ToList();
+        //    game = game with { Moves = moves };
+        //    Games.Update(game);
+        //    Moves.RemoveRange(gameMoves);
+        //    int records = await SaveChangesAsync();
+        //    _logger.LogInformation("added/updated {records} records", records);
+        //}
+        //catch (Exception ex)
+        //{
+        //    _logger.Error(ex, ex.Message);
+        //    throw;
+        //}
     }
 
-    public async Task AddMoveAsync(CodeBreakerGameMove move)
+    public Task AddMoveAsync(Shared.Models.Data.Move move)
     {
-        try
-        {
-            Moves.Add(move);
-            await SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, ex.Message);
-            throw;
-        }
+        throw new NotImplementedException();
+        //try
+        //{
+        //    Moves.Add(move);
+        //    await SaveChangesAsync();
+        //}
+        //catch (Exception ex)
+        //{
+        //    _logger.Error(ex, ex.Message);
+        //    throw;
+        //}
     }
     
-    public async Task<CodeBreakerGame?> GetGameAsync(Guid gameId)
+    public Task<Shared.Models.Data.Game?> GetGameAsync(Guid gameId)
     {
-        var game = await Games
-            .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
-        return game;
+        throw new NotImplementedException();
+        //var game = await Games
+        //    .AsNoTracking()
+        //    .SingleOrDefaultAsync(g => g.Id == gameId);
+        //return game;
     }
 
-    public async Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
+    public Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
     {
+        throw new NotImplementedException();
+
         // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
         
-        var games = await Games
-            .AsNoTracking()
-            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
-            .Where(g => g.Moves.Count > 0)
-            .OrderByDescending(g => g.Time)
-            .Take(50)
-            .ToListAsync();
+        //var games = await Games
+        //    .AsNoTracking()
+        //    .Where(g => g.StartTimestamp >= date && g.StartTimestamp <= date.AddDays(1))
+        //    .Where(g => g.Moves.Count > 0)
+        //    .OrderByDescending(g => g.StartTimestamp)
+        //    .Take(50)
+        //    .ToListAsync();
 
-        return new GamesInformationDetail(date) { Games = games };        
+        //return new GamesInformationDetail(date) { Games = games };        
     }
 
-    public async Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date)
+    public Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date)
     {
+        throw new NotImplementedException();
+
         // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
 
-        var games = await Games
-            .AsNoTracking()
-            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
-            .OrderByDescending(g => g.Time)
-            .Take(50)
-            .Select(g => new { g.Time, g.User, g.Moves, g.CodeBreakerGameId })
-            .ToListAsync();
+        //var games = await Games
+        //    .AsNoTracking()
+        //    .Where(g => g.StartTimestamp >= date && g.StartTimestamp <= date.AddDays(1))
+        //    .OrderByDescending(g => g.StartTimestamp)
+        //    .Take(50)
+        //    .Select(g => new { g.StartTimestamp, g.Username, g.Moves, g.Id})
+        //    .ToListAsync();
 
-        var games2 = games
-            .Where(g => g.Moves.Count > 0)
-            .Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
+        //var games2 = games
+        //    .Where(g => g.Moves.Count > 0)
+        //    .Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
 
-        return games2;
+        //return games2;
     }
 
-    public async Task<CodeBreakerGame?> GetGameDetailAsync(Guid gameId)
+    public Task<Shared.Models.Data.Game?> GetGameDetailAsync(Guid gameId)
     {
-        var game = await Games
-            .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
-        return game;
+        throw new NotImplementedException();
+
+        //var game = await Games
+        //    .AsNoTracking()
+        //    .SingleOrDefaultAsync(g => g.Id == gameId);
+        //return game;
     }
 }

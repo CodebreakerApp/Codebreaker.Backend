@@ -1,5 +1,4 @@
-﻿using CodeBreaker.APIs.Services;
-
+﻿using CodeBreaker.APIs.Services.Obsolete;
 using Xunit;
 
 namespace ServerTests;
