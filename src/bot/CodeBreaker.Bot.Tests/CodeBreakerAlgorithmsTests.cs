@@ -2,6 +2,8 @@ using System.Collections;
 
 using Xunit;
 
+using static CodeBreaker.Shared.CodeBreakerColors;
+
 namespace CodeBreaker.Bot.Tests;
 
 public class CodeBreakerAlgorithmsTests
@@ -74,7 +76,7 @@ public class CodeBreakerAlgorithmsTests
     [Fact]
     public void HandleBlackMatchShouldNotInclude()
     {
-        List<int> toMatch = new List<int>()
+        List<int> toMatch = new()
         {
             0b_000100_010000_001000_000010
         };
@@ -102,7 +104,7 @@ public class CodeBreakerAlgorithmsTests
     public void IntToColorsTest()
     {
         int value = 0b_000100_010000_000001_100000;
-        string[] expected = { "red", "blue", "black", "yellow" };
+        string[] expected = { Red, Blue, Black, Yellow };
         string[] actual = CodeBreakerAlgorithms.IntToColors(value);
         Assert.Equal(expected, actual);
     }
