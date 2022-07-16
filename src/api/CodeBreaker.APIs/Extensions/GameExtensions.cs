@@ -11,26 +11,49 @@ internal static class GameExtensions
             throw new ArgumentException($"Invalid guess number {move.GuessPegs.Count} for {game.Type.Holes} holes");
 
         if (move.GuessPegs.Any(guessPeg => !game.Type.Fields.Contains(guessPeg)))
-            throw new ArgumentOutOfRangeException("The guess contains an invalid value");
+            throw new ArgumentException("The guess contains an invalid value");
 
-        // Check MoveCount
-        //if (game.Moves.Any(m => m.MoveNumber >= move.MoveNumber))
-        //    throw new ArgumentOutOfRangeException("The order of the moveNumbers is not correct"); // TODO other exception type
+        // Change MoveCount
         move.MoveNumber = game.GetLastMoveOrDefault()?.MoveNumber + 1 ?? 0;
 
         // Check black and white keyPegs
-        KeyPegs keyPegs = new KeyPegs();
+        List<string> codeToCheck = new List<string>(game.Code);
+        List<string> guessPegsToCheck = new List<string>(move.GuessPegs);
+        int black = 0;
+        List<string> whitePegs = new List<string>();
 
-        for (int i = 0; i < move.GuessPegs.Count; i++)
-            if (move.GuessPegs[i] == game.Code[i])
-                keyPegs.Black++;
-            else if (game.Code.Contains(move.GuessPegs[i]))
-                keyPegs.White++;
+        // check black
+        for (int i = 0; i < guessPegsToCheck.Count; i++)
+            if (guessPegsToCheck[i] == codeToCheck[i])
+            {
+                black++;
+                codeToCheck.RemoveAt(i);
+                guessPegsToCheck.RemoveAt(i);
+                i--;
+            }
 
-        move.KeyPegs = keyPegs;
-        game.Moves.Add(move);
+        // check white
+        for (int i = 0; i < guessPegsToCheck.Count; i++)
+        {
+            string value = guessPegsToCheck[i];
+
+            // value not in code
+            if (!codeToCheck.Contains(value))
+                continue;
+
+            // value peg was already checked
+            if (whitePegs.Contains(value))
+                continue;
+
+            whitePegs.Add(value);
+        }
+
+        KeyPegs keyPegs = new KeyPegs(black, whitePegs.Count);
 
         if (keyPegs.Black + keyPegs.White > game.Type.Holes)
             throw new Exception("Their are more keyPegs than holes"); // Should not be the case
+
+        move.KeyPegs = keyPegs;
+        game.Moves.Add(move);
     }
 }

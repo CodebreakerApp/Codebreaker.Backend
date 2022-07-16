@@ -1,17 +1,12 @@
-using CodeBreaker.APIs.Data;
-using CodeBreaker.APIs.Exceptions;
-using CodeBreaker.APIs.Services.Obsolete;
-using CodeBreaker.Shared;
-
-using Microsoft.Extensions.Logging;
-
-using Moq;
+using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+using CodeBreaker.APIs.Extensions;
+using CodeBreaker.Shared.Models.Data;
 
 using System.Collections;
 
 using Xunit;
 
-using static CodeBreaker.Shared.CodeBreakerColors;
+using static CodeBreaker.Shared.Models.Data.Colors;
 
 namespace CodeBreaker.APIs.Tests;
 
@@ -20,95 +15,70 @@ public class GameAlgorithmTests
     [Fact]
     public void SetMoveWithThreeWhite()
     {
-        string[] expected = { White, White, White };
-        string[] code = { Green, Yellow, Green, Black };
-        string gameId = Guid.NewGuid().ToString();
-        Game6x4Definition definition = new();
+        KeyPegs expectedKeyPegs = new(0, 3);
+        KeyPegs? resultKeyPegs = TestSkeleton(
+            new[] { Green, Yellow, Green, Black },
+            new[] { Yellow, Green, Black, Blue }
+        );
 
-        Game_Old game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-        GameAlgorithm algorithm = new GameAlgorithm(new TestLogger<GameAlgorithm>());
-
-        
-        GameMove guess = new(gameId, 1, new[] { Yellow, Green, Black, Blue });
-
-        var result = algorithm.SetMove(game, guess);
-        var actual = result.Result.KeyPegs;
-        Assert.Equal(expected, actual);
+        Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
-    [InlineData(Red, Yellow, Red, Blue, Black, White, White)]
-    [InlineData(White, White, Blue, Red, Black, Black)]
+    [InlineData(1, 2, Red, Yellow, Red, Blue)]
+    [InlineData(2, 0, White, White, Blue, Red)]
     [Theory]
-    public void SetMoveUsingVariousData(string guess1, string guess2, string guess3, string guess4, params string[] expected)
+    public void SetMoveUsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
     {
-        string gameId = Guid.NewGuid().ToString();
         string[] code = new[] { Red, Green, Blue, Red };
-        Game6x4Definition definition = new();
-        Game_Old game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-
-
-        List<string> codePegs = new(new string[] { guess1, guess2, guess3, guess4 });
-        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
-
-        GameMove guess = new(gameId, 1, codePegs);
-        (GameMoveResult gameResult, _, _) = algorithm.SetMove(game, guess);
-        string[] result = gameResult.KeyPegs.ToArray();
-        Assert.Equal(expected, result);
+        KeyPegs expectedKeyPegs = new KeyPegs(expectedBlack, expectedWhite);
+        KeyPegs? resultKeyPegs = TestSkeleton(code, guessValues);
+        Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
     [Theory]
     [ClassData(typeof(TestData))]
-    public void SetMoveUsingVariousData2(string[] code, string[] guesses, string[] expected)
+    public void SetMoveUsingVariousDataUsingDataClass(string[] code, string[] guess, KeyPegs expectedKeyPegs)
     {
-        string gameId = Guid.NewGuid().ToString();
-        Game6x4Definition definition = new();
-        Game_Old game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-        
-        GameMove guess = new(gameId, 1, guesses);
-
-        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
-
-        var result = algorithm.SetMove(game, guess);
-        string[] actual = result.Result.KeyPegs.ToArray();
-        Assert.Equal(expected, actual);
+        KeyPegs? actualKeyPegs = TestSkeleton(code, guess);
+        Assert.Equal(expectedKeyPegs, actualKeyPegs);
     }
 
     [Fact]
     public void ShouldThrowOnInvalidGuessCount()
     {
-        string[] code = { "Black", "Black", "Black", "Black" };
-        string[] guesses = { "Black" };
-        string gameId = Guid.NewGuid().ToString();
-        Game6x4Definition definition = new();
-        Game_Old game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-
-        GameMove guess = new(gameId, 1, guesses);
-
-        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
-
         Assert.Throws<ArgumentException>(() =>
         {
-            algorithm.SetMove(game, guess);
+            TestSkeleton(
+                new[] { "Black", "Black", "Black", "Black" },
+                new[] { "Black" }
+            );
         });
     }
 
     [Fact]
     public void ShouldThrowOnInvalidGuessValues()
     {
-        string[] code = { "Black", "Black", "Black", "Black" };
-        string[] guesses = { "Black", "Der", "Blue", "Yellow" };
-        string gameId = Guid.NewGuid().ToString();
-        Game6x4Definition definition = new();
-        Game_Old game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-
-        GameMove guess = new(gameId, 1, guesses);
-
-        GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
-
         Assert.Throws<ArgumentException>(() =>
         {
-            algorithm.SetMove(game, guess);
+            TestSkeleton(
+                new[] { "Black", "Black", "Black", "Black" },
+                new[] { "Black", "Der", "Blue", "Yellow" }      // "Der" is the wrong value
+            );
         });
+    }
+    private KeyPegs? TestSkeleton(string[] code, string[] guess)
+    {
+        Game game = new(
+            Guid.NewGuid(),
+            new GameType6x4Factory().Create(),
+            "test-username",
+            code
+        );
+        Move move = new(1, guess);
+
+        game.ApplyMove(move);
+
+        return game.Moves[0].KeyPegs;
     }
 }
 
@@ -118,27 +88,27 @@ public class TestData : IEnumerable<object[]>
     {
         yield return new object[]
         {
-            new string[] { Green, Blue, Green, Yellow }, // code
-            new string[] { Green, Green, Black, White }, // inputdata
-            new string[] { Black, White } // results
+            new string[] { Green, Blue,  Green, Yellow }, // code
+            new string[] { Green, Green, Black, White },  // inputdata
+            new KeyPegs(1, 1) // expected
         };
         yield return new object[]
         {
-            new string[] { Red, Blue, Black, White }, // code
-            new string[] { Black, Black, Red, Yellow }, // inputdata
-            new string[] { White, White } // results
+            new string[] { Red,   Blue,  Black, White },
+            new string[] { Black, Black, Red,   Yellow },
+            new KeyPegs(0, 2)
         };
         yield return new object[]
         {
             new string[] { Yellow, Black, Yellow, Green },
-            new string[] { Black, Black, Black, Black },
-            new string[] { Black }
+            new string[] { Black,  Black, Black,  Black },
+            new KeyPegs(1, 0)
         };
         yield return new object[]
         {
             new string[] { Yellow, Yellow, White, Red },
-            new string[] { Green, Yellow, White, Red },
-            new string[] { Black, Black, Black }
+            new string[] { Green,  Yellow, White, Red },
+            new KeyPegs(3, 0)
         };
     }
 

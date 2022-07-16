@@ -15,11 +15,4 @@ internal static class GameFactory
             Username = username,
             Code = CodeFactory.CreateRandomCode(gameType)
         };
-        //{
-        //    CodeBreakerGameId = Guid.NewGuid(),
-        //    Type = gameType,
-        //    Username = username,
-        //    Code = CodeFactory.CreateRandomCode(gameType),
-        //    StartTimestamp = DateTime.Now
-        //};
 }
