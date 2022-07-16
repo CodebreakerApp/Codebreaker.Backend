@@ -35,7 +35,7 @@ public class GameClient
         var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
         responseMessage.EnsureSuccessStatusCode();
         var response = await responseMessage.Content.ReadFromJsonAsync<MoveResponse>();
-        return (response.Completed, response.Won, response.KeyPegs?.ToArray() ?? new string[0]);
+        return (response.Completed, response.Won, response.KeyPegs?.ToArray() ?? Array.Empty<string>());
     }
 
     public async Task<IEnumerable<GamesInfo>?> GetReportAsync(DateTime? date)
@@ -43,7 +43,7 @@ public class GameClient
         string requestUri = "/report";
         if (date is not null)
         {
-            requestUri = $"{requestUri}?date={date.Value.ToString("yyyy-MM-dd")}";
+            requestUri = $"{requestUri}?date={date.Value:yyyy-MM-dd}";
         }
         _logger.LogInformation("Calling Codebreaker with {uri}", requestUri);
 
