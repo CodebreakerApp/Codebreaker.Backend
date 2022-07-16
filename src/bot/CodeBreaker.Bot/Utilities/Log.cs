@@ -25,10 +25,10 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "Reduced the possible values to {number} with {color} hits in {game}")]
     public static partial void ReducedPossibleValues(this ILogger logger, int number, string color, string game);
-    
+
     [LoggerMessage(
         EventId = 4003,
-        Level =LogLevel.Information,
+        Level = LogLevel.Information,
         Message = "Finished run with {number} in {game}")]
     public static partial void FinishedRun(this ILogger logger, int number, string game);
 
