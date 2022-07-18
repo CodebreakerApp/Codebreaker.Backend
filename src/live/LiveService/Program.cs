@@ -5,6 +5,10 @@ using LiveService.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSignalR().AddAzureSignalR();
+
 WebApplication app = builder.Build();
+
+app.MapHub<LiveHub>("/live");
 
 app.Run();
