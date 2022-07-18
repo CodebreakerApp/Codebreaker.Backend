@@ -8,8 +8,12 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["api/CodeBreaker.APIs/CodeBreaker.APIs.csproj", "api/CodeBreaker.APIs/"]
 COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
+COPY ["api/CodeBreaker.APIs.Tests/CodeBreaker.APIs.Tests.csproj", "api/CodeBreaker.APIs.Tests/"]
 RUN dotnet restore "api/CodeBreaker.APIs/CodeBreaker.APIs.csproj"
+RUN dotnet restore "api/CodeBreaker.APIs.Tests/CodeBreaker.APIs.Tests.csproj"
 COPY . .
+WORKDIR "/src/api/CodeBreaker.APIs.Tests"
+RUN dotnet test "CodeBreaker.APIs.Tests.csproj"
 WORKDIR "/src/api/CodeBreaker.APIs"
 RUN dotnet build "CodeBreaker.APIs.csproj" -c Release -o /app/build
 
