@@ -31,8 +31,8 @@ public class GameAlgorithmTests
         
         GameMove guess = new(gameId, 1, new[] { Yellow, Green, Black, Blue });
 
-        var result = algorithm.SetMove(game, guess);
-        var actual = result.Result.KeyPegs;
+        (GameMoveResult result, _, _) = algorithm.SetMove(game, guess);
+        var actual = result.KeyPegs;
         Assert.Equal(expected, actual);
     }
 
@@ -68,8 +68,8 @@ public class GameAlgorithmTests
 
         GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
 
-        var result = algorithm.SetMove(game, guess);
-        string[] actual = result.Result.KeyPegs.ToArray();
+        (GameMoveResult result, _, _) = algorithm.SetMove(game, guess);
+        string[] actual = result.KeyPegs.ToArray();
         Assert.Equal(expected, actual);
     }
 
