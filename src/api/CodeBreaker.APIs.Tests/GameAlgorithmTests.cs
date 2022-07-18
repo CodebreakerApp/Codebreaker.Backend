@@ -22,7 +22,7 @@ public class GameAlgorithmTests
     {
         string[] expected = { White, White, White };
         string[] code = { Green, Yellow, Green, Black };
-        string gameId = Guid.NewGuid().ToString();
+        Guid gameId = Guid.NewGuid();
         Game6x4Definition definition = new();
 
         Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
@@ -31,8 +31,8 @@ public class GameAlgorithmTests
         
         GameMove guess = new(gameId, 1, new[] { Yellow, Green, Black, Blue });
 
-        var result = algorithm.SetMove(game, guess);
-        var actual = result.Result.KeyPegs;
+        (GameMoveResult result, _, _) = algorithm.SetMove(game, guess);
+        var actual = result.KeyPegs;
         Assert.Equal(expected, actual);
     }
 
@@ -41,7 +41,7 @@ public class GameAlgorithmTests
     [Theory]
     public void SetMoveUsingVariousData(string guess1, string guess2, string guess3, string guess4, params string[] expected)
     {
-        string gameId = Guid.NewGuid().ToString();
+        Guid gameId = Guid.NewGuid();
         string[] code = new[] { Red, Green, Blue, Red };
         Game6x4Definition definition = new();
         Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
@@ -60,7 +60,7 @@ public class GameAlgorithmTests
     [ClassData(typeof(TestData))]
     public void SetMoveUsingVariousData2(string[] code, string[] guesses, string[] expected)
     {
-        string gameId = Guid.NewGuid().ToString();
+        Guid gameId = Guid.NewGuid();
         Game6x4Definition definition = new();
         Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
         
@@ -68,8 +68,8 @@ public class GameAlgorithmTests
 
         GameAlgorithm algorithm = new(new TestLogger<GameAlgorithm>());
 
-        var result = algorithm.SetMove(game, guess);
-        string[] actual = result.Result.KeyPegs.ToArray();
+        (GameMoveResult result, _, _) = algorithm.SetMove(game, guess);
+        string[] actual = result.KeyPegs.ToArray();
         Assert.Equal(expected, actual);
     }
 
@@ -78,7 +78,7 @@ public class GameAlgorithmTests
     {
         string[] code = { "Black", "Black", "Black", "Black" };
         string[] guesses = { "Black" };
-        string gameId = Guid.NewGuid().ToString();
+        Guid gameId = Guid.NewGuid();
         Game6x4Definition definition = new();
         Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
 
@@ -97,7 +97,7 @@ public class GameAlgorithmTests
     {
         string[] code = { "Black", "Black", "Black", "Black" };
         string[] guesses = { "Black", "Der", "Blue", "Yellow" };
-        string gameId = Guid.NewGuid().ToString();
+        Guid gameId = Guid.NewGuid();
         Game6x4Definition definition = new();
         Game game = new(gameId, "Game6x4", "test", code, definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
 
