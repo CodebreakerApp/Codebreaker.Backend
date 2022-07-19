@@ -9,20 +9,22 @@ internal class Game6x4Service : IGameService
     private readonly IGameCache _gameCache;
     private readonly ICodeBreakerContext _efContext;
     private readonly ILogger _logger;
-
+    private readonly IEventService _eventService;
 
     public Game6x4Service(
         Game6x4Definition gameDefinition,
         IGameAlgorithm gameAlgorithm,
         IGameCache gameCache,
         ICodeBreakerContext context,
-        ILogger<Game6x4Service> logger)
+        ILogger<Game6x4Service> logger,
+        IEventService eventService)
     {
         _gameDefinition = gameDefinition;
         _gameAlgorithm = gameAlgorithm;
         _gameCache = gameCache;
         _logger = logger;
         _efContext = context;
+        _eventService = eventService;
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ internal class Game6x4Service : IGameService
         await _efContext.InitGameAsync(game.ToDataGame());
 
         _logger.GameStarted(game.ToString());
+        await _eventService.FireGameCreatedEventAsync(game);
 
         return game;
     }
@@ -84,6 +87,7 @@ internal class Game6x4Service : IGameService
             }
 
             _logger.SetMove(guess.ToString(), result.ToString());
+            await _eventService.FireMoveCreatedEventAsync(guess);
             return result;
         }
         catch (Exception ex)
