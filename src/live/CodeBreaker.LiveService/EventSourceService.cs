@@ -10,9 +10,14 @@ public class EventSourceService
 
     public EventSourceService(IConfiguration configuration)
     {
-        string consumerGroupName = EventHubConsumerClient.DefaultConsumerGroupName;
-        const string eventHubConnectionString = "Azure:EventHub:ConnectionString";
-        _eventHubConsumerClient = new EventHubConsumerClient(consumerGroupName, configuration[eventHubConnectionString] ?? throw new ArgumentNullException($"The \"{eventHubConnectionString}\" is not configured"));
+        const string consumerGroupConfigurationName = "Azure:EventHub:ConsumerGroupName";
+        const string connectionStringConfigurationName = "Azure:EventHub:ConnectionString";
+        const string nameConfigurationNae = "Azure:EventHub:Name";
+        _eventHubConsumerClient = new EventHubConsumerClient(
+            configuration[consumerGroupConfigurationName] ?? EventHubConsumerClient.DefaultConsumerGroupName,
+            configuration[connectionStringConfigurationName] ?? throw new ArgumentNullException(connectionStringConfigurationName, $"{connectionStringConfigurationName} is not configured"),
+            configuration[nameConfigurationNae] ?? throw new ArgumentNullException(nameConfigurationNae, $"{nameConfigurationNae} is not configured")
+        );
     }
 
     public async IAsyncEnumerable<LiveHubArgs> SubscribeAsync([EnumeratorCancellation] CancellationToken token = default)
