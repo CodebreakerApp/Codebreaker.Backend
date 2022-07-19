@@ -17,7 +17,7 @@ app.MapPost("/event", (
 ) =>
 {
     foreach (EventGridEvent e in events)
-        hub.FireGameEventAsync(new(e.EventType, e.Data), token);
+        hub.FireGameEvent(new(e.EventType, e.Data), token);
 });
 
 app.Run();

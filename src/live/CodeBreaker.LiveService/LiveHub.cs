@@ -5,6 +5,6 @@ namespace LiveService;
 
 public class LiveHub : Hub
 {
-    public Task FireGameEventAsync(LiveHubArgs args, CancellationToken token) =>
+    public Task FireGameEvent(LiveHubArgs args, CancellationToken token) =>
         Clients.All.SendAsync("gameEvent", args, token);
 }
