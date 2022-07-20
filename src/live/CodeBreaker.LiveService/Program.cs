@@ -1,23 +1,10 @@
-using Azure.Messaging.EventGrid;
+using CodeBreaker.LiveService.Extensions;
+using CodeBreaker.LiveService.Options;
 using LiveService;
-using Microsoft.AspNetCore.Mvc;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddSignalR().AddAzureSignalR();
-
+builder.Services.AddSignalR().AddAzureSignalRIfConfigured(builder.Configuration);
 WebApplication app = builder.Build();
 
 app.MapHub<LiveHub>("/live");
-
-app.MapPost("/event", (
-    [FromBody] EventGridEvent[] events,
-    [FromServices] LiveHub hub,
-    CancellationToken token
-) =>
-{
-    foreach (EventGridEvent e in events)
-        hub.FireGameEvent(new(e.EventType, e.Data), token);
-});
-
 app.Run();

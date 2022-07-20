@@ -2,18 +2,20 @@
 using System.Text.Json;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
+using CodeBreaker.APIs.Options;
 using CodeBreaker.LiveService.Shared;
+using Microsoft.Extensions.Options;
 using static CodeBreaker.LiveService.Shared.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
 
-public class EventService : IEventService
+public class EventService : IPublishEventService
 {
     private readonly EventHubProducerClient _eventGridPublisherClient;
 
-    public EventService(IConfiguration configuration)
+    public EventService(IOptions<AzureOptions> azureOptions)
     {
-        _eventGridPublisherClient = new EventHubProducerClient(configuration["Azure:EventHub:ConnectionString"], configuration["Azure:EventHub:Name"]);
+        _eventGridPublisherClient = new (azureOptions.Value.EventHub.ConnectionString, azureOptions.Value.EventHub.Name);
     }
 
     public Task FireGameCreatedEventAsync(Game game, CancellationToken token = default) =>
@@ -25,12 +27,12 @@ public class EventService : IEventService
     private async Task SendEventAsync<TData>(string eventName, TData data, CancellationToken token = default)
         where TData : notnull
     {
-        LiveHubArgs args = new LiveHubArgs(eventName, data);
+        LiveHubArgs args = new (eventName, data);
         using EventDataBatch eventBatch = await _eventGridPublisherClient.CreateBatchAsync(token);
 
         if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(args)))))
-            throw new Exception("Could not add game to the eventBatch");
+            throw new EventBatchSizeException("Could not add game to the eventBatch. The payload is too large. (https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging.eventdatabatch.tryadd?view=azure-dotnet#remarks)");
 
-        await _eventGridPublisherClient.SendAsync(eventBatch);
+        await _eventGridPublisherClient.SendAsync(eventBatch, token);
     }
 }

@@ -8,7 +8,7 @@ internal class Game8x5Service : IGameService
     private readonly IGameCache _gameCache;
     private readonly ILogger _logger;
     private readonly ICodeBreakerContext _efContext;
-    private readonly IEventService _eventService;
+    private readonly IPublishEventService _eventService;
 
     public Game8x5Service(
         Game8x5Definition gameDefinition,
@@ -16,7 +16,7 @@ internal class Game8x5Service : IGameService
         IGameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game8x5Service> logger,
-        IEventService eventService)
+        IPublishEventService eventService)
     {
         _gameDefinition = gameDefinition;
         _gameAlgorithm = gameAlgorithm;

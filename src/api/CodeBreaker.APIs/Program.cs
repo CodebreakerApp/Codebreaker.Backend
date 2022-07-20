@@ -4,7 +4,6 @@ global using CodeBreaker.APIs.Exceptions;
 global using CodeBreaker.APIs.Extensions;
 global using CodeBreaker.APIs.Services;
 global using CodeBreaker.Shared;
-global using CodeBreaker.Shared.APIModels;
 
 global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
@@ -12,18 +11,18 @@ global using Microsoft.EntityFrameworkCore;
 
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
+using CodeBreaker.APIs.Options;
+using CodeBreaker.APIs.Utilities;
 
 
 #if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
-
 using System.Configuration;
 #endif
 
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -44,7 +43,7 @@ using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
 #endif
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.BindOptions<AzureOptions>(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
@@ -62,7 +61,7 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
 builder.Services.AddSingleton<Game6x4Definition>();
 builder.Services.AddSingleton<Game8x5Definition>();
 builder.Services.AddSingleton<IGameCache, GameCache>();
-builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IPublishEventService, EventService>();
 builder.Services.AddScoped<Game6x4Service>();
 builder.Services.AddScoped<Game8x5Service>();
 builder.Services.AddScoped<IGameAlgorithm, GameAlgorithm>();

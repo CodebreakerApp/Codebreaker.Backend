@@ -9,7 +9,7 @@ internal class Game6x4Service : IGameService
     private readonly IGameCache _gameCache;
     private readonly ICodeBreakerContext _efContext;
     private readonly ILogger _logger;
-    private readonly IEventService _eventService;
+    private readonly IPublishEventService _eventService;
 
     public Game6x4Service(
         Game6x4Definition gameDefinition,
@@ -17,7 +17,7 @@ internal class Game6x4Service : IGameService
         IGameCache gameCache,
         ICodeBreakerContext context,
         ILogger<Game6x4Service> logger,
-        IEventService eventService)
+        IPublishEventService eventService)
     {
         _gameDefinition = gameDefinition;
         _gameAlgorithm = gameAlgorithm;
