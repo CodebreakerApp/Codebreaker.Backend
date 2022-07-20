@@ -1,5 +1,4 @@
 ﻿using CodeBreaker.Shared;
-using CodeBreaker.Shared.APIModels;
 
 using Microsoft.Extensions.Logging;
 
