@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 
 namespace CodeBreaker.Services;
 
-public class GameClient
+public class GameClient : IGameClient, IGameReportClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
