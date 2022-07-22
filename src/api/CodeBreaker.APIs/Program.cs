@@ -46,16 +46,15 @@ using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
     }).Build();
 #endif
 
+DefaultAzureCredential azureCredential = new();
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationErrorsException("AzureAppConfigurationEndpoint");
-    DefaultAzureCredential credential = new();
-    //AzureCliCredential credential = new();
-    options.Connect(new Uri(endpoint), credential)
+    options.Connect(new Uri(endpoint), azureCredential)
         .Select(KeyFilter.Any, LabelFilter.Null)
         .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
-        .ConfigureKeyVault(vault => vault.SetCredential(credential));
+        .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
@@ -73,7 +72,7 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
 builder.Services.AddSingleton<EventHubProducerClient>(builder =>
 {
     ApiServiceOptions options = builder.GetRequiredService<ApiServiceOptions>();
-    return new(options.EventHub.FullyQualifiedNamespace, options.EventHub.Name, new AzureCliCredential());
+    return new(options.EventHub.FullyQualifiedNamespace, options.EventHub.Name, azureCredential);
 });
 builder.Services.AddSingleton<Game6x4Definition>();
 builder.Services.AddSingleton<Game8x5Definition>();
