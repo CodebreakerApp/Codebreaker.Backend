@@ -1,4 +1,6 @@
-﻿namespace CodeBreaker.Bot;
+﻿using CodeBreaker.Shared;
+
+namespace CodeBreaker.Bot;
 
 public class CodeBreakerGameRunner
 {
