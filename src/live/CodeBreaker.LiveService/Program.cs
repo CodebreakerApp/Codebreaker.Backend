@@ -11,8 +11,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationNotFoundException("AzureAppConfigurationEndpoint");
-    //DefaultAzureCredential credential = new();
-    AzureCliCredential credential = new();
+    DefaultAzureCredential credential = new();
+    //AzureCliCredential credential = new();
     options.Connect(new Uri(endpoint), credential)
         .Select(KeyFilter.Any, LabelFilter.Null)
         .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
