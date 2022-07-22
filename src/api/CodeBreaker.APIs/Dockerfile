@@ -7,6 +7,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["api/CodeBreaker.APIs/CodeBreaker.APIs.csproj", "api/CodeBreaker.APIs/"]
+COPY ["shared/CodeBreaker.LiveService.Shared/CodeBreaker.LiveService.Shared.csproj", "shared/CodeBreaker.LiveService.Shared/"]
 COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
 COPY ["api/CodeBreaker.APIs.Tests/CodeBreaker.APIs.Tests.csproj", "api/CodeBreaker.APIs.Tests/"]
 RUN dotnet restore "api/CodeBreaker.APIs/CodeBreaker.APIs.csproj"

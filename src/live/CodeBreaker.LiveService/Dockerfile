@@ -6,16 +6,18 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["LiveService/LiveService.csproj", "LiveService/"]
-RUN dotnet restore "LiveService/LiveService.csproj"
+COPY ["live/CodeBreaker.LiveService/CodeBreaker.LiveService.csproj", "live/CodeBreaker.LiveService/"]
+COPY ["shared/CodeBreaker.LiveService.Shared/CodeBreaker.LiveService.Shared.csproj", "shared/CodeBreaker.LiveService.Shared/"]
+COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
+RUN dotnet restore "live/CodeBreaker.LiveService/CodeBreaker.LiveService.csproj"
 COPY . .
-WORKDIR "/src/LiveService"
-RUN dotnet build "LiveService.csproj" -c Release -o /app/build
+WORKDIR "/src/live/CodeBreaker.LiveService"
+RUN dotnet build "CodeBreaker.LiveService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "LiveService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "CodeBreaker.LiveService.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "LiveService.dll"]
+ENTRYPOINT ["dotnet", "CodeBreaker.LiveService.dll"]
