@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CodeBreaker.LiveService.Shared\CodeBreaker.LiveService.Shared.csproj" />
     <ProjectReference Include="..\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
   </ItemGroup>
 

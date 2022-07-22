@@ -1,3 +1,3 @@
 ﻿namespace CodeBreaker.LiveService.Shared;
 
-public record LiveHubArgs(string name, object data);
+public record LiveHubArgs(string Name, object Data);
