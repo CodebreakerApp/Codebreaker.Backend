@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Consumer;
+using CodeBreaker.LiveService;
 using CodeBreaker.LiveService.Options;
 using CodeBreaker.Shared.Exceptions;
 using LiveService;
@@ -30,6 +31,7 @@ builder.Services.AddSingleton(x =>
         azureCredential
     );
 });
+builder.Services.AddSingleton<EventSourceService>();
 string? signalRConnectionString = builder.Configuration["LiveService:ConnectionStrings:SignalR"];
 builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 WebApplication app = builder.Build();
