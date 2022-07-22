@@ -20,7 +20,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<LiveServiceOptions>(builder.Configuration.GetRequiredSection("LiveService"));
 builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<LiveServiceOptions>>().Value);
-builder.Services.AddScoped(x =>
+builder.Services.AddSingleton(x =>
 {
     LiveServiceOptions options = x.GetRequiredService<LiveServiceOptions>();
     return new EventHubConsumerClient(

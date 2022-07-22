@@ -77,7 +77,7 @@ builder.Services.AddSingleton<EventHubProducerClient>(builder =>
 builder.Services.AddSingleton<Game6x4Definition>();
 builder.Services.AddSingleton<Game8x5Definition>();
 builder.Services.AddSingleton<IGameCache, GameCache>();
-builder.Services.AddScoped<IPublishEventService, EventService>();
+builder.Services.AddSingleton<IPublishEventService, EventService>();
 builder.Services.AddScoped<Game6x4Service>();
 builder.Services.AddScoped<Game8x5Service>();
 builder.Services.AddScoped<IGameAlgorithm, GameAlgorithm>();
