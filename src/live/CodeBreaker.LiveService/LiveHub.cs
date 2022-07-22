@@ -15,5 +15,6 @@ public class LiveHub : Hub
         Clients.All.SendAsync("gameEvent", args, token);
 
     public IAsyncEnumerable<LiveHubArgs> SubscribeToGameEvents(CancellationToken token) =>
-        _eventSourceService.SubscribeAsync(token);
+        _eventSourceService.SubscribeAsync(token)
+            .Where(x => x.Name is not null);
 }
