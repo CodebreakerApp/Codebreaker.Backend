@@ -15,9 +15,9 @@ public class CodeBreakerExtensionsTests
     public void TestToGame()
     {
         Game6x4Definition definition = new();
-        Game expected = new("79fa64d6-9ba7-4e56-90b6-8ed7aba3c6e1", GameTypes.Game6x4, "test", new[] { Green, Green, Yellow, Green},  definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
-        CodeBreakerGame dbGame = new("79fa64d6-9ba7-4e56-90b6-8ed7aba3c6e1", GameTypes.Game6x4, "Green..Green..Yellow..Green", "test", expected.Holes, expected.ColorList.ToArray(), definition.MaxMoves, expected.StartTime);
-        Game actual = CodeBreakerExtensions.ToGame(dbGame);
+        Game expected = new(Guid.Parse("79fa64d6-9ba7-4e56-90b6-8ed7aba3c6e1"), GameTypes.Game6x4, "test", new[] { Green, Green, Yellow, Green},  definition.Colors, definition.Holes, definition.MaxMoves, DateTime.Now);
+        CodeBreakerGame dbGame = new(Guid.Parse("79fa64d6-9ba7-4e56-90b6-8ed7aba3c6e1"), GameTypes.Game6x4, "Green..Green..Yellow..Green", "test", expected.Holes, expected.ColorList.ToArray(), definition.MaxMoves, expected.StartTime);
+        var actual = CodeBreakerExtensions.ToGame(dbGame);
         Assert.Equal(expected, actual);
     }
 }

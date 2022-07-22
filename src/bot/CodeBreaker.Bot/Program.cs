@@ -1,5 +1,4 @@
 global using Microsoft.ApplicationInsights.Extensibility;
-global using CodeBreaker.Shared.APIModels;
 global using CodeBreaker.Bot;
 global using System.Collections.Concurrent;
 

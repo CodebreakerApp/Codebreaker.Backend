@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CodeBreaker.APIs.Tests": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -8,8 +8,12 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["bot/CodeBreaker.Bot/CodeBreaker.Bot.csproj", "bot/CodeBreaker.Bot/"]
 COPY ["shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj", "shared/CodeBreaker.Shared/"]
+COPY ["bot/CodeBreaker.Bot.Tests/CodeBreaker.Bot.Tests.csproj", "bot/CodeBreaker.Bot.Tests/"]
 RUN dotnet restore "bot/CodeBreaker.Bot/CodeBreaker.Bot.csproj"
+RUN dotnet restore "bot/CodeBreaker.Bot.Tests/CodeBreaker.Bot.Tests.csproj"
 COPY . .
+WORKDIR "/src/bot/CodeBreaker.Bot.Tests"
+RUN dotnet test "CodeBreaker.Bot.Tests.csproj"
 WORKDIR "/src/bot/CodeBreaker.Bot"
 RUN dotnet build "CodeBreaker.Bot.csproj" -c Release -o /app/build
 

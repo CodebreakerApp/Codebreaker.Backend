@@ -11,8 +11,12 @@ global using Microsoft.EntityFrameworkCore;
 
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
+using Azure.Identity;
+using Azure.Messaging.EventHubs.Producer;
 using CodeBreaker.APIs.Options;
 using CodeBreaker.APIs.Utilities;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.Options;
 
 
 #if USEPROMETHEUS
@@ -42,26 +46,38 @@ using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
     }).Build();
 #endif
 
+DefaultAzureCredential azureCredential = new();
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.BindOptions<AzureOptions>(builder.Configuration);
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationErrorsException("AzureAppConfigurationEndpoint");
+    options.Connect(new Uri(endpoint), azureCredential)
+        .Select(KeyFilter.Any, LabelFilter.Null)
+        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
+});
+builder.Services.AddAzureAppConfiguration();
+builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
+builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-});
+builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
-    string? connectionString = builder.Configuration.GetSection("CodeBreakerAPI").GetConnectionString("CodeBreakerConnection");
-    if (connectionString is null) throw new ConfigurationErrorsException("No connection string found with the configuration.");
+    string connectionString = builder.Configuration["CodeBreakerAPI:ConnectionStrings:CodeBreakerConnection"] ?? throw new ConfigurationErrorsException("No connection string found with the configuration.");
     options.UseCosmos(connectionString, "codebreaker");
+});
+builder.Services.AddSingleton<EventHubProducerClient>(builder =>
+{
+    ApiServiceOptions options = builder.GetRequiredService<ApiServiceOptions>();
+    return new(options.EventHub.FullyQualifiedNamespace, options.EventHub.Name, azureCredential);
 });
 builder.Services.AddSingleton<Game6x4Definition>();
 builder.Services.AddSingleton<Game8x5Definition>();
 builder.Services.AddSingleton<IGameCache, GameCache>();
-builder.Services.AddScoped<IPublishEventService, EventService>();
+builder.Services.AddSingleton<IPublishEventService, EventService>();
 builder.Services.AddScoped<Game6x4Service>();
 builder.Services.AddScoped<Game8x5Service>();
 builder.Services.AddScoped<IGameAlgorithm, GameAlgorithm>();
@@ -84,10 +100,11 @@ app.UseCors(AllowCodeBreakerOrigins);
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseAzureAppConfiguration();
 
 app.MapPost("/start/{gameType}", async (CreateGameRequest request, string gameType, string? apiVersion) =>
 {
-    using var scope = app.Services.CreateScope();
+    await using var scope = app.Services.CreateAsyncScope();
 
     IGameService? service = GetGameService(scope.ServiceProvider, gameType);
     if (service is null)
@@ -113,7 +130,7 @@ app.MapPost("/move/{gameType}", async (MoveRequest request, string gameType, str
     {
         // TODO: get game type from the game id, it should not be necessary to pass it with this request
 
-        using var scope = app.Services.CreateScope();
+        await using var scope = app.Services.CreateAsyncScope();
 
         IGameService? service = GetGameService(scope.ServiceProvider, gameType);
         if (service is null)

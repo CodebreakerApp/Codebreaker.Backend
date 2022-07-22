@@ -2,7 +2,7 @@
 
 namespace CodeBreaker.APIs.Exceptions;
 
-public class EventBatchSizeException : ApplicationException
+public class EventBatchSizeException : Exception
 {
     public EventBatchSizeException()
     {
