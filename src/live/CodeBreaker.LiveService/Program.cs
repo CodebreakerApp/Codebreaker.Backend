@@ -26,7 +26,7 @@ builder.Services.AddSingleton(x =>
     LiveServiceOptions options = x.GetRequiredService<LiveServiceOptions>();
     return new EventHubConsumerClient(
         options.EventHub.ConsumerGroupName ?? EventHubConsumerClient.DefaultConsumerGroupName,
-        options.EventHub.ConnectionString ?? throw new ConfigurationNotFoundException(),
+        options.EventHub.FullyQualifiedNamespace ?? throw new ConfigurationNotFoundException(),
         options.EventHub.Name ?? throw new ConfigurationNotFoundException(),
         azureCredential
     );

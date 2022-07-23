@@ -12,16 +12,16 @@ public class LiveClient
         _hubConnection = hubConnection;
     }
 
-    public IAsyncEnumerable<LiveHubArgs> SubscribeToEventsAsync()
+    public Task StartAsync(CancellationToken token = default)
     {
-        try
-        {
-            return _hubConnection.StreamAsync<LiveHubArgs>("SubscribeToGameEvents");
-        }
-        catch (Exception e)
-        {
+        return _hubConnection.StartAsync(token);
+    }
 
-            throw;
-        }
+    public IAsyncEnumerable<LiveHubArgs> SubscribeToEventsAsync(CancellationToken token = default)
+    {
+        if (_hubConnection.State != HubConnectionState.Connected)
+            throw new InvalidOperationException("The SignalR-Client has to be started before");
+
+        return _hubConnection.StreamAsync<LiveHubArgs>("SubscribeToGameEvents", token);
     }
 }

@@ -16,7 +16,7 @@ public class EventHubOptions
 {
     public string? ConsumerGroupName { get; set; }
 
-    public string ConnectionString { get; set; } = string.Empty;
+    public string FullyQualifiedNamespace { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
 }
