@@ -6,13 +6,10 @@ namespace LiveService;
 
 public class LiveHub : Hub
 {
-    private readonly EventSourceService _eventSourceService;
+    private readonly IEventSourceService _eventSourceService;
 
-    public LiveHub(EventSourceService eventSourceService) =>
+    public LiveHub(IEventSourceService eventSourceService) =>
         _eventSourceService = eventSourceService;
-
-    public Task FireGameEvent(LiveHubArgs args, CancellationToken token) =>
-        Clients.All.SendAsync("gameEvent", args, token);
 
     public IAsyncEnumerable<LiveHubArgs> SubscribeToGameEvents(CancellationToken token) =>
         _eventSourceService.SubscribeAsync(token)

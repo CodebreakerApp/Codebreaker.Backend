@@ -4,7 +4,7 @@ using CodeBreaker.LiveService.Shared;
 
 namespace CodeBreaker.LiveService;
 
-public class EventSourceService
+public class EventSourceService : IEventSourceService
 {
     private readonly EventHubConsumerClient _eventHubConsumerClient;
 
