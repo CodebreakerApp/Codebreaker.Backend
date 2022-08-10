@@ -8,7 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
+#if DEBUG
+AzureCliCredential azureCredential = new();
+#else
 DefaultAzureCredential azureCredential = new();
+#endif
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
@@ -34,7 +38,13 @@ builder.Services.AddSingleton(x =>
 builder.Services.AddSingleton<ILiveHubSender, LiveHubSender>();
 builder.Services.AddSingleton<IEventSourceService, EventSourceService>();
 string? signalRConnectionString = builder.Configuration["LiveService:ConnectionStrings:SignalR"];
+
+#if DEBUG
+builder.Services.AddSignalR();
+#else
 builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
+#endif
+
 builder.Services.AddHostedService<EventHandlingService>();
 
 WebApplication app = builder.Build();

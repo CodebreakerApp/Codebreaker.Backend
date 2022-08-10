@@ -11,6 +11,11 @@ public class LiveHubSender : ILiveHubSender
     public LiveHubSender(IHubContext<LiveHub> hubContext) =>
         _hubContext = hubContext;
 
-    public Task FireGameEvent(LiveHubArgs args, CancellationToken token) =>
-        _hubContext.Clients.All.SendAsync("gameEvent", args, token);
+    public Task FireGameEvent(LiveHubArgs args, CancellationToken token)
+    {
+        if (args is null)
+            throw new ArgumentNullException(nameof(args));
+
+        return _hubContext.Clients.All.SendAsync("gameEvent", args, token);
+    }
 }

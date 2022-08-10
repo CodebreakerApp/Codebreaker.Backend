@@ -26,7 +26,7 @@ public class LiveClient
         _logger = logger;
         _hubConnection = hubConnection;
         InitializeEventHandlers();
-        _hubConnection.On<LiveHubArgs>("gameEvent", args => _eventHandlers[args.Name](args));
+        _hubConnection.On<LiveHubArgs>("gameEvent", OnRemoteEvent);
     }
 
     public Task StartAsync(CancellationToken token = default)
@@ -40,6 +40,17 @@ public class LiveClient
             throw new InvalidOperationException("The SignalR-Client has to be started before");
 
         return _hubConnection.StreamAsync<LiveHubArgs>("SubscribeToGameEvents", token);
+    }
+
+    private void OnRemoteEvent(LiveHubArgs args)
+    {
+        if (args is null || args.Name is null)
+            throw new ArgumentNullException(nameof(args));
+
+        if (!_eventHandlers.TryGetValue(args.Name, out Action<LiveHubArgs>? action))
+            throw new ArgumentOutOfRangeException(nameof(args.Name), "No EventHandler for this eventName found.");
+
+        action(args);
     }
 
     private void InitializeEventHandlers()
