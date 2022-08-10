@@ -31,9 +31,12 @@ builder.Services.AddSingleton(x =>
         azureCredential
     );
 });
-builder.Services.AddSingleton<EventSourceService>();
+builder.Services.AddSingleton<ILiveHubSender, LiveHubSender>();
+builder.Services.AddSingleton<IEventSourceService, EventSourceService>();
 string? signalRConnectionString = builder.Configuration["LiveService:ConnectionStrings:SignalR"];
 builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
+builder.Services.AddHostedService<EventHandlingService>();
+
 WebApplication app = builder.Build();
 
 app.UseAzureAppConfiguration();
