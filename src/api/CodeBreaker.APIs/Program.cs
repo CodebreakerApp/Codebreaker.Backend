@@ -46,7 +46,11 @@ using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
     }).Build();
 #endif
 
+#if DEBUG
+AzureCliCredential azureCredential = new();
+#else
 DefaultAzureCredential azureCredential = new();
+#endif
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
