@@ -80,6 +80,8 @@ internal class Game6x4Service : IGameService
                 await _efContext.AddMoveAsync(dataMove);
             }
 
+            await _eventService.FireMoveCreatedEventAsync(guess);
+
             if (result.Completed)
             {
                 await _efContext.UpdateGameAsync(dataGame);
@@ -87,7 +89,6 @@ internal class Game6x4Service : IGameService
             }
 
             _logger.SetMove(guess.ToString(), result.ToString());
-            await _eventService.FireMoveCreatedEventAsync(guess);
             return result;
         }
         catch (Exception ex)
