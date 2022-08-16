@@ -1,9 +1,11 @@
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Consumer;
 using CodeBreaker.LiveService;
+using CodeBreaker.LiveService.ApplicationInsights;
 using CodeBreaker.LiveService.Options;
 using CodeBreaker.Shared.Exceptions;
 using LiveService;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
@@ -22,6 +24,8 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<LiveServiceOptions>(builder.Configuration.GetRequiredSection("LiveService"));
 builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<LiveServiceOptions>>().Value);
