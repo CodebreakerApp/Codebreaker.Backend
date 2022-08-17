@@ -24,6 +24,8 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 builder.Services.AddAzureAppConfiguration();
@@ -53,6 +55,8 @@ builder.Services.AddHostedService<EventHandlingService>();
 
 WebApplication app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseAzureAppConfiguration();
 app.MapHub<LiveHub>("/live");
 app.MapGet("/update-config", (
@@ -62,5 +66,8 @@ app.MapGet("/update-config", (
 {
     c.Reload();
     logger.LogInformation("Configuration reloaded");
-});
+    return Results.NoContent();
+})
+.WithDescription("Triggers the reload of the configuration.")
+.Produces(StatusCodes.Status204NoContent);
 app.Run();
