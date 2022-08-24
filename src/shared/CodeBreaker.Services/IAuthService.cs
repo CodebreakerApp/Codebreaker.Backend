@@ -4,7 +4,7 @@ namespace CodeBreaker.Services;
 
 public interface IAuthService
 {
-    Task<AuthenticationResult> LoginAsync(CancellationToken cancellation = default);
+    UserInformation? LastUserInformation { get; }
 
-    Task<bool> IsAuthenticatedAsync(CancellationToken cancellation = default);
+    Task<AuthenticationResult> LoginAsync(CancellationToken cancellation = default);
 }

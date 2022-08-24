@@ -1,7 +1,31 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 
 namespace CodeBreaker.Services;
+
+public record UserInformation(
+    IAccount Account,
+    IEnumerable<string> EmailAddresses,
+    string FirstName,
+    string LastName,
+    string Username,
+    string GamerName
+)
+{
+    public static UserInformation FromAuthenticationResult(AuthenticationResult authenticationResult)
+    {
+        string GetClaim(string type) => authenticationResult.ClaimsPrincipal.Claims.First(x => x.Type == type).Value;
+        return new(
+            authenticationResult.Account,
+            GetClaim("emails").Split(','),
+            GetClaim("given_name"),
+            GetClaim("family_name"),
+            GetClaim("name"),
+            GetClaim("gamer_name")
+        );
+    }
+}
 
 public class AuthService : IAuthService
 {
@@ -36,6 +60,8 @@ public class AuthService : IAuthService
 
     private IPublicClientApplication PublicClientApplication { get; }
 
+    public UserInformation? LastUserInformation { get; private set; }
+
     public AuthService(ILogger<AuthService> logger)
     {
         _logger = logger;
@@ -48,11 +74,13 @@ public class AuthService : IAuthService
 
     public async Task<AuthenticationResult> LoginAsync(CancellationToken cancellation = default)
     {
-        IAccount? account = (await GetAccountsAsync()).FirstOrDefault();
+        IAccount? account = (await GetAccountsAsync(cancellation)).FirstOrDefault();
 
         try
         {
-            return await PublicClientApplication.AcquireTokenSilent(ApiScopes, account).ExecuteAsync(cancellation);
+            AuthenticationResult result = await PublicClientApplication.AcquireTokenSilent(ApiScopes, account).ExecuteAsync(cancellation);
+            LastUserInformation = UserInformation.FromAuthenticationResult(result);
+            return result;
         }
         catch (MsalUiRequiredException)
         {
@@ -60,14 +88,11 @@ public class AuthService : IAuthService
 
             try
             {
-                return await PublicClientApplication
+                AuthenticationResult result = await PublicClientApplication
                     .AcquireTokenInteractive(ApiScopes)
-                    //.WithUseEmbeddedWebView(false)
-                    //.WithSystemWebViewOptions(new()
-                    //{
-                    //    OpenBrowserAsync = OpenInteractiveAsync
-                    //})
                     .ExecuteAsync(cancellation);
+                LastUserInformation = UserInformation.FromAuthenticationResult(result);
+                return result;
             }
             catch (MsalException msalEx)
             {
@@ -82,17 +107,9 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<bool> IsAuthenticatedAsync(CancellationToken cancellation = default)
+    private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation)
     {
         cancellation.ThrowIfCancellationRequested();
-        return (await PublicClientApplication.GetAccountsAsync()).Any();
+        return PublicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
     }
-
-    private Task OpenInteractiveAsync(Uri uri)
-    {
-        return Task.CompletedTask;
-    }
-
-    private Task<IEnumerable<IAccount>> GetAccountsAsync() =>
-        PublicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
 }
