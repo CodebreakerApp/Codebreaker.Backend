@@ -1,6 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 
-namespace CodeBreaker.Services;
+namespace CodeBreaker.Services.Authentication;
 
 public interface IAuthService
 {
