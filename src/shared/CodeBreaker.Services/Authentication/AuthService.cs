@@ -2,30 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 
-namespace CodeBreaker.Services;
-
-public record UserInformation(
-    IAccount Account,
-    IEnumerable<string> EmailAddresses,
-    string FirstName,
-    string LastName,
-    string Username,
-    string GamerName
-)
-{
-    public static UserInformation FromAuthenticationResult(AuthenticationResult authenticationResult)
-    {
-        string GetClaim(string type) => authenticationResult.ClaimsPrincipal.Claims.First(x => x.Type == type).Value;
-        return new(
-            authenticationResult.Account,
-            GetClaim("emails").Split(','),
-            GetClaim("given_name"),
-            GetClaim("family_name"),
-            GetClaim("name"),
-            GetClaim("gamer_name")
-        );
-    }
-}
+namespace CodeBreaker.Services.Authentication;
 
 public class AuthService : IAuthService
 {
