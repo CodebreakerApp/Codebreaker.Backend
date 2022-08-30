@@ -4,8 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
     <UserSecretsId>4053495e-84a4-48c2-91d3-4b8290310020</UserSecretsId>
     <ApplicationInsightsResourceId>/subscriptions/7221029f-b7dc-4ab8-b117-111900d0d73c/resourceGroups/codebreaker/providers/microsoft.insights/components/codebreakerinsights</ApplicationInsightsResourceId>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
