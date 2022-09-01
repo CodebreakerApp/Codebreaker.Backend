@@ -3,6 +3,7 @@ using System.Text.Json;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
 using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Shared.Models.Data;
 using static CodeBreaker.LiveService.Shared.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
@@ -19,7 +20,7 @@ public class EventService : IPublishEventService, IAsyncDisposable
     public Task FireGameCreatedEventAsync(Game game, CancellationToken token = default) =>
         SendEventAsync(GameCreatedEventName, game, token);
 
-    public Task FireMoveCreatedEventAsync(GameMove move, CancellationToken token = default) =>
+    public Task FireMoveCreatedEventAsync(Move move, CancellationToken token = default) =>
         SendEventAsync(MoveCreatedEventName, move, token);
 
     private async Task SendEventAsync<TData>(string eventName, TData data, CancellationToken token = default)

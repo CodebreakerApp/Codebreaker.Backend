@@ -13,17 +13,24 @@ public class GameService : IGameService
 
 	private readonly ILogger _logger;
 
-	public GameService(CodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger)
+    private readonly IPublishEventService _eventService;
+
+	public GameService(CodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
 	{
 		_dbContext = dbContext;
 		_gameCache = gameCache;
 		_logger = logger;
+        _eventService = eventService;
 	}
 
-	public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date) =>
-		_dbContext.Games
-			.Where(x => DateOnly.FromDateTime(x.Start) == date)
-			.AsAsyncEnumerable();
+	public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date)
+    {
+        DateTime begin = new DateTime(date.Year, date.Month, date.Day);
+        DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
+        return _dbContext.Games
+            .Where(x => x.Start >= begin && x.Start < end)
+            .AsAsyncEnumerable();
+    }
 
 	public virtual async ValueTask<Game?> GetAsync(Guid id) =>
 		_gameCache.GetOrDefault(id)
@@ -35,6 +42,8 @@ public class GameService : IGameService
 		_gameCache.Set(game.GameId, game);
 		_dbContext.Games.Add(game);
 		await _dbContext.SaveChangesAsync();
+        _logger.GameStarted(game.ToString());
+        await _eventService.FireGameCreatedEventAsync(game);
 		return game;
 	}
 

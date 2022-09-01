@@ -1,5 +1,23 @@
 ﻿namespace CodeBreaker.Shared.Models.Data;
 
+//public record class Game(
+//    Guid GameId,
+//    GameType<string> Type,
+//    string Username,
+//    IReadOnlyList<string> Code,
+//    DateTime Start,
+//    DateTime? End,
+//    IList<Move> Moves
+//)
+//{
+//    public bool Ended => End != null;
+
+//    public bool Won => Moves.LastOrDefault()?.KeyPegs?.Black == Type.Holes;
+
+//    public override string ToString() =>
+//        $"{GameId} for {Username}, {string.Join("..", Code)}";
+//}
+
 public record Game
 {
     private readonly Guid _id;

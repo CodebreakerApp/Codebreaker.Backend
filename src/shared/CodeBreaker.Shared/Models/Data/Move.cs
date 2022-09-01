@@ -1,5 +1,23 @@
 ﻿namespace CodeBreaker.Shared.Models.Data;
 
+//public record struct KeyPegs(int Black, int White);
+
+//public record class Move<TField>(
+//    int MoveNumber,
+//    IReadOnlyList<TField> GuessPegs,
+//    KeyPegs? KeyPegs
+//);
+
+//public record class Move(
+//    int MoveNumber,
+//    IReadOnlyList<string> GuessPegs,
+//    KeyPegs? KeyPegs
+//) : Move<string>(
+//    MoveNumber,
+//    GuessPegs,
+//    KeyPegs
+//);
+
 public record Move : Move<string>
 {
     public Move()
@@ -38,7 +56,7 @@ public record Move<TField>
     }
 
     public Move(int moveNumber, IReadOnlyList<TField> guessPegs)
-        :this(guessPegs)
+        : this(guessPegs)
     {
         MoveNumber = moveNumber;
     }

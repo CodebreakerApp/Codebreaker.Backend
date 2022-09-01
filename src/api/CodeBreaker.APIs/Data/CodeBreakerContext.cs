@@ -1,7 +1,6 @@
 ﻿using CodeBreaker.APIs.Data.DbConfiguration;
 using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Report;
-using System.Reflection;
 
 namespace CodeBreaker.APIs.Data;
 
@@ -32,7 +31,7 @@ public class CodeBreakerContext : DbContext//, ICodeBreakerContext
 
     //public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
 
-    public Task InitGameAsync(Shared.Models.Data.Game game)
+    public Task InitGameAsync(Game game)
     {
         throw new NotImplementedException();
 
@@ -41,7 +40,7 @@ public class CodeBreakerContext : DbContext//, ICodeBreakerContext
         //_logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
     }
     
-    public Task UpdateGameAsync(Shared.Models.Data.Game game)
+    public Task UpdateGameAsync(Game game)
     {
         throw new NotImplementedException();
         //try

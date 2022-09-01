@@ -11,19 +11,23 @@ public class MoveService : IMoveService
 
 	private readonly ILogger _logger;
 
-	public MoveService(CodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger)
-	{
-		_dbContext = dbContext;
-		_gameCache = gameCache;
-		_logger = logger;
-	}
+    private readonly IPublishEventService _eventService;
 
-	public virtual async Task<Game> CreateMoveAsync(Guid gameId, Move move)
+	public MoveService(CodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
+    {
+        _dbContext = dbContext;
+        _gameCache = gameCache;
+        _logger = logger;
+        _eventService = eventService;
+    }
+
+    public virtual async Task<Game> CreateMoveAsync(Guid gameId, Move move)
 	{
 		Game game = await LoadGameFromCacheOrDatabase(gameId);
 		game.ApplyMove(move);
 		await _dbContext.SaveChangesAsync();
 		_gameCache.Set(gameId, game);
+        await _eventService.FireMoveCreatedEventAsync(move);
 		return game;
 	}
 

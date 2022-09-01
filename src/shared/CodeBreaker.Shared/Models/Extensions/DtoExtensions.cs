@@ -5,7 +5,7 @@ namespace CodeBreaker.Shared.Models.Data;
 public static class DtoExtensions
 {
     public static GameDto ToDto(this Game game) =>
-        new GameDto
+        new()
         {
             GameId = game.GameId,
             Type = game.Type,
@@ -17,7 +17,7 @@ public static class DtoExtensions
         };
 
     public static MoveDto<TField> ToDto<TField>(this Move<TField> move) =>
-        new MoveDto<TField>
+        new ()
         {
             MoveNumber = move.MoveNumber,
             GuessPegs = move.GuessPegs,
@@ -25,22 +25,20 @@ public static class DtoExtensions
         };
 
     public static Game ToModel(this GameDto dto) =>
-        new Game
-        {
-            GameId = dto.GameId,
-            Type = dto.Type,
-            Code = dto.Code,
-            Moves = dto.Moves.Select(m => m.ToModel()).ToList(),
-            Start = dto.Start,
-            End = dto.End,
-            Username = dto.Username
-        };
+        new(
+            dto.GameId,
+            dto.Type,
+            dto.Username,
+            dto.Code,
+            dto.Start,
+            dto.End,
+            dto.Moves.Select(m => m.ToModel()).ToList()
+        );
 
     public static Move ToModel(this MoveDto<string> dto) =>
-        new Move
-        {
-            KeyPegs = dto.KeyPegs,
-            GuessPegs = dto.GuessPegs,
-            MoveNumber = dto.MoveNumber
-        };
+        new (
+            dto.MoveNumber,
+            dto.GuessPegs,
+            dto.KeyPegs
+        );
 }

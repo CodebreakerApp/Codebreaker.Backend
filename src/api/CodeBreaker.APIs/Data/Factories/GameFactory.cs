@@ -9,10 +9,13 @@ internal static class GameFactory
         CreateWithRandomCode(username, gameTypeFactory.Create());
 
     public static Game CreateWithRandomCode(string username, GameType<string> gameType) =>
-        new Game {
-            GameId = Guid.NewGuid(),
-            Type = gameType,
-            Username = username,
-            Code = CodeFactory.CreateRandomCode(gameType)
-        };
+        new(
+            Guid.NewGuid(),
+            gameType,
+            username,
+            CodeFactory.CreateRandomCode(gameType),
+            DateTime.Now,
+            null,
+            new List<Move> ()
+        );
 }

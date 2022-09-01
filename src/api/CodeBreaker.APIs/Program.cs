@@ -10,7 +10,10 @@ global using Microsoft.EntityFrameworkCore;
 
 global using System.Collections.Concurrent;
 global using System.Diagnostics;
+using Azure.Identity;
+using Azure.Messaging.EventHubs.Producer;
 using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+using CodeBreaker.APIs.Options;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.APIs.Utilities;
@@ -18,6 +21,8 @@ using CodeBreaker.Shared.Models.Api;
 using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.Options;
 
 
 #if USEPROMETHEUS
@@ -48,8 +53,24 @@ using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
     }).Build();
 #endif
 
+#if DEBUG
+AzureCliCredential azureCredential = new();
+#else
+DefaultAzureCredential azureCredential = new();
+#endif
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationErrorsException("AzureAppConfigurationEndpoint");
+    options.Connect(new Uri(endpoint), azureCredential)
+        .Select(KeyFilter.Any, LabelFilter.Null)
+        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
+});
+builder.Services.AddAzureAppConfiguration();
+builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
+builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
@@ -65,10 +86,17 @@ builder.Services.AddDbContext</*ICodeBreakerContext, */CodeBreakerContext>(optio
     options.UseCosmos(connectionString, "codebreaker");
 });
 
+builder.Services.AddSingleton<EventHubProducerClient>(builder =>
+{
+    ApiServiceOptions options = builder.GetRequiredService<ApiServiceOptions>();
+    return new(options.EventHub.FullyQualifiedNamespace, options.EventHub.Name, azureCredential);
+});
+
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IGameCache, GameCache>();
 builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMapper<string>>(x => new GameTypeFactoryMapper<string>().Initialize());
 
+builder.Services.AddSingleton<IPublishEventService, EventService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IMoveService, MoveService>();
 
@@ -96,12 +124,12 @@ app.UseSwaggerUI();
 // -------------------------
 
 app.MapGet("/games", (
-    [FromQuery] DateTime date,
+    [FromQuery] DateOnly date,
     [FromServices] IGameService gameService
 ) =>
 {
     IAsyncEnumerable<GameDto> games = gameService
-        .GetByDate(DateOnly.FromDateTime(date))
+        .GetByDate(date)
         .Select(g => g.ToDto());
     return new GetGamesResponse(games.ToEnumerable());
 })
@@ -112,7 +140,7 @@ app.MapGet("/games", (
 
 // Get game by id
 app.MapGet("/games/{gameId:guid}", async (
-    [FromQuery] Guid gameId,
+    [FromRoute] Guid gameId,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -161,7 +189,7 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     [FromServices] IMoveService moveService) =>
 {
     Game game;
-    Move move = new Move(req.GuessPegs.ToList());
+    Move move = new Move(0, req.GuessPegs.ToList(), null);
 
     try
     {
