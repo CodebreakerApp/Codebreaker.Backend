@@ -6,5 +6,7 @@ public interface IAuthService
 {
     UserInformation? LastUserInformation { get; }
 
-    Task<AuthenticationResult> LoginAsync(CancellationToken cancellation = default);
+    bool IsAuthenticated { get; }
+
+    Task<AuthenticationResult> AquireTokenAsync(CancellationToken cancellation = default);
 }

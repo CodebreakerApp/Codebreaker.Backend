@@ -39,6 +39,8 @@ public class AuthService : IAuthService
 
     public UserInformation? LastUserInformation { get; private set; }
 
+    public bool IsAuthenticated => LastUserInformation != null;
+
     public AuthService(ILogger<AuthService> logger)
     {
         _logger = logger;
@@ -49,7 +51,7 @@ public class AuthService : IAuthService
             .Build();
     }
 
-    public async Task<AuthenticationResult> LoginAsync(CancellationToken cancellation = default)
+    public async Task<AuthenticationResult> AquireTokenAsync(CancellationToken cancellation = default)
     {
         IAccount? account = (await GetAccountsAsync(cancellation)).FirstOrDefault();
 
