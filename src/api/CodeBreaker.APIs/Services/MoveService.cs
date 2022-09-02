@@ -22,17 +22,16 @@ public class MoveService : IMoveService
     }
 
     public virtual async Task<Game> CreateMoveAsync(Guid gameId, Move move)
-	{
-		Game game = await LoadGameFromCacheOrDatabase(gameId);
-		game.ApplyMove(move);
-		await _dbContext.SaveChangesAsync();
-		_gameCache.Set(gameId, game);
+    {
+        Game game = await _dbContext.AddMoveAsync(gameId, move);
         await _eventService.FireMoveCreatedEventAsync(move);
-		return game;
-	}
+        _gameCache.Set(gameId, game);
+        _logger.SetMove(move.ToString(), move.KeyPegs?.ToString() ?? string.Empty);
+        return game;
+    }
 
-	private async ValueTask<Game> LoadGameFromCacheOrDatabase(Guid gameId) =>
-		_gameCache.GetOrDefault(gameId)
-		?? await _dbContext.Games.FindAsync(gameId)
-		?? throw new GameNotFoundException($"The game with the id {gameId} was not found");
+    //private async ValueTask<Game> LoadGameFromCacheOrDatabase(Guid gameId) =>
+    //    _gameCache.GetOrDefault(gameId)
+    //    ?? await _dbContext.GetGameAsync(gameId)
+    //    ?? throw new GameNotFoundException($"The game with the id {gameId} was not found");
 }

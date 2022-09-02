@@ -76,7 +76,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext</*ICodeBreakerContext, */CodeBreakerContext>(options =>
+builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration
         .GetSection("CodeBreakerAPI")
@@ -124,7 +124,7 @@ app.UseSwaggerUI();
 // -------------------------
 
 app.MapGet("/games", (
-    [FromQuery] DateOnly date,
+    [FromQuery] DateTime date,
     [FromServices] IGameService gameService
 ) =>
 {

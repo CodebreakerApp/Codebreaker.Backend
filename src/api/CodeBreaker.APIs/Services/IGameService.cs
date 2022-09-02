@@ -9,6 +9,8 @@ namespace CodeBreaker.APIs.Services
         
         IAsyncEnumerable<Game> GetByDate(DateOnly date);
 
+        IAsyncEnumerable<Game> GetByDate(DateTime date);
+
         Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory);
 
         Task CancelAsync(Guid id);

@@ -1,138 +1,83 @@
 ﻿using CodeBreaker.APIs.Data.DbConfiguration;
 using CodeBreaker.Shared.Models.Data;
-using CodeBreaker.Shared.Models.Report;
 
 namespace CodeBreaker.APIs.Data;
 
-public class CodeBreakerContext : DbContext//, ICodeBreakerContext
+public class CodeBreakerContext : DbContext, ICodeBreakerContext
 {
     private readonly ILogger _logger;
 
-    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger) : base(options) 
+    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger) : base(options)
     {
         _logger = logger;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultContainer("GameContainer");// "CodeBreakerContainer");
-        //modelBuilder.Entity<CodeBreakerGame>()
-        //    .HasPartitionKey(g => g.CodeBreakerGameId);
-        //modelBuilder.Entity<CodeBreakerGameMove>()
-        //    .HasPartitionKey(m => m.CodeBreakerGameId);
+        modelBuilder.HasDefaultContainer("GameContainer");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameDbConfiguration).Assembly);
     }
 
     public DbSet<Game> Games => Set<Game>();
 
-    //public DbSet<Move> Moves => Set<Move>();
-
-    //public DbSet<CodeBreakerGame> Games => Set<CodeBreakerGame>();
-
-    //public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
-
-    public Task InitGameAsync(Game game)
+    public async Task CreateGameAsync(Game game)
     {
-        throw new NotImplementedException();
-
-        //Games.Add(game);
-        //await SaveChangesAsync();
-        //_logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
-    }
-    
-    public Task UpdateGameAsync(Game game)
-    {
-        throw new NotImplementedException();
-        //try
-        //{
-        //    var gameMoves = await Moves
-        //        .Where(m => m.GameId == game.CodeBreakerGameId)
-        //        .ToListAsync();
-        //    var moves = gameMoves.Select(
-        //        m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys, DateTime.Now))
-        //        .ToList();
-        //    game = game with { Moves = moves };
-        //    Games.Update(game);
-        //    Moves.RemoveRange(gameMoves);
-        //    int records = await SaveChangesAsync();
-        //    _logger.LogInformation("added/updated {records} records", records);
-        //}
-        //catch (Exception ex)
-        //{
-        //    _logger.Error(ex, ex.Message);
-        //    throw;
-        //}
+        Games.Add(game);
+        await SaveChangesAsync();
+        _logger.LogInformation("Created game with id {gameId}", game.GameId);
     }
 
-    public Task AddMoveAsync(Shared.Models.Data.Move move)
+    public async Task UpdateGameAsync(Game game)
     {
-        throw new NotImplementedException();
-        //try
-        //{
-        //    Moves.Add(move);
-        //    await SaveChangesAsync();
-        //}
-        //catch (Exception ex)
-        //{
-        //    _logger.Error(ex, ex.Message);
-        //    throw;
-        //}
-    }
-    
-    public Task<Shared.Models.Data.Game?> GetGameAsync(Guid gameId)
-    {
-        throw new NotImplementedException();
-        //var game = await Games
-        //    .AsNoTracking()
-        //    .SingleOrDefaultAsync(g => g.Id == gameId);
-        //return game;
+        Games.Update(game);
+        await SaveChangesAsync();
+        _logger.LogInformation("Updated game with id {gameId}", game.GameId);
     }
 
-    public Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
+    public async Task DeleteGameAsync(Guid gameId)
     {
-        throw new NotImplementedException();
-
-        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
-        
-        //var games = await Games
-        //    .AsNoTracking()
-        //    .Where(g => g.StartTimestamp >= date && g.StartTimestamp <= date.AddDays(1))
-        //    .Where(g => g.Moves.Count > 0)
-        //    .OrderByDescending(g => g.StartTimestamp)
-        //    .Take(50)
-        //    .ToListAsync();
-
-        //return new GamesInformationDetail(date) { Games = games };        
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Games.Remove(game);
+        await SaveChangesAsync();
     }
 
-    public Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date)
+    public async Task CancelGameAsync(Guid gameId)
     {
-        throw new NotImplementedException();
-
-        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
-
-        //var games = await Games
-        //    .AsNoTracking()
-        //    .Where(g => g.StartTimestamp >= date && g.StartTimestamp <= date.AddDays(1))
-        //    .OrderByDescending(g => g.StartTimestamp)
-        //    .Take(50)
-        //    .Select(g => new { g.StartTimestamp, g.Username, g.Moves, g.Id})
-        //    .ToListAsync();
-
-        //var games2 = games
-        //    .Where(g => g.Moves.Count > 0)
-        //    .Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
-
-        //return games2;
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        game.End = DateTime.Now;
+        await SaveChangesAsync();
     }
 
-    public Task<Shared.Models.Data.Game?> GetGameDetailAsync(Guid gameId)
+    public async Task<Game> AddMoveAsync(Guid gameId, Move move)
     {
-        throw new NotImplementedException();
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        return await AddMoveAsync(game, move);
+    }
 
-        //var game = await Games
-        //    .AsNoTracking()
-        //    .SingleOrDefaultAsync(g => g.Id == gameId);
-        //return game;
+    public async Task<Game> AddMoveAsync(Game game, Move move)
+    {
+        game.ApplyMove(move);
+        await SaveChangesAsync();
+        _logger.LogInformation("Added move to game with id {gameId}", game.GameId);
+        return game;
+    }
+
+    public Task<Game?> GetGameAsync(Guid gameId) =>
+        Games.SingleOrDefaultAsync(g => g.GameId == gameId);
+
+    public Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateTime date) =>
+        GetGamesByDateAsync(DateOnly.FromDateTime(date));
+
+    public async Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateOnly date)
+    {
+        DateTime begin = new DateTime(date.Year, date.Month, date.Day);
+        DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
+
+        return Games
+            .AsNoTracking()
+            .Where(x => x.Start >= begin && x.Start < end)
+            .OrderByDescending(x => x.Start)
+            .Take(100)
+            .AsAsyncEnumerable();
     }
 }
