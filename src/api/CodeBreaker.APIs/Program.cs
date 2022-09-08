@@ -28,6 +28,7 @@ using Microsoft.Extensions.Options;
 #if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
+using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 #endif
@@ -75,7 +76,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o => o.EnableAnnotations());
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration
@@ -124,7 +125,7 @@ app.UseSwaggerUI();
 // -------------------------
 
 app.MapGet("/games", (
-    [FromQuery] DateTime date,
+    [FromQuery] [SwaggerParameter("The of date to get the games from. (e.g. 2022-01-01)")] DateTime date,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -133,14 +134,12 @@ app.MapGet("/games", (
         .Select(g => g.ToDto());
     return new GetGamesResponse(games.ToEnumerable());
 })
-.WithDescription("Get games by start-date")
-.WithSummary("SummaryTest")
-.WithName("NameTest")
-.Produces<IEnumerable<GetGamesResponse>>(StatusCodes.Status200OK);
+.Produces<IEnumerable<GetGamesResponse>>(StatusCodes.Status200OK)
+.WithMetadata(new SwaggerOperationAttribute("Get games by the given date"));
 
 // Get game by id
 app.MapGet("/games/{gameId:guid}", async (
-    [FromRoute] Guid gameId,
+    [FromRoute] [SwaggerParameter("The id of the game to get")] Guid gameId,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -152,11 +151,12 @@ app.MapGet("/games/{gameId:guid}", async (
     return Results.Ok(new GetGameResponse(game.ToDto()));
 })
 .Produces<GetGameResponse>(StatusCodes.Status200OK)
-.Produces(StatusCodes.Status404NotFound);
+.Produces(StatusCodes.Status404NotFound)
+.WithMetadata(new SwaggerOperationAttribute("Gets a game by the given id"));
 
 // Create game
 app.MapPost("/games", async (
-    [FromBody] CreateGameRequest req,
+    [FromBody] [SwaggerRequestBody("The data of the game to create")] CreateGameRequest req,
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper,
     [FromServices] IGameService gameService) =>
 {
@@ -164,12 +164,13 @@ app.MapPost("/games", async (
     Game game = await gameService.CreateAsync(req.Username, gameTypeFactory);
     return Results.Created($"/games/{game.GameId}", new CreateGameResponse(game.ToDto()));
 })
-.Produces<CreateGameResponse>(StatusCodes.Status201Created);
+.Produces<CreateGameResponse>(StatusCodes.Status201Created)
+.WithMetadata(new SwaggerOperationAttribute("Creates and starts a game"));
 
 // Cancel or delete game
 app.MapDelete("/games/{gameId:guid}", async (
-    [FromRoute] Guid gameId,
-    [FromQuery] bool? cancel,
+    [FromRoute] [SwaggerParameter("The id of the game to delete or cancel")] Guid gameId,
+    [FromQuery] [SwaggerParameter("Defines whether the game should be cancelled or deleted.")] bool? cancel,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -180,12 +181,16 @@ app.MapDelete("/games/{gameId:guid}", async (
 
     return Results.NoContent();
 })
-.Produces(StatusCodes.Status204NoContent);
+.Produces(StatusCodes.Status204NoContent)
+.WithMetadata(new SwaggerOperationAttribute(
+    "Cancels or deletes the game with the given id",
+    "A cancelled game remains in the database, whereas a deleted game does not."
+));
 
 // Create move for game
 app.MapPost("/games/{gameId:guid}/moves", async (
-    [FromRoute] Guid gameId,
-    [FromBody] CreateMoveRequest req,
+    [FromRoute] [SwaggerParameter("The id of the game to create a move for")] Guid gameId,
+    [FromBody] [SwaggerRequestBody("The data for creating the move")] CreateMoveRequest req,
     [FromServices] IMoveService moveService) =>
 {
     Game game;
@@ -208,6 +213,8 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     return Results.Ok(new CreateMoveResponse((KeyPegs)keyPegs, game.Ended, game.Won));
 })
 .Produces<CreateMoveResponse>(StatusCodes.Status200OK)
-.Produces(StatusCodes.Status404NotFound);
+.Produces(StatusCodes.Status400BadRequest)
+.Produces(StatusCodes.Status404NotFound)
+.WithMetadata(new SwaggerOperationAttribute("Creates a move for the game with the given id"));
 
 app.Run();
