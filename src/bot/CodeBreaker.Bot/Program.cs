@@ -65,7 +65,7 @@ app.MapPost("/bots", (
 })
 .Produces(StatusCodes.Status202Accepted)
 .Produces(StatusCodes.Status400BadRequest)
-.WithMetadata(new SwaggerOperationAttribute(summary: "Starts a bot playing one or more games"));
+.WithMetadata(new SwaggerOperationAttribute("Starts a bot playing one or more games"));
 
 app.MapGet("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
 {
@@ -89,7 +89,7 @@ app.MapGet("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
 .Produces<StatusResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute(summary: "Gets the status of a bot"));
+.WithMetadata(new SwaggerOperationAttribute("Gets the status of a bot"));
 
 app.MapDelete("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
 {
@@ -111,6 +111,6 @@ app.MapDelete("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
 .Produces(StatusCodes.Status204NoContent)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute(summary: "Stops the bot with the given id"));
+.WithMetadata(new SwaggerOperationAttribute("Stops the bot with the given id"));
 
 app.Run();
