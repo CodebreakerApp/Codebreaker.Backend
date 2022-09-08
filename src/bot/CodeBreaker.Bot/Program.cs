@@ -6,6 +6,8 @@ global using static CodeBreaker.Shared.Models.Data.Colors;
 
 using System.Runtime.CompilerServices;
 using CodeBreaker.APIs;
+using CodeBreaker.Bot.Exceptions;
+using CodeBreaker.Bot.Api;
 
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
@@ -42,21 +44,64 @@ app.UseSwaggerUI();
 
 app.MapPost("/games", (CodeBreakerTimer timer, int? delaySecondsBetweenGames, int? numberGames, int? thinkSeconds) =>
 {
-    string id = timer.Start(delaySecondsBetweenGames ?? 60, numberGames ?? 3, thinkSeconds ?? 3);
+    Guid id;
+
+    try
+    {
+        id = timer.Start(delaySecondsBetweenGames ?? 60, numberGames ?? 3, thinkSeconds ?? 3);
+    }
+    catch (ArgumentOutOfRangeException)
+    {
+        return Results.BadRequest("Invalid parameters");
+    }
 
     return Results.Accepted($"/games/{id}", id);
-}).Produces(StatusCodes.Status202Accepted);
+})
+.Produces(StatusCodes.Status202Accepted)
+.Produces(StatusCodes.Status400BadRequest);
 
-app.MapGet("/games/{id}", (string id) =>
+app.MapGet("/games/{id}", (Guid id) =>
 {
-    string status = CodeBreakerTimer.Status(id);
-    return Results.Ok(status);
-}).Produces(StatusCodes.Status200OK);
+    StatusResponse result;
 
-app.MapDelete("/games/{id}", (string id) =>
-{
-    string result = CodeBreakerTimer.Stop(id);
+    try
+    {
+        result = CodeBreakerTimer.Status(id);
+    }
+    catch (ArgumentException)
+    {
+        return Results.BadRequest("Invalid id");
+    }
+    catch (BotNotFoundException)
+    {
+        return Results.NotFound();
+    }
+    
     return Results.Ok(result);
-}).Produces(StatusCodes.Status200OK);
+})
+.Produces(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest)
+.Produces(StatusCodes.Status404NotFound);
+
+app.MapDelete("/games/{id}", (Guid id) =>
+{
+    try
+    {
+        CodeBreakerTimer.Stop(id);
+    }
+    catch (ArgumentException)
+    {
+        return Results.BadRequest("Invalid id");
+    }
+    catch (BotNotFoundException)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.NoContent();
+})
+.Produces(StatusCodes.Status204NoContent)
+.Produces(StatusCodes.Status400BadRequest)
+.Produces(StatusCodes.Status404NotFound);
 
 app.Run();
