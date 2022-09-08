@@ -2,7 +2,7 @@ global using Microsoft.ApplicationInsights.Extensibility;
 global using CodeBreaker.Bot;
 global using System.Collections.Concurrent;
 
-global using static CodeBreaker.Shared.CodeBreakerColors;
+global using static CodeBreaker.Shared.Models.Data.Colors;
 
 using System.Runtime.CompilerServices;
 using CodeBreaker.APIs;
@@ -40,20 +40,20 @@ app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/start", (CodeBreakerTimer timer, int? delaySecondsBetweenGames, int? numberGames, int? thinkSeconds) =>
+app.MapPost("/games", (CodeBreakerTimer timer, int? delaySecondsBetweenGames, int? numberGames, int? thinkSeconds) =>
 {
     string id = timer.Start(delaySecondsBetweenGames ?? 60, numberGames ?? 3, thinkSeconds ?? 3);
 
-    return Results.Accepted($"/status/{id}", id);
+    return Results.Accepted($"/games/{id}", id);
 }).Produces(StatusCodes.Status202Accepted);
 
-app.MapGet("/status/{id}", (string id) =>
+app.MapGet("/games/{id}", (string id) =>
 {
     string status = CodeBreakerTimer.Status(id);
     return Results.Ok(status);
 }).Produces(StatusCodes.Status200OK);
 
-app.MapGet("/stop/{id}", (string id) =>
+app.MapDelete("/games/{id}", (string id) =>
 {
     string result = CodeBreakerTimer.Stop(id);
     return Results.Ok(result);
