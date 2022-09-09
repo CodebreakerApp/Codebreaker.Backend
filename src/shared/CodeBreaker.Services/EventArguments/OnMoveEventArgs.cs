@@ -1,8 +1,11 @@
 ﻿using CodeBreaker.Shared;
+using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.Services.EventArguments;
 
-public class OnMoveEventArgs : EventArgs, ILiveEventArgs<GameMove?>
+public class OnMoveEventArgs : EventArgs, ILiveEventArgs<Move?>
 {
-    public GameMove? Data { get; init; }
+    public Guid GameId { get; init; }
+
+    public Move? Data { get; init; }
 }

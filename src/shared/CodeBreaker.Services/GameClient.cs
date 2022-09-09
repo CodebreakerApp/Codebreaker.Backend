@@ -1,12 +1,11 @@
 ﻿using CodeBreaker.Shared.Models.Api;
-using CodeBreaker.Shared.Models.Data;
 using Microsoft.Extensions.Logging;
 
 using System.Net.Http.Json;
 
 namespace CodeBreaker.Services;
 
-public class GameClient
+public class GameClient : IGameClient, IGameReportClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
@@ -34,27 +33,25 @@ public class GameClient
         return await responseMessage.Content.ReadFromJsonAsync<CreateMoveResponse>();
     }
 
-    public async Task<IEnumerable<Game>> GetReportAsync(DateTime? date)
+    public async Task<GetGamesResponse?> GetGamesAsync(DateTime? date)
     {
         string requestUri = "/games";
 
         if (date is null)
-            date = DateTime.Now;
+            date = DateTime.Now.Date;
 
         requestUri = $"{requestUri}?date={date.Value.ToString("yyyy-MM-dd")}";
         _logger.LogInformation("Calling Codebreaker with {uri}", requestUri);
 
-        GetGamesResponse response = await _httpClient.GetFromJsonAsync<GetGamesResponse>(requestUri);
-        return response.Games.Select(g => g.ToModel());
+        return await _httpClient.GetFromJsonAsync<GetGamesResponse>(requestUri);
     }
 
-    public async Task<Game?> GetDetailedReportAsync(Guid id)
+    public async Task<GetGameResponse?> GetGameAsync(Guid id)
     {
         string requestUri = $"/games/{id}";
         _logger.LogInformation("Calling Codebreaker with {uri}", requestUri);
         HttpResponseMessage responseMessage = await _httpClient.GetAsync(requestUri);
         responseMessage.EnsureSuccessStatusCode();
-        GetGameResponse response = await responseMessage.Content.ReadFromJsonAsync<GetGameResponse>();
-        return response.Game.ToModel();
+        return await responseMessage.Content.ReadFromJsonAsync<GetGameResponse>();
     }
 }

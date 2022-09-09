@@ -134,7 +134,7 @@ app.MapGet("/games", (
         .Select(g => g.ToDto());
     return new GetGamesResponse(games.ToEnumerable());
 })
-.Produces<IEnumerable<GetGamesResponse>>(StatusCodes.Status200OK)
+.Produces<GetGamesResponse>(StatusCodes.Status200OK)
 .WithMetadata(new SwaggerOperationAttribute("Get games by the given date"));
 
 // Get game by id

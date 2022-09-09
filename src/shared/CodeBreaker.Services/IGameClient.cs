@@ -1,8 +1,10 @@
-﻿using CodeBreaker.Shared;
+﻿using CodeBreaker.Shared.Models.Api;
 
 namespace CodeBreaker.Services;
+
 public interface IGameClient
 {
-    Task<(bool Completed, bool Won, string[] KeyPegs)> SetMoveAsync(Guid gameId, int moveNumber, params string[] colorNames);
-    Task<CreateGameResponse> StartGameAsync(string name);
+    Task<CreateMoveResponse> SetMoveAsync(Guid gameId, params string[] colorNames);
+
+    Task<CreateGameResponse> StartGameAsync(string username, string gameType);
 }
