@@ -1,4 +1,5 @@
-﻿using CodeBreaker.Shared.Models.Data;
+﻿using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Extensions;
 
 namespace CodeBreaker.APIs.Extensions;
@@ -50,10 +51,15 @@ internal static class GameExtensions
 
         KeyPegs keyPegs = new KeyPegs(black, whitePegs.Count);
 
-        if (keyPegs.Black + keyPegs.White > game.Type.Holes)
+        if (keyPegs.Total > game.Type.Holes)
             throw new InvalidOperationException("Their are more keyPegs than holes"); // Should not be the case
 
         move.KeyPegs = keyPegs;
+
         game.Moves.Add(move);
+
+        // all holes correct  OR  maxmoves reached
+        if (keyPegs.Black == game.Type.Holes || game.Moves.Count >= game.Type.MaxMoves)
+            game.End = DateTime.Now;
     }
 }
