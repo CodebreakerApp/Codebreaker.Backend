@@ -123,4 +123,6 @@ public record struct KeyPegs
             _white = value;
         }
     }
+
+    public int Total => Black + White;
 }
