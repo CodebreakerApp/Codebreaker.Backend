@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using CodeBreaker.Services.Authentication.Definitions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 
@@ -17,16 +17,16 @@ public class AuthService : IAuthService
     //private const string PolicyEditProfile = "";
     //private const string PolicyResetPassword = "";
 
-    private static string[] ApiScopes = {
-        $"https://{Tenant}/39a665a4-54ce-44cd-b581-0f654a31dbcf/Games.Play",
-        $"https://{Tenant}/39a665a4-54ce-44cd-b581-0f654a31dbcf/Reports.Read",
-    };
+    //private static string[] ApiScopes = {
+    //    $"https://{Tenant}/39a665a4-54ce-44cd-b581-0f654a31dbcf/Games.Play",
+    //    $"https://{Tenant}/39a665a4-54ce-44cd-b581-0f654a31dbcf/Reports.Read",
+    //};
 
-    private static string[] LiveScopes =
-    {
-        $"https://{Tenant}/77d424b0-f92c-4f00-bd88-c6645f0d11e7/Messages.ReadFromAllGroups",
-        $"https://{Tenant}/77d424b0-f92c-4f00-bd88-c6645f0d11e7/Messages.ReadFromSameGroup",
-    };
+    //private static string[] LiveScopes =
+    //{
+    //    $"https://{Tenant}/77d424b0-f92c-4f00-bd88-c6645f0d11e7/Messages.ReadFromAllGroups",
+    //    $"https://{Tenant}/77d424b0-f92c-4f00-bd88-c6645f0d11e7/Messages.ReadFromSameGroup",
+    //};
 
     private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
     public static string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
@@ -51,13 +51,13 @@ public class AuthService : IAuthService
             .Build();
     }
 
-    public async Task<AuthenticationResult> AquireTokenAsync(CancellationToken cancellation = default)
+    public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default)
     {
         IAccount? account = (await GetAccountsAsync(cancellation)).FirstOrDefault();
 
         try
         {
-            AuthenticationResult result = await PublicClientApplication.AcquireTokenSilent(ApiScopes, account).ExecuteAsync(cancellation);
+            AuthenticationResult result = await PublicClientApplication.AcquireTokenSilent(authHandler.Claims, account).ExecuteAsync(cancellation);
             LastUserInformation = UserInformation.FromAuthenticationResult(result);
             return result;
         }
@@ -68,7 +68,7 @@ public class AuthService : IAuthService
             try
             {
                 AuthenticationResult result = await PublicClientApplication
-                    .AcquireTokenInteractive(ApiScopes)
+                    .AcquireTokenInteractive(authHandler.Claims)
                     .ExecuteAsync(cancellation);
                 LastUserInformation = UserInformation.FromAuthenticationResult(result);
                 return result;
@@ -86,7 +86,7 @@ public class AuthService : IAuthService
         }
     }
 
-    private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation)
+    private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation = default)
     {
         cancellation.ThrowIfCancellationRequested();
         return PublicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
