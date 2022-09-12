@@ -43,7 +43,7 @@ public class AuthService : IAuthService
 
     public AuthService(ILogger<AuthService> logger)
     {
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         PublicClientApplication = PublicClientApplicationBuilder.Create(ClientId)
             .WithB2CAuthority(AuthoritySignUpSignIn)
             .WithRedirectUri(RedirectUri)

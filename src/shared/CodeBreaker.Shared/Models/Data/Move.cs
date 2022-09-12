@@ -1,4 +1,6 @@
-﻿namespace CodeBreaker.Shared.Models.Data;
+﻿using System.Runtime.Serialization;
+
+namespace CodeBreaker.Shared.Models.Data;
 
 //public record struct KeyPegs(int Black, int White);
 
@@ -124,5 +126,6 @@ public record struct KeyPegs
         }
     }
 
+    [IgnoreDataMember]
     public int Total => Black + White;
 }

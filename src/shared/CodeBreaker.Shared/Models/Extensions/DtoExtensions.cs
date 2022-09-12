@@ -21,8 +21,18 @@ public static class DtoExtensions
         {
             MoveNumber = move.MoveNumber,
             GuessPegs = move.GuessPegs,
-            KeyPegs = move.KeyPegs
+            KeyPegs = move.KeyPegs?.ToDto()
         };
+
+    public static KeyPegsDto ToDto(this KeyPegs keyPegs) =>
+        new()
+        {
+            Black = keyPegs.Black,
+            White = keyPegs.White
+        };
+
+    public static KeyPegs ToModel(this KeyPegsDto dto) =>
+        new(dto.Black, dto.White);
 
     public static Game ToModel(this GameDto dto) =>
         new(
@@ -39,6 +49,6 @@ public static class DtoExtensions
         new (
             dto.MoveNumber,
             dto.GuessPegs,
-            dto.KeyPegs
+            dto.KeyPegs?.ToModel()
         );
 }

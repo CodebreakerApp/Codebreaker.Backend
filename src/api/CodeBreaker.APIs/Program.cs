@@ -210,7 +210,7 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     if (keyPegs is null)
         return Results.BadRequest("Could not get keyPegs");
 
-    return Results.Ok(new CreateMoveResponse((KeyPegs)keyPegs, game.Ended, game.Won));
+    return Results.Ok(new CreateMoveResponse(((KeyPegs)keyPegs).ToDto(), game.Ended, game.Won));
 })
 .Produces<CreateMoveResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
