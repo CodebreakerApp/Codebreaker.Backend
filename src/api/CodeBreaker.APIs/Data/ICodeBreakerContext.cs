@@ -11,7 +11,7 @@ public interface ICodeBreakerContext
     Task DeleteGameAsync(Guid gameId);
     Task CancelGameAsync(Guid gameId);
     Task<Game?> GetGameAsync(Guid gameId);
-    Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateOnly date);
-    Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateTime date);
+    IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date);
+    IAsyncEnumerable<Game> GetGamesByDateAsync(DateTime date);
     Task UpdateGameAsync(Game game);
 }

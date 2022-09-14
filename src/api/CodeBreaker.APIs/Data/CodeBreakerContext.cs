@@ -65,10 +65,10 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
     public Task<Game?> GetGameAsync(Guid gameId) =>
         Games.SingleOrDefaultAsync(g => g.GameId == gameId);
 
-    public Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateTime date) =>
+    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateTime date) =>
         GetGamesByDateAsync(DateOnly.FromDateTime(date));
 
-    public async Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateOnly date)
+    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date)
     {
         DateTime begin = new DateTime(date.Year, date.Month, date.Day);
         DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
