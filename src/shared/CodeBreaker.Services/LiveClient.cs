@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Services.Authentication;
+using CodeBreaker.Services.Authentication.Definitions;
 using CodeBreaker.Services.EventArguments;
 using CodeBreaker.Shared.Models.Data;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -20,15 +22,20 @@ public class LiveClient
 
     private readonly HubConnection _hubConnection;
 
+    private readonly IAuthService _authService;
+
+    private readonly IAuthDefinition _liveAuthDefinition = new LiveServiceAuthDefinition();
+
     public event EventHandler<OnGameEventArgs>? OnGameEvent;
 
     public event EventHandler<OnMoveEventArgs>? OnMoveEvent;
 
     private readonly Dictionary<string, Action<LiveHubArgs>> _eventHandlers = new ();
 
-    public LiveClient(ILogger<LiveClient> logger, IOptions<LiveClientOptions> options)
+    public LiveClient(ILogger<LiveClient> logger, IOptions<LiveClientOptions> options, IAuthService authService)
     {
         _logger = logger;
+        _authService = authService;
         _hubConnection = BuildHubConnection(options.Value.LiveBase);
         InitializeEventHandlers();
         _hubConnection.On<LiveHubArgs>("gameEvent", OnRemoteEvent);
@@ -36,7 +43,10 @@ public class LiveClient
 
     private HubConnection BuildHubConnection(string liveBase) =>
         new HubConnectionBuilder()
-            .WithUrl(liveBase) // TODO: Add Auth-Token
+            .WithUrl(liveBase, options =>
+            {
+                options.AccessTokenProvider = async () => (await _authService.AquireTokenAsync(_liveAuthDefinition)).AccessToken;
+            })
             .WithAutomaticReconnect()
             .ConfigureLogging(x =>
             {
