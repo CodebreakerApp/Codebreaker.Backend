@@ -4,9 +4,15 @@ using CodeBreaker.Services.EventArguments;
 using CodeBreaker.Shared.Models.Data;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using static CodeBreaker.LiveService.Shared.LiveEventNames;
 
 namespace CodeBreaker.Services;
+
+public class LiveClientOptions
+{
+    public string LiveBase { get; set; } = string.Empty;
+}
 
 public class LiveClient
 {
@@ -20,13 +26,23 @@ public class LiveClient
 
     private readonly Dictionary<string, Action<LiveHubArgs>> _eventHandlers = new ();
 
-    public LiveClient(ILogger<LiveClient> logger, HubConnection hubConnection)
+    public LiveClient(ILogger<LiveClient> logger, IOptions<LiveClientOptions> options)
     {
         _logger = logger;
-        _hubConnection = hubConnection;
+        _hubConnection = BuildHubConnection(options.Value.LiveBase);
         InitializeEventHandlers();
         _hubConnection.On<LiveHubArgs>("gameEvent", OnRemoteEvent);
     }
+
+    private HubConnection BuildHubConnection(string liveBase) =>
+        new HubConnectionBuilder()
+            .WithUrl(liveBase) // TODO: Add Auth-Token
+            .WithAutomaticReconnect()
+            .ConfigureLogging(x =>
+            {
+                x.SetMinimumLevel(LogLevel.Information);
+            })
+            .Build();
 
     public Task StartAsync(CancellationToken token = default)
     {
