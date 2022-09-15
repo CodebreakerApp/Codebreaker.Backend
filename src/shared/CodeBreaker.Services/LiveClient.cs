@@ -1,12 +1,20 @@
 ﻿using System.Text.Json;
 using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Services.Authentication;
+using CodeBreaker.Services.Authentication.Definitions;
 using CodeBreaker.Services.EventArguments;
 using CodeBreaker.Shared.Models.Data;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using static CodeBreaker.LiveService.Shared.LiveEventNames;
 
 namespace CodeBreaker.Services;
+
+public class LiveClientOptions
+{
+    public string LiveBase { get; set; } = string.Empty;
+}
 
 public class LiveClient
 {
@@ -14,19 +22,37 @@ public class LiveClient
 
     private readonly HubConnection _hubConnection;
 
+    private readonly IAuthService _authService;
+
+    private readonly IAuthDefinition _liveAuthDefinition = new LiveServiceAuthDefinition();
+
     public event EventHandler<OnGameEventArgs>? OnGameEvent;
 
     public event EventHandler<OnMoveEventArgs>? OnMoveEvent;
 
     private readonly Dictionary<string, Action<LiveHubArgs>> _eventHandlers = new ();
 
-    public LiveClient(ILogger<LiveClient> logger, HubConnection hubConnection)
+    public LiveClient(ILogger<LiveClient> logger, IOptions<LiveClientOptions> options, IAuthService authService)
     {
         _logger = logger;
-        _hubConnection = hubConnection;
+        _authService = authService;
+        _hubConnection = BuildHubConnection(options.Value.LiveBase);
         InitializeEventHandlers();
         _hubConnection.On<LiveHubArgs>("gameEvent", OnRemoteEvent);
     }
+
+    private HubConnection BuildHubConnection(string liveBase) =>
+        new HubConnectionBuilder()
+            .WithUrl(liveBase, options =>
+            {
+                options.AccessTokenProvider = async () => (await _authService.AquireTokenAsync(_liveAuthDefinition)).AccessToken;
+            })
+            .WithAutomaticReconnect()
+            .ConfigureLogging(x =>
+            {
+                x.SetMinimumLevel(LogLevel.Information);
+            })
+            .Build();
 
     public Task StartAsync(CancellationToken token = default)
     {
