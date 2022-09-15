@@ -2,25 +2,6 @@
 
 namespace CodeBreaker.Shared.Models.Data;
 
-//public record class GameType<TField>(
-//    string Name,
-//    IReadOnlyList<TField> Fields,
-//    int Holes,
-//    int MaxMoves
-//);
-
-//public record class GameType(
-//    string Name,
-//    IReadOnlyList<string> Fields,
-//    int Holes,
-//    int MaxMoves
-//) : GameType<string>(
-//    Name,
-//    Fields,
-//    Holes,
-//    MaxMoves
-//);
-
 public class GameType : GameType<string>
 {
     public GameType(string name, IReadOnlyList<string> fields, int holes, int maxMoves) : base(name, fields, holes, maxMoves)
@@ -28,7 +9,7 @@ public class GameType : GameType<string>
     }
 
     public static GameType Default =>
-        new GameType(
+        new (
         "6x4Game",
             new string[] { Black, White, Red, Green, Blue, Yellow },
             4,
