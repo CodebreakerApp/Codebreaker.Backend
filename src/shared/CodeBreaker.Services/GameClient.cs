@@ -1,6 +1,6 @@
 ﻿using CodeBreaker.Services.Authentication;
-using CodeBreaker.Shared;
-
+using CodeBreaker.Services.Authentication.Definitions;
+using CodeBreaker.Shared.Models.Api;
 using Microsoft.Extensions.Logging;
 
 using System.Net.Http.Json;
@@ -10,58 +10,61 @@ namespace CodeBreaker.Services;
 public class GameClient : IGameClient, IGameReportClient
 {
     private readonly HttpClient _httpClient;
-    private readonly IAuthService _authService;
+
     private readonly ILogger _logger;
+
+    private readonly IAuthService _authService;
+
+    private readonly IAuthDefinition _authDefinition = new ApiServiceAuthDefinition();
 
     public GameClient(HttpClient httpClient, ILogger<GameClient> logger, IAuthService authService)
     {
         _httpClient = httpClient;
         _logger = logger;
-        _logger.LogInformation("Injected HttpClient with base address {uri} into GameClient", _httpClient.BaseAddress);
         _authService = authService;
+        _logger.LogInformation("Injected HttpClient with base address {uri} into GameClient", _httpClient.BaseAddress);
     }
 
-    public async Task<CreateGameResponse> StartGameAsync(string name)
+    public async Task<CreateGameResponse> StartGameAsync(string username, string gameType)
     {
         await SetAuthentication();
-        CreateGameRequest request = new(name);
-        var responseMessage = await _httpClient.PostAsJsonAsync("start/6x4", request);
+        CreateGameRequest request = new(username, gameType);
+        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync($"/games", request);
         responseMessage.EnsureSuccessStatusCode();
-        var response = await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
-        return response;
+        return await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
     }
 
-    public async Task<(bool Completed, bool Won, string[] KeyPegs)> SetMoveAsync(Guid gameId, int moveNumber, params string[] colorNames)
+    public async Task<CreateMoveResponse> SetMoveAsync(Guid gameId, params string[] colorNames)
     {
         await SetAuthentication();
-        MoveRequest moveRequest = new(gameId, moveNumber, colorNames);
-        var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
+        CreateMoveRequest request = new CreateMoveRequest(colorNames.ToList());
+        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync($"/games/{gameId}/moves", request);
         responseMessage.EnsureSuccessStatusCode();
-        var response = await responseMessage.Content.ReadFromJsonAsync<MoveResponse>();
-        return (response.Completed, response.Won, response.KeyPegs?.ToArray() ?? Array.Empty<string>());
+        return await responseMessage.Content.ReadFromJsonAsync<CreateMoveResponse>();
     }
 
-    public async Task<IEnumerable<GamesInfo>?> GetReportAsync(DateTime? date)
+    public async Task<GetGamesResponse?> GetGamesAsync(DateTime? date)
     {
-        string requestUri = "/report";
-
-        if (date is not null)
-            requestUri = $"{requestUri}?date={date:yyyy-MM-dd}";
-
         await SetAuthentication();
+        string requestUri = "/games";
+
+        if (date is null)
+            date = DateTime.Now.Date;
+
+        requestUri = $"{requestUri}?date={date.Value.ToString("yyyy-MM-dd")}";
         _logger.LogInformation("Calling Codebreaker with {uri}", requestUri);
 
-        return await _httpClient.GetFromJsonAsync<IEnumerable<GamesInfo>>(requestUri);
+        return await _httpClient.GetFromJsonAsync<GetGamesResponse>(requestUri);
     }
 
-    public async Task<CodeBreakerGame?> GetDetailedReportAsync(Guid id)
+    public async Task<GetGameResponse?> GetGameAsync(Guid id)
     {
         await SetAuthentication();
-        string requestUri = $"/reportdetail/{id}";
-
+        string requestUri = $"/games/{id}";
         _logger.LogInformation("Calling Codebreaker with {uri}", requestUri);
-
-        return await _httpClient.GetFromJsonAsync<CodeBreakerGame?>(requestUri);
+        HttpResponseMessage responseMessage = await _httpClient.GetAsync(requestUri);
+        responseMessage.EnsureSuccessStatusCode();
+        return await responseMessage.Content.ReadFromJsonAsync<GetGameResponse>();
     }
 
     private async ValueTask SetAuthentication()
@@ -73,5 +76,5 @@ public class GameClient : IGameClient, IGameReportClient
     }
 
     private async Task<string> GetAccessTokenAsync() =>
-        (await _authService.AquireTokenAsync()).AccessToken;
+        (await _authService.AquireTokenAsync(_authDefinition)).AccessToken;
 }

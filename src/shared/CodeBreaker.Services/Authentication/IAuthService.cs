@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿using CodeBreaker.Services.Authentication.Definitions;
+using Microsoft.Identity.Client;
 
 namespace CodeBreaker.Services.Authentication;
 
@@ -8,5 +9,5 @@ public interface IAuthService
 
     bool IsAuthenticated { get; }
 
-    Task<AuthenticationResult> AquireTokenAsync(CancellationToken cancellation = default);
+    Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default);
 }

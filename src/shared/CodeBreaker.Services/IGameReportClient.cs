@@ -1,8 +1,9 @@
-﻿using CodeBreaker.Shared;
+﻿using CodeBreaker.Shared.Models.Api;
 
 namespace CodeBreaker.Services;
 public interface IGameReportClient
 {
-    Task<CodeBreakerGame?> GetDetailedReportAsync(Guid id);
-    Task<IEnumerable<GamesInfo>?> GetReportAsync(DateTime? date);
+    Task<GetGameResponse?> GetGameAsync(Guid id);
+
+    Task<GetGamesResponse?> GetGamesAsync(DateTime? date);
 }

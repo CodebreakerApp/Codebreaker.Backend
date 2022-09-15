@@ -1,15 +1,17 @@
-﻿namespace CodeBreaker.APIs.Data;
+﻿using CodeBreaker.Shared.Models.Data;
 
-internal interface ICodeBreakerContext
+namespace CodeBreaker.APIs.Data;
+public interface ICodeBreakerContext
 {
-    // game run
-    Task InitGameAsync(CodeBreakerGame game);
-    Task UpdateGameAsync(CodeBreakerGame game);
-    Task AddMoveAsync(CodeBreakerGameMove move);
-    Task<CodeBreakerGame?> GetGameAsync(Guid gameId);
+    DbSet<Game> Games { get; }
 
-    // report
-    Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date);
-    Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date);
-    Task<CodeBreakerGame?> GetGameDetailAsync(Guid gameId);
+    Task<Game> AddMoveAsync(Guid gameId, Move move);
+    Task<Game> AddMoveAsync(Game game, Move move);
+    Task CreateGameAsync(Game game);
+    Task DeleteGameAsync(Guid gameId);
+    Task CancelGameAsync(Guid gameId);
+    Task<Game?> GetGameAsync(Guid gameId);
+    Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateOnly date);
+    Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateTime date);
+    Task UpdateGameAsync(Game game);
 }

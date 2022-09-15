@@ -1,4 +1,4 @@
-﻿using CodeBreaker.Shared;
+﻿using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.Services.EventArguments;
 

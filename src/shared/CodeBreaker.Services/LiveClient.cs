@@ -1,8 +1,7 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using CodeBreaker.LiveService.Shared;
 using CodeBreaker.Services.EventArguments;
-using CodeBreaker.Shared;
+using CodeBreaker.Shared.Models.Data;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using static CodeBreaker.LiveService.Shared.LiveEventNames;
@@ -56,7 +55,7 @@ public class LiveClient
     private void InitializeEventHandlers()
     {
         _eventHandlers.Add(GameCreatedEventName, eventData => Handle<Game, OnGameEventArgs>(eventData, () => OnGameEvent));
-        _eventHandlers.Add(MoveCreatedEventName, eventData => Handle<GameMove, OnMoveEventArgs>(eventData, () => OnMoveEvent));
+        _eventHandlers.Add(MoveCreatedEventName, eventData => Handle<Move, OnMoveEventArgs>(eventData, () => OnMoveEvent));
     }
 
     private void Handle<T, TArgs>(LiveHubArgs liveHubArgs, Func<EventHandler<TArgs>?> eventHandler)

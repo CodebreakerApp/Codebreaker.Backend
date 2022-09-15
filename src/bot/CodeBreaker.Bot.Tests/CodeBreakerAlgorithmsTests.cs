@@ -2,7 +2,7 @@ using System.Collections;
 
 using Xunit;
 
-using static CodeBreaker.Shared.CodeBreakerColors;
+using static CodeBreaker.Shared.Models.Data.Colors;
 
 namespace CodeBreaker.Bot.Tests;
 

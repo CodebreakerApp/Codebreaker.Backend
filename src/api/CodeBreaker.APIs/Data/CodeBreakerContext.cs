@@ -1,117 +1,83 @@
-﻿namespace CodeBreaker.APIs.Data;
+﻿using CodeBreaker.APIs.Data.DbConfiguration;
+using CodeBreaker.Shared.Models.Data;
 
-internal class CodeBreakerContext : DbContext, ICodeBreakerContext
+namespace CodeBreaker.APIs.Data;
+
+public class CodeBreakerContext : DbContext, ICodeBreakerContext
 {
     private readonly ILogger _logger;
-    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger)
-        : base(options) 
+
+    public CodeBreakerContext(DbContextOptions<CodeBreakerContext> options, ILogger<CodeBreakerContext> logger) : base(options)
     {
         _logger = logger;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultContainer("CodeBreakerContainer");
-        modelBuilder.Entity<CodeBreakerGame>()
-            .HasPartitionKey(g => g.CodeBreakerGameId);
-        modelBuilder.Entity<CodeBreakerGameMove>()
-            .HasPartitionKey(m => m.CodeBreakerGameId);
+        modelBuilder.HasDefaultContainer("GameContainer");
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameDbConfiguration).Assembly);
     }
 
-    public DbSet<CodeBreakerGame> Games => Set<CodeBreakerGame>();
-    public DbSet<CodeBreakerGameMove> Moves => Set<CodeBreakerGameMove>();
+    public DbSet<Game> Games => Set<Game>();
 
-    public async Task InitGameAsync(CodeBreakerGame game)
+    public async Task CreateGameAsync(Game game)
     {
         Games.Add(game);
         await SaveChangesAsync();
-        _logger.LogInformation("initialized game with id {gameid}", game.CodeBreakerGameId);
-    }
-    
-    public async Task UpdateGameAsync(CodeBreakerGame game)
-    {
-        try
-        {
-            var gameMoves = await Moves
-                .Where(m => m.CodeBreakerGameId == game.CodeBreakerGameId)
-                .ToListAsync();
-            var moves = gameMoves.Select(
-                m => new CodeBreakerMove(m.CodeBreakerGameId, m.MoveNumber, m.Move, m.Keys, DateTime.Now))
-                .ToList();
-            game = game with { Moves = moves };
-            Games.Update(game);
-            Moves.RemoveRange(gameMoves);
-            int records = await SaveChangesAsync();
-            _logger.LogInformation("added/updated {records} records", records);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, ex.Message);
-            throw;
-        }
+        _logger.LogInformation("Created game with id {gameId}", game.GameId);
     }
 
-    public async Task AddMoveAsync(CodeBreakerGameMove move)
+    public async Task UpdateGameAsync(Game game)
     {
-        try
-        {
-            Moves.Add(move);
-            await SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, ex.Message);
-            throw;
-        }
+        Games.Update(game);
+        await SaveChangesAsync();
+        _logger.LogInformation("Updated game with id {gameId}", game.GameId);
     }
-    
-    public async Task<CodeBreakerGame?> GetGameAsync(Guid gameId)
+
+    public async Task DeleteGameAsync(Guid gameId)
     {
-        var game = await Games
-            .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Games.Remove(game);
+        await SaveChangesAsync();
+    }
+
+    public async Task CancelGameAsync(Guid gameId)
+    {
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        game.End = DateTime.Now;
+        await SaveChangesAsync();
+    }
+
+    public async Task<Game> AddMoveAsync(Guid gameId, Move move)
+    {
+        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        return await AddMoveAsync(game, move);
+    }
+
+    public async Task<Game> AddMoveAsync(Game game, Move move)
+    {
+        game.ApplyMove(move);
+        await SaveChangesAsync();
+        _logger.LogInformation("Added move to game with id {gameId}", game.GameId);
         return game;
     }
 
-    public async Task<GamesInformationDetail> GetGamesDetailsAsync(DateTime date)
+    public Task<Game?> GetGameAsync(Guid gameId) =>
+        Games.SingleOrDefaultAsync(g => g.GameId == gameId);
+
+    public Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateTime date) =>
+        GetGamesByDateAsync(DateOnly.FromDateTime(date));
+
+    public async Task<IAsyncEnumerable<Game>> GetGamesByDateAsync(DateOnly date)
     {
-        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
-        
-        var games = await Games
+        DateTime begin = new DateTime(date.Year, date.Month, date.Day);
+        DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
+
+        return Games
             .AsNoTracking()
-            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
-            .Where(g => g.Moves.Count > 0)
-            .OrderByDescending(g => g.Time)
-            .Take(50)
-            .ToListAsync();
-
-        return new GamesInformationDetail(date) { Games = games };        
-    }
-
-    public async Task<IEnumerable<GamesInfo>> GetGamesAsync(DateTime date)
-    {
-        // TODO: .NET 7 - update for DateOnly optimization - EF Core and JSON support needed
-
-        var games = await Games
-            .AsNoTracking()
-            .Where(g => g.Time >= date && g.Time <= date.AddDays(1))
-            .OrderByDescending(g => g.Time)
-            .Take(50)
-            .Select(g => new { g.Time, g.User, g.Moves, g.CodeBreakerGameId })
-            .ToListAsync();
-
-        var games2 = games
-            .Where(g => g.Moves.Count > 0)
-            .Select(g => new GamesInfo(g.Time, g.User, g.Moves.Count, g.CodeBreakerGameId)).ToList();
-
-        return games2;
-    }
-
-    public async Task<CodeBreakerGame?> GetGameDetailAsync(Guid gameId)
-    {
-        var game = await Games
-            .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.CodeBreakerGameId == gameId);
-        return game;
+            .Where(x => x.Start >= begin && x.Start < end)
+            .OrderByDescending(x => x.Start)
+            .Take(100)
+            .AsAsyncEnumerable();
     }
 }

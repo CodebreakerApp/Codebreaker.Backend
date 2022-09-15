@@ -1,4 +1,5 @@
-﻿using CodeBreaker.Shared;
+﻿using CodeBreaker.Shared.Models.Api;
+using static CodeBreaker.Shared.Models.Data.Colors;
 
 namespace CodeBreaker.Bot;
 
@@ -17,7 +18,7 @@ public class CodeBreakerGameRunner
         _logger = logger;
     }
 
-    private static List<int> InitializePossibleValues()
+    private List<int> InitializePossibleValues()
     {
         static List<int> Create8Colors(int shift)
         {
@@ -60,13 +61,11 @@ public class CodeBreakerGameRunner
         _possibleValues = InitializePossibleValues();
         _moves.Clear();
 
-        CreateGameRequest request = new("Bot");
-
-        var responseMessage = await _httpClient.PostAsJsonAsync("start/6x4", request);
+        CreateGameRequest request = new("Bot", "6x4Game");
+        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync("/games", request);
         responseMessage.EnsureSuccessStatusCode();
-        var response = await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
-        _moveNumber = 1;
-        _gameId = response.Id;
+        CreateGameResponse response = await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
+        _gameId = response.Game.GameId;
     }
 
     /// <summary>
@@ -79,21 +78,20 @@ public class CodeBreakerGameRunner
     /// <exception cref="InvalidOperationException">throws if initialization was not done, or with invalid game state</exception>
     public async Task RunAsync(int thinkSeconds)
     {
-        //if (_gameId is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         Guid gameId = _gameId ?? throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
 
-        MoveResponse response;
+        CreateMoveResponse response;
 
         do
         {
-            (var colorNames, var selection) = GetNextMoves();
-            MoveRequest moveRequest = new(gameId, _moveNumber++, colorNames);
+            (string[] colorNames, int selection) = GetNextMoves();
+            CreateMoveRequest moveRequest = new(colorNames);
             _logger.SendMove(moveRequest.ToString(), gameId.ToString());
 
             var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
             responseMessage.EnsureSuccessStatusCode();
-            response = await responseMessage.Content.ReadFromJsonAsync<MoveResponse>();
+            response = await responseMessage.Content.ReadFromJsonAsync<CreateMoveResponse>();
 
             if (response.Won)
             {
@@ -101,17 +99,14 @@ public class CodeBreakerGameRunner
                 break;
             }
 
-            int blackHits = response.KeyPegs?.Count(s => s == Black) ?? 0;
-            if (blackHits >= 4)
-            {
-                throw new InvalidOperationException($"4 or more blacks but won was not set: {blackHits}");
-            }
+            int blackHits = response.KeyPegs.Black;
+            int whiteHits = response.KeyPegs.White;
 
-            int whiteHits = response.KeyPegs?.Count(s => s == White) ?? 0;
+            if (blackHits >= 4)
+                throw new InvalidOperationException($"4 or more blacks but won was not set: {blackHits}");
+
             if (whiteHits > 4)
-            {
                 throw new InvalidOperationException($"more than 4 whites is not possible: {whiteHits}");
-            }
 
             if (blackHits == 0 && whiteHits == 0)
             {

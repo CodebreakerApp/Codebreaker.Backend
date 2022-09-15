@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>4053495e-84a4-48c2-91d3-4b8290310020</UserSecretsId>
     <ApplicationInsightsResourceId>/subscriptions/7221029f-b7dc-4ab8-b117-111900d0d73c/resourceGroups/codebreaker/providers/microsoft.insights/components/codebreakerinsights</ApplicationInsightsResourceId>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <PublishProfile>DefaultContainer</PublishProfile>
   </PropertyGroup>
 
@@ -16,6 +15,7 @@
     <PackageReference Include="Microsoft.Tye.Extensions.Configuration" Version="0.10.0-alpha.21420.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
