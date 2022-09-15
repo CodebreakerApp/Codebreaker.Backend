@@ -7,7 +7,7 @@ using CodeBreaker.Shared.Models.Data;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using static CodeBreaker.LiveService.Shared.LiveEventNames;
+using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.Services;
 

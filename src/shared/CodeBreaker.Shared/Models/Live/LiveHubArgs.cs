@@ -4,7 +4,7 @@ public record LiveHubArgs
 {
     private readonly string _name = string.Empty;
 
-    private readonly object _data = new object();
+    private readonly object _data = new ();
 
     public LiveHubArgs(string name, object data)
     {

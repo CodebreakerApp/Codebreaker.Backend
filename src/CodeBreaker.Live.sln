@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.LiveService", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Shared", "shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj", "{5B213830-3AA2-49EB-B89B-52645CD3F11F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBreaker.LiveService.Shared", "services\shared\CodeBreaker.LiveService.Shared\CodeBreaker.LiveService.Shared.csproj", "{4895A291-5E83-41BC-A7A8-5DA56272763F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{5B213830-3AA2-49EB-B89B-52645CD3F11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B213830-3AA2-49EB-B89B-52645CD3F11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B213830-3AA2-49EB-B89B-52645CD3F11F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4895A291-5E83-41BC-A7A8-5DA56272763F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4895A291-5E83-41BC-A7A8-5DA56272763F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4895A291-5E83-41BC-A7A8-5DA56272763F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4895A291-5E83-41BC-A7A8-5DA56272763F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

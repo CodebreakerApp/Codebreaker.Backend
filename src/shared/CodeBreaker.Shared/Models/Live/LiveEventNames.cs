@@ -1,4 +1,4 @@
-﻿namespace CodeBreaker.LiveService.Shared;
+﻿namespace CodeBreaker.Shared.Models.Live;
 
 public static class LiveEventNames
 {
