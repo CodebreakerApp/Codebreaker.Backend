@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32611.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.LiveService", "live\CodeBreaker.LiveService\CodeBreaker.LiveService.csproj", "{A7BCCEE2-9D5C-4C3E-AD51-F8774C908066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.LiveService", "services\live\CodeBreaker.LiveService\CodeBreaker.LiveService.csproj", "{A7BCCEE2-9D5C-4C3E-AD51-F8774C908066}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Shared", "shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj", "{5B213830-3AA2-49EB-B89B-52645CD3F11F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBreaker.LiveService.Shared", "shared\CodeBreaker.LiveService.Shared\CodeBreaker.LiveService.Shared.csproj", "{4895A291-5E83-41BC-A7A8-5DA56272763F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBreaker.LiveService.Shared", "services\shared\CodeBreaker.LiveService.Shared\CodeBreaker.LiveService.Shared.csproj", "{4895A291-5E83-41BC-A7A8-5DA56272763F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
