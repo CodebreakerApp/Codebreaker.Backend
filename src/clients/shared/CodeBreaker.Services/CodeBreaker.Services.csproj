@@ -13,8 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeBreaker.LiveService.Shared\CodeBreaker.LiveService.Shared.csproj" />
-    <ProjectReference Include="..\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
+    <ProjectReference Include="..\..\..\shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
   </ItemGroup>
 
 </Project>

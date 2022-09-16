@@ -4,7 +4,7 @@ using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
 using CodeBreaker.LiveService.Shared;
 using CodeBreaker.Shared.Models.Data;
-using static CodeBreaker.LiveService.Shared.LiveEventNames;
+using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
 

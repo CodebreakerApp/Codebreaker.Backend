@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32317.152
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot", "bot\CodeBreaker.Bot\CodeBreaker.Bot.csproj", "{FAC1E880-2F77-4295-95B9-0280AFDAE319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot", "services\bot\CodeBreaker.Bot\CodeBreaker.Bot.csproj", "{FAC1E880-2F77-4295-95B9-0280AFDAE319}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot.Tests", "bot\CodeBreaker.Bot.Tests\CodeBreaker.Bot.Tests.csproj", "{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot.Tests", "services\bot\CodeBreaker.Bot.Tests\CodeBreaker.Bot.Tests.csproj", "{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Shared", "shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj", "{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}"
 EndProject
