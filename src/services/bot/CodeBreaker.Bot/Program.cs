@@ -10,6 +10,7 @@ using CodeBreaker.Bot.Exceptions;
 using CodeBreaker.Bot.Api;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.RateLimiting;
 
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
@@ -38,6 +39,17 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
     options.BaseAddress = apiUri;
 });
 builder.Services.AddScoped<CodeBreakerTimer>();
+builder.Services.AddRequestDecompression();
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
+        {
+            PermitLimit = 10,
+            QueueLimit = 5,
+            QueueProcessingOrder = QueueProcessingOrder.NewestFirst
+        }));
+});
 
 app = builder.Build();
 

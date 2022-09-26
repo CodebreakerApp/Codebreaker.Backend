@@ -35,6 +35,7 @@ using System.Configuration;
 
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
+using System.Threading.RateLimiting;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -113,9 +114,24 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddRequestDecompression();
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
+        {
+            PermitLimit = 10,
+            QueueLimit = 5,
+            QueueProcessingOrder = QueueProcessingOrder.NewestFirst
+        }));
+});
+
 var app = builder.Build();
 
 app.UseCors(AllowCodeBreakerOrigins);
+app.UseRequestDecompression();
+
+app.UseRateLimiter();
 
 app.UseSwagger();
 app.UseSwaggerUI();
