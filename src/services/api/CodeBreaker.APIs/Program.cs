@@ -113,10 +113,12 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddRequestDecompression();
+
 var app = builder.Build();
 
 app.UseCors(AllowCodeBreakerOrigins);
-
+app.UseRequestDecompression();
 app.UseSwagger();
 app.UseSwaggerUI();
 
