@@ -65,11 +65,11 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
         return _gameTypeFactories[name.ToUpperInvariant()];
     }
 
+    public virtual IEnumerable<GameTypeFactory<TField>> GetAllFactories() =>
+        _gameTypeFactories.Values;
 
-	public virtual GameTypeFactory<TField> GetFactoryByName(string name) =>
-		_gameTypeFactories[name.ToUpperInvariant()];
 
-	private ImmutableDictionary<string, GameTypeFactory<TField>> CreateDictionaryForTypes(IEnumerable<Type> gameTypeFactoryTypes) =>
+    private ImmutableDictionary<string, GameTypeFactory<TField>> CreateDictionaryForTypes(IEnumerable<Type> gameTypeFactoryTypes) =>
 		gameTypeFactoryTypes
 			.Select(f =>
 			{

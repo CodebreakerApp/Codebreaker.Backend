@@ -176,6 +176,18 @@ app.MapGet("/games/{gameId:guid}", async (
     return x;
 });
 
+app.MapGet("/gametypes", async (
+    [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper
+) =>
+{
+    IEnumerable<GameType<string>> gameTypes = gameTypeFactoryMapper.GetAllFactories().Select(x => x.Create());
+    return Results.Ok(new GetGameTypesResponse(gameTypes.Select(x => x.ToDto())));
+})
+.Produces<GetGameTypesResponse>(StatusCodes.Status200OK)
+.WithName("GetGameTypes")
+.WithSummary("Gets the available game-types")
+.WithOpenApi();
+
 // Create game
 app.MapPost("/games", async (
     [FromBody] CreateGameRequest req,
