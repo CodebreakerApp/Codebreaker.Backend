@@ -82,6 +82,8 @@ app.MapGet("/update-config", (
     logger.LogInformation("Configuration reloaded");
     return Results.NoContent();
 })
-.WithDescription("Triggers the reload of the configuration.")
-.Produces(StatusCodes.Status204NoContent);
+.Produces(StatusCodes.Status204NoContent)
+.WithName("TriggerConfigUpdate")
+.WithSummary("Triggers the reload of the configuration.")
+.WithOpenApi();
 app.Run();
