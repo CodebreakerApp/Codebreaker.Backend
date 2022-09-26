@@ -182,7 +182,17 @@ app.MapPost("/games", async (
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper,
     [FromServices] IGameService gameService) =>
 {
-    GameTypeFactory<string> gameTypeFactory = gameTypeFactoryMapper[req.GameType];
+    GameTypeFactory<string> gameTypeFactory;
+
+    try
+    {
+        gameTypeFactory = gameTypeFactoryMapper[req.GameType];
+    }
+    catch (GameTypeNotFoundException)
+    {
+        return Results.BadRequest("Gametype does not exist");
+    }
+    
     Game game = await gameService.CreateAsync(req.Username, gameTypeFactory);
     return Results.Created($"/games/{game.GameId}", new CreateGameResponse(game.ToDto()));
 })
