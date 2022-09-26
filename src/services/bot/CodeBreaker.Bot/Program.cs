@@ -8,9 +8,7 @@ using System.Runtime.CompilerServices;
 using CodeBreaker.APIs;
 using CodeBreaker.Bot.Exceptions;
 using CodeBreaker.Bot.Api;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.RateLimiting;
 
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
@@ -22,7 +20,7 @@ WebApplication? app = null;
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(o => o.EnableAnnotations());
+builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
 {
     // running with tye?
@@ -39,17 +37,6 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
     options.BaseAddress = apiUri;
 });
 builder.Services.AddScoped<CodeBreakerTimer>();
-builder.Services.AddRequestDecompression();
-builder.Services.AddRateLimiter(options =>
-{
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
-        {
-            PermitLimit = 10,
-            QueueLimit = 5,
-            QueueProcessingOrder = QueueProcessingOrder.NewestFirst
-        }));
-});
 
 app = builder.Build();
 
@@ -58,9 +45,9 @@ app.UseSwaggerUI();
 
 app.MapPost("/bots", (
     [FromServices] CodeBreakerTimer timer,
-    [FromQuery] [SwaggerParameter("The delay between the games (seconds). If not specified, default values are used.")] int? delay,
-    [FromQuery] [SwaggerParameter("The number of games to play. If not specified, default values are used.")] int? count,
-    [FromQuery] [SwaggerParameter("The duration of a game (seconds). If not specified, default values are used.")] int? duration) =>
+    [FromQuery] int? delay,
+    [FromQuery] int? count,
+    [FromQuery] int? duration) =>
 {
     Guid id;
 
@@ -77,9 +64,17 @@ app.MapPost("/bots", (
 })
 .Produces(StatusCodes.Status202Accepted)
 .Produces(StatusCodes.Status400BadRequest)
-.WithMetadata(new SwaggerOperationAttribute("Starts a bot playing one or more games"));
+.WithName("CreateBot")
+.WithSummary("Starts a bot playing one or more games")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The delay between the games (seconds). If not specified, default values are used.";
+    x.Parameters[1].Description = "The number of games to play. If not specified, default values are used.";
+    x.Parameters[2].Description = "The duration of a game (seconds). If not specified, default values are used.";
+    return x;
+});
 
-app.MapGet("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
+app.MapGet("/bots/{id}", (Guid id) =>
 {
     StatusResponse result;
 
@@ -95,15 +90,21 @@ app.MapGet("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
     {
         return Results.NotFound();
     }
-    
+
     return Results.Ok(result);
 })
 .Produces<StatusResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute("Gets the status of a bot"));
+.WithName("GetBot")
+.WithSummary("Gets the status of a bot")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The id of the bot";
+    return x;
+});
 
-app.MapDelete("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
+app.MapDelete("/bots/{id}", (Guid id) =>
 {
     try
     {
@@ -123,6 +124,12 @@ app.MapDelete("/bots/{id}", ([SwaggerParameter("The id of the bot")] Guid id) =>
 .Produces(StatusCodes.Status204NoContent)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute("Stops the bot with the given id"));
+.WithName("StopBot")
+.WithSummary("Stops the bot with the given id")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The id of the bot";
+    return x;
+});
 
 app.Run();
