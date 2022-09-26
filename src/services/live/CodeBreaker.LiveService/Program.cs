@@ -53,8 +53,11 @@ builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 
 builder.Services.AddHostedService<EventHandlingService>();
 
+builder.Services.AddRequestDecompression();
+
 WebApplication app = builder.Build();
 
+app.UseRequestDecompression();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAzureAppConfiguration();
