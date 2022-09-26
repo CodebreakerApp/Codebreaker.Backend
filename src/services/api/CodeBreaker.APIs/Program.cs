@@ -1,14 +1,11 @@
-global using CodeBreaker.APIs;
 global using CodeBreaker.APIs.Data;
 global using CodeBreaker.APIs.Exceptions;
 global using CodeBreaker.APIs.Extensions;
-global using CodeBreaker.Shared;
 
 global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
 global using Microsoft.EntityFrameworkCore;
 
-global using System.Collections.Concurrent;
 global using System.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
@@ -24,12 +21,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
-
 #if USEPROMETHEUS
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
-using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 #endif
 
@@ -77,7 +71,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
-builder.Services.AddSwaggerGen(o => o.EnableAnnotations());
+builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration
@@ -141,7 +135,7 @@ app.UseSwaggerUI();
 // -------------------------
 
 app.MapGet("/games", (
-    [FromQuery] [SwaggerParameter("The of date to get the games from. (e.g. 2022-01-01)")] DateTime date,
+    [FromQuery] DateTime date,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -151,11 +145,17 @@ app.MapGet("/games", (
     return new GetGamesResponse(games.ToEnumerable());
 })
 .Produces<GetGamesResponse>(StatusCodes.Status200OK)
-.WithMetadata(new SwaggerOperationAttribute("Get games by the given date"));
+.WithName("GetGames")
+.WithSummary("Get games by the given date")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The of date to get the games from. (e.g. 2022-01-01)";
+    return x;
+});
 
 // Get game by id
 app.MapGet("/games/{gameId:guid}", async (
-    [FromRoute] [SwaggerParameter("The id of the game to get")] Guid gameId,
+    [FromRoute] Guid gameId,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -168,11 +168,17 @@ app.MapGet("/games/{gameId:guid}", async (
 })
 .Produces<GetGameResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute("Gets a game by the given id"));
+.WithName("GetGame")
+.WithSummary("Gets a game by the given id")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The id of the game to get";
+    return x;
+});
 
 // Create game
 app.MapPost("/games", async (
-    [FromBody] [SwaggerRequestBody("The data of the game to create")] CreateGameRequest req,
+    [FromBody] CreateGameRequest req,
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper,
     [FromServices] IGameService gameService) =>
 {
@@ -181,12 +187,18 @@ app.MapPost("/games", async (
     return Results.Created($"/games/{game.GameId}", new CreateGameResponse(game.ToDto()));
 })
 .Produces<CreateGameResponse>(StatusCodes.Status201Created)
-.WithMetadata(new SwaggerOperationAttribute("Creates and starts a game"));
+.WithName("CreateGame")
+.WithSummary("Creates and starts a game")
+.WithOpenApi(x =>
+{
+    x.RequestBody.Description = "The data of the game to create";
+    return x;
+});
 
 // Cancel or delete game
 app.MapDelete("/games/{gameId:guid}", async (
-    [FromRoute] [SwaggerParameter("The id of the game to delete or cancel")] Guid gameId,
-    [FromQuery] [SwaggerParameter("Defines whether the game should be cancelled or deleted.")] bool? cancel,
+    [FromRoute] Guid gameId,
+    [FromQuery] bool? cancel,
     [FromServices] IGameService gameService
 ) =>
 {
@@ -198,15 +210,20 @@ app.MapDelete("/games/{gameId:guid}", async (
     return Results.NoContent();
 })
 .Produces(StatusCodes.Status204NoContent)
-.WithMetadata(new SwaggerOperationAttribute(
-    "Cancels or deletes the game with the given id",
-    "A cancelled game remains in the database, whereas a deleted game does not."
-));
+.WithName("CancelOrDeleteGame")
+.WithSummary("Cancels or deletes the game with the given id")
+.WithDescription("A cancelled game remains in the database, whereas a deleted game does not.")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The id of the game to delete or cancel";
+    x.Parameters[1].Description = "Defines whether the game should be cancelled or deleted.";
+    return x;
+});
 
 // Create move for game
 app.MapPost("/games/{gameId:guid}/moves", async (
-    [FromRoute] [SwaggerParameter("The id of the game to create a move for")] Guid gameId,
-    [FromBody] [SwaggerRequestBody("The data for creating the move")] CreateMoveRequest req,
+    [FromRoute] Guid gameId,
+    [FromBody] CreateMoveRequest req,
     [FromServices] IMoveService moveService) =>
 {
     Game game;
@@ -231,6 +248,13 @@ app.MapPost("/games/{gameId:guid}/moves", async (
 .Produces<CreateMoveResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
 .Produces(StatusCodes.Status404NotFound)
-.WithMetadata(new SwaggerOperationAttribute("Creates a move for the game with the given id"));
+.WithName("CreateMove")
+.WithSummary("Creates a move for the game with the given id")
+.WithOpenApi(x =>
+{
+    x.Parameters[0].Description = "The id of the game to create a move for";
+    x.RequestBody.Description = "The data for creating the move";
+    return x;
+});
 
 app.Run();
