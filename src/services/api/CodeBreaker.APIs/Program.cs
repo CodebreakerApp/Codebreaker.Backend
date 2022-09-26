@@ -176,13 +176,35 @@ app.MapGet("/games/{gameId:guid}", async (
     return x;
 });
 
+app.MapGet("/gametypes", async (
+    [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper
+) =>
+{
+    IEnumerable<GameType<string>> gameTypes = gameTypeFactoryMapper.GetAllFactories().Select(x => x.Create());
+    return Results.Ok(new GetGameTypesResponse(gameTypes.Select(x => x.ToDto())));
+})
+.Produces<GetGameTypesResponse>(StatusCodes.Status200OK)
+.WithName("GetGameTypes")
+.WithSummary("Gets the available game-types")
+.WithOpenApi();
+
 // Create game
 app.MapPost("/games", async (
     [FromBody] CreateGameRequest req,
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper,
     [FromServices] IGameService gameService) =>
 {
-    GameTypeFactory<string> gameTypeFactory = gameTypeFactoryMapper[req.GameType];
+    GameTypeFactory<string> gameTypeFactory;
+
+    try
+    {
+        gameTypeFactory = gameTypeFactoryMapper[req.GameType];
+    }
+    catch (GameTypeNotFoundException)
+    {
+        return Results.BadRequest("Gametype does not exist");
+    }
+    
     Game game = await gameService.CreateAsync(req.Username, gameTypeFactory);
     return Results.Created($"/games/{game.GameId}", new CreateGameResponse(game.ToDto()));
 })

@@ -10,6 +10,8 @@ namespace CodeBreaker.APIs.Data.Factories.GameTypeFactories
 
         GameTypeFactory<TField> GetFactoryByName(string name);
 
+        IEnumerable<GameTypeFactory<TField>> GetAllFactories();
+
         GameTypeFactoryMapper<TField> Initialize();
 
         GameTypeFactoryMapper<TField> Initialize(Assembly assemblyToCheck);

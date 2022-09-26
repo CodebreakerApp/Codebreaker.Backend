@@ -51,4 +51,10 @@ public static class DtoExtensions
             dto.GuessPegs,
             dto.KeyPegs?.ToModel()
         );
+
+    public static GameTypeDto ToDto<TField>(this GameType<TField> gameType) =>
+        new()
+        {
+            Name = gameType.Name
+        };
 }
