@@ -1,4 +1,4 @@
-using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Extensions;
 using CodeBreaker.Shared.Models.Data;
 
