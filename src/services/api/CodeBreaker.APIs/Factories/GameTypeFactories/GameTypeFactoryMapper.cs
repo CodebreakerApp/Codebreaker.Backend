@@ -2,7 +2,7 @@
 using System.Reflection;
 using CodeBreaker.Shared.Exceptions;
 
-namespace CodeBreaker.Data.Factories.GameTypeFactories;
+namespace CodeBreaker.APIs.Factories.GameTypeFactories;
 
 public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
 {

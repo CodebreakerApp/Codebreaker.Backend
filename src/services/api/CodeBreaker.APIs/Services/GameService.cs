@@ -1,6 +1,6 @@
-﻿using CodeBreaker.APIs.Services.Cache;
-using CodeBreaker.Data.Factories;
-using CodeBreaker.Data.Factories.GameTypeFactories;
+﻿using CodeBreaker.APIs.Factories;
+using CodeBreaker.APIs.Factories.GameTypeFactories;
+using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.APIs.Services;

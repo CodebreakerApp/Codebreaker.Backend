@@ -1,6 +1,4 @@
-﻿using System;
-using CodeBreaker.Data.DbConfiguration;
-using CodeBreaker.Data.Extensions;
+﻿using CodeBreaker.Data.DbConfiguration;
 using CodeBreaker.Shared.Exceptions;
 using CodeBreaker.Shared.Models.Data;
 using Microsoft.EntityFrameworkCore;
@@ -51,22 +49,6 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
         Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         game.End = DateTime.Now;
         await SaveChangesAsync();
-    }
-
-    [Obsolete("Move ApplyMove to API")]
-    public async Task<Game> AddMoveAsync(Guid gameId, Move move)
-    {
-        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
-        return await AddMoveAsync(game, move);
-    }
-
-    [Obsolete("Move ApplyMove to API")]
-    public async Task<Game> AddMoveAsync(Game game, Move move)
-    {
-        game.ApplyMove(move);
-        await SaveChangesAsync();
-        _logger.LogInformation("Added move to game with id {gameId}", game.GameId);
-        return game;
     }
 
     public Task<Game?> GetGameAsync(Guid gameId) =>

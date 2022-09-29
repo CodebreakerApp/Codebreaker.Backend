@@ -1,4 +1,5 @@
-﻿using CodeBreaker.APIs.Services.Cache;
+﻿using CodeBreaker.APIs.Extensions;
+using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.APIs.Services;
@@ -23,15 +24,12 @@ public class MoveService : IMoveService
 
     public virtual async Task<Game> CreateMoveAsync(Guid gameId, Move move)
     {
-        Game game = await _dbContext.AddMoveAsync(gameId, move);
+        Game game = await _dbContext.GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        game.ApplyMove(move);
+        await _dbContext.UpdateGameAsync(game);
         await _eventService.FireMoveCreatedEventAsync(move);
         _gameCache.Set(gameId, game);
-        _logger.SetMove(move.ToString(), move.KeyPegs?.ToString() ?? string.Empty);
+        _logger.SetMove(move.ToString() ?? string.Empty, move.KeyPegs?.ToString() ?? string.Empty);
         return game;
     }
-
-    //private async ValueTask<Game> LoadGameFromCacheOrDatabase(Guid gameId) =>
-    //    _gameCache.GetOrDefault(gameId)
-    //    ?? await _dbContext.GetGameAsync(gameId)
-    //    ?? throw new GameNotFoundException($"The game with the id {gameId} was not found");
 }

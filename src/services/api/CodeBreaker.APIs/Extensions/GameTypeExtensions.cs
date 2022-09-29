@@ -1,7 +1,7 @@
-﻿using CodeBreaker.Data.Factories;
+﻿using CodeBreaker.APIs.Factories;
 using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.Data.Extensions
+namespace CodeBreaker.APIs.Extensions
 {
     internal static class GameTypeExtensions
     {

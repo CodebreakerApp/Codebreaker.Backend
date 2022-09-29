@@ -8,7 +8,6 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.Data.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Options;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.APIs.Services.Cache;
@@ -29,6 +28,7 @@ using System.Configuration;
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
+using CodeBreaker.APIs.Factories.GameTypeFactories;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

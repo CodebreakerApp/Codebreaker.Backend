@@ -1,7 +1,7 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Extensions;
 
-namespace CodeBreaker.Data.Extensions;
+namespace CodeBreaker.APIs.Extensions;
 
 internal static class GameExtensions
 {
@@ -17,8 +17,8 @@ internal static class GameExtensions
         move.MoveNumber = game.GetLastMoveOrDefault()?.MoveNumber + 1 ?? 0;
 
         // Check black and white keyPegs
-        List<string> codeToCheck = new (game.Code);
-        List<string> guessPegsToCheck = new (move.GuessPegs);
+        List<string> codeToCheck = new(game.Code);
+        List<string> guessPegsToCheck = new(move.GuessPegs);
         int black = 0;
         List<string> whitePegs = new();
 
@@ -48,7 +48,7 @@ internal static class GameExtensions
             whitePegs.Add(value);
         }
 
-        KeyPegs keyPegs = new (black, whitePegs.Count);
+        KeyPegs keyPegs = new(black, whitePegs.Count);
 
         if (keyPegs.Total > game.Type.Holes)
             throw new InvalidOperationException("Their are more keyPegs than holes"); // Should not be the case

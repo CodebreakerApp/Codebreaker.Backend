@@ -1,6 +1,6 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.Data.Factories;
+namespace CodeBreaker.APIs.Factories;
 
 internal static class CodeFactory
 {

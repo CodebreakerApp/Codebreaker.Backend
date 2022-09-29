@@ -1,7 +1,7 @@
-﻿using CodeBreaker.Data.Factories.GameTypeFactories;
+﻿using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.Data.Factories;
+namespace CodeBreaker.APIs.Factories;
 
 public static class GameFactory
 {
