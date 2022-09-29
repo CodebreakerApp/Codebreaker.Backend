@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using CodeBreaker.Shared.Exceptions;
 
 namespace CodeBreaker.Data.Factories.GameTypeFactories;
 
@@ -42,11 +43,32 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
         return this;
     }
 
-    public virtual GameTypeFactory<TField> this[string name] =>
-        _gameTypeFactories[name.ToUpperInvariant()];
+    /// <summary>
+    /// Gets the a <see cref="GameTypeFactory"/> by its name.
+    /// </summary>
+    /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
+    /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
+    /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
+	public virtual GameTypeFactory<TField> this[string name] =>
+        GetFactoryByName(name);
 
-    public virtual GameTypeFactory<TField> GetFactoryByName(string name) =>
-        _gameTypeFactories[name.ToUpperInvariant()];
+    /// <summary>
+    /// Gets the a <see cref="GameTypeFactory"/> by its name.
+    /// </summary>
+    /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
+    /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
+    /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
+	public virtual GameTypeFactory<TField> GetFactoryByName(string name)
+    {
+        if (!_gameTypeFactories.ContainsKey(name))
+            throw new GameTypeNotFoundException();
+
+        return _gameTypeFactories[name.ToUpperInvariant()];
+    }
+
+    public virtual IEnumerable<GameTypeFactory<TField>> GetAllFactories() =>
+        _gameTypeFactories.Values;
+
 
     private ImmutableDictionary<string, GameTypeFactory<TField>> CreateDictionaryForTypes(IEnumerable<Type> gameTypeFactoryTypes) =>
         gameTypeFactoryTypes

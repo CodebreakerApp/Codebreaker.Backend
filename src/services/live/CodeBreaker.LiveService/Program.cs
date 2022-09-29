@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Consumer;
 using CodeBreaker.LiveService;
@@ -52,9 +53,22 @@ builder.Services.AddSignalR().AddAzureSignalR(signalRConnectionString);
 #endif
 
 builder.Services.AddHostedService<EventHandlingService>();
+builder.Services.AddRequestDecompression();
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
+        {
+            PermitLimit = 10,
+            QueueLimit = 5,
+            QueueProcessingOrder = QueueProcessingOrder.NewestFirst
+        }));
+});
 
 WebApplication app = builder.Build();
 
+app.UseRequestDecompression();
+app.UseRateLimiter();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAzureAppConfiguration();
@@ -68,6 +82,8 @@ app.MapGet("/update-config", (
     logger.LogInformation("Configuration reloaded");
     return Results.NoContent();
 })
-.WithDescription("Triggers the reload of the configuration.")
-.Produces(StatusCodes.Status204NoContent);
+.Produces(StatusCodes.Status204NoContent)
+.WithName("TriggerConfigUpdate")
+.WithSummary("Triggers the reload of the configuration.")
+.WithOpenApi();
 app.Run();
