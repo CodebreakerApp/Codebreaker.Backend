@@ -17,10 +17,10 @@ internal static class GameExtensions
         move.MoveNumber = game.GetLastMoveOrDefault()?.MoveNumber + 1 ?? 0;
 
         // Check black and white keyPegs
-        var codeToCheck = new List<string>(game.Code);
-        var guessPegsToCheck = new List<string>(move.GuessPegs);
+        List<string> codeToCheck = new (game.Code);
+        List<string> guessPegsToCheck = new (move.GuessPegs);
         int black = 0;
-        var whitePegs = new List<string>();
+        List<string> whitePegs = new();
 
         // check black
         for (int i = 0; i < guessPegsToCheck.Count; i++)
@@ -48,7 +48,7 @@ internal static class GameExtensions
             whitePegs.Add(value);
         }
 
-        var keyPegs = new KeyPegs(black, whitePegs.Count);
+        KeyPegs keyPegs = new (black, whitePegs.Count);
 
         if (keyPegs.Total > game.Type.Holes)
             throw new InvalidOperationException("Their are more keyPegs than holes"); // Should not be the case

@@ -1,4 +1,5 @@
-﻿using CodeBreaker.Data.DbConfiguration;
+﻿using System;
+using CodeBreaker.Data.DbConfiguration;
 using CodeBreaker.Data.Extensions;
 using CodeBreaker.Shared.Exceptions;
 using CodeBreaker.Shared.Models.Data;
@@ -52,12 +53,14 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
         await SaveChangesAsync();
     }
 
+    [Obsolete("Move ApplyMove to API")]
     public async Task<Game> AddMoveAsync(Guid gameId, Move move)
     {
         Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         return await AddMoveAsync(game, move);
     }
 
+    [Obsolete("Move ApplyMove to API")]
     public async Task<Game> AddMoveAsync(Game game, Move move)
     {
         game.ApplyMove(move);
@@ -74,8 +77,8 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
 
     public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date)
     {
-        var begin = new DateTime(date.Year, date.Month, date.Day);
-        var end = new DateTime(date.Year, date.Month, date.Day + 1);
+        DateTime begin = new (date.Year, date.Month, date.Day);
+        DateTime end = new (date.Year, date.Month, date.Day + 1);
 
         return Games
             .AsNoTracking()

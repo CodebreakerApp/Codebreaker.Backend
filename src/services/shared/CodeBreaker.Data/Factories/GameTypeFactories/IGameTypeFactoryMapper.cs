@@ -1,21 +1,20 @@
 ﻿using System.Reflection;
 
-namespace CodeBreaker.Data.Factories.GameTypeFactories
+namespace CodeBreaker.Data.Factories.GameTypeFactories;
+
+public interface IGameTypeFactoryMapper : IGameTypeFactoryMapper<string> { }
+
+public interface IGameTypeFactoryMapper<TField>
 {
-    public interface IGameTypeFactoryMapper : IGameTypeFactoryMapper<string> { }
+    GameTypeFactory<TField> this[string name] { get; }
 
-    public interface IGameTypeFactoryMapper<TField>
-    {
-        GameTypeFactory<TField> this[string name] { get; }
+    GameTypeFactory<TField> GetFactoryByName(string name);
 
-        GameTypeFactory<TField> GetFactoryByName(string name);
+    GameTypeFactoryMapper<TField> Initialize();
 
-        GameTypeFactoryMapper<TField> Initialize();
+    GameTypeFactoryMapper<TField> Initialize(Assembly assemblyToCheck);
 
-        GameTypeFactoryMapper<TField> Initialize(Assembly assemblyToCheck);
+    GameTypeFactoryMapper<TField> Initialize(IEnumerable<GameTypeFactory<TField>> gameTypeFactories);
 
-        GameTypeFactoryMapper<TField> Initialize(IEnumerable<GameTypeFactory<TField>> gameTypeFactories);
-
-        GameTypeFactoryMapper<TField> Initialize(IEnumerable<Type> gameTypeFactoryTypes);
-    }
+    GameTypeFactoryMapper<TField> Initialize(IEnumerable<Type> gameTypeFactoryTypes);
 }
