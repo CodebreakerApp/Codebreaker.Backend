@@ -1,4 +1,4 @@
-﻿using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+﻿using CodeBreaker.Data.Factories.GameTypeFactories;
 using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.APIs.Services

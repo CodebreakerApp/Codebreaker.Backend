@@ -1,12 +1,12 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.APIs.Data.Factories;
+namespace CodeBreaker.Data.Factories;
 
 internal static class CodeFactory
 {
     public static IReadOnlyList<TField> CreateRandomCode<TField>(GameType<TField> gameType)
     {
-        TField[] pegs = new TField[gameType.Holes];
+        var pegs = new TField[gameType.Holes];
 
         for (int i = 0; i < gameType.Holes; i++)
         {

@@ -1,6 +1,7 @@
 ﻿using CodeBreaker.Shared.Models.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace CodeBreaker.APIs.Data;
+namespace CodeBreaker.Data;
 public interface ICodeBreakerContext
 {
     DbSet<Game> Games { get; }

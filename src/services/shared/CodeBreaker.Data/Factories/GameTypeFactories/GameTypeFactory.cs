@@ -1,6 +1,6 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+namespace CodeBreaker.Data.Factories.GameTypeFactories;
 
 public abstract class GameTypeFactory : GameTypeFactory<string>
 {

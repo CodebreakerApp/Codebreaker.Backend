@@ -1,18 +1,14 @@
 global using CodeBreaker.APIs;
-global using CodeBreaker.APIs.Data;
-global using CodeBreaker.APIs.Exceptions;
-global using CodeBreaker.APIs.Extensions;
+global using CodeBreaker.Data;
 global using CodeBreaker.Shared;
 
 global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
 global using Microsoft.EntityFrameworkCore;
 
-global using System.Collections.Concurrent;
 global using System.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Options;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.APIs.Services.Cache;
@@ -29,12 +25,13 @@ using Microsoft.Extensions.Options;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using Swashbuckle.AspNetCore.Annotations;
-using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 #endif
 
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
+using CodeBreaker.Data.Factories.GameTypeFactories;
+using CodeBreaker.Shared.Exceptions;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace CodeBreaker.APIs.Data.Factories.GameTypeFactories
+namespace CodeBreaker.Data.Factories.GameTypeFactories
 {
     public interface IGameTypeFactoryMapper : IGameTypeFactoryMapper<string> { }
 

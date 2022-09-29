@@ -1,7 +1,7 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 using static CodeBreaker.Shared.Models.Data.Colors;
 
-namespace CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+namespace CodeBreaker.Data.Factories.GameTypeFactories;
 
 internal class GameType6x4MiniFactory : GameTypeFactory
 {

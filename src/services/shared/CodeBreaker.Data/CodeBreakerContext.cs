@@ -1,7 +1,11 @@
-﻿using CodeBreaker.APIs.Data.DbConfiguration;
+﻿using CodeBreaker.Data.DbConfiguration;
+using CodeBreaker.Data.Extensions;
+using CodeBreaker.Shared.Exceptions;
 using CodeBreaker.Shared.Models.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace CodeBreaker.APIs.Data;
+namespace CodeBreaker.Data;
 
 public class CodeBreakerContext : DbContext, ICodeBreakerContext
 {
@@ -70,8 +74,8 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
 
     public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date)
     {
-        DateTime begin = new DateTime(date.Year, date.Month, date.Day);
-        DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
+        var begin = new DateTime(date.Year, date.Month, date.Day);
+        var end = new DateTime(date.Year, date.Month, date.Day + 1);
 
         return Games
             .AsNoTracking()
