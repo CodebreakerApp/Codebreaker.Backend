@@ -1,4 +1,4 @@
-﻿using CodeBreaker.APIs.Data.Factories;
+﻿using CodeBreaker.APIs.Factories;
 using CodeBreaker.Shared.Models.Data;
 
 namespace CodeBreaker.APIs.Extensions

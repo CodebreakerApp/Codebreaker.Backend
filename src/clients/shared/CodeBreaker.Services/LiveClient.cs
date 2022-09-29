@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using CodeBreaker.LiveService.Shared;
 using CodeBreaker.Services.Authentication;
 using CodeBreaker.Services.Authentication.Definitions;
 using CodeBreaker.Services.EventArguments;
 using CodeBreaker.Shared.Models.Data;
+using CodeBreaker.Shared.Models.Live;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

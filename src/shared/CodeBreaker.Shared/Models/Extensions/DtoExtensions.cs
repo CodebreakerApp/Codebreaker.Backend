@@ -1,6 +1,7 @@
 ﻿using CodeBreaker.Shared.Models.Api;
+using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.Shared.Models.Data;
+namespace CodeBreaker.Shared.Models.Extensions;
 
 public static class DtoExtensions
 {
@@ -17,7 +18,7 @@ public static class DtoExtensions
         };
 
     public static MoveDto<TField> ToDto<TField>(this Move<TField> move) =>
-        new ()
+        new()
         {
             MoveNumber = move.MoveNumber,
             GuessPegs = move.GuessPegs,
@@ -46,7 +47,7 @@ public static class DtoExtensions
         );
 
     public static Move ToModel(this MoveDto<string> dto) =>
-        new (
+        new(
             dto.MoveNumber,
             dto.GuessPegs,
             dto.KeyPegs?.ToModel()

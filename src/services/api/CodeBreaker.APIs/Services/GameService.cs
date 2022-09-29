@@ -1,5 +1,5 @@
-﻿using CodeBreaker.APIs.Data.Factories;
-using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+﻿using CodeBreaker.APIs.Factories;
+using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.Shared.Models.Data;
 

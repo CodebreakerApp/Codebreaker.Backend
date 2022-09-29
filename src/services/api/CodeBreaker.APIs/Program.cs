@@ -1,6 +1,5 @@
-global using CodeBreaker.APIs.Data;
-global using CodeBreaker.APIs.Exceptions;
-global using CodeBreaker.APIs.Extensions;
+global using CodeBreaker.Data;
+global using CodeBreaker.Shared.Exceptions;
 
 global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
@@ -9,7 +8,6 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Options;
 using CodeBreaker.APIs.Services;
 using CodeBreaker.APIs.Services.Cache;
@@ -30,6 +28,7 @@ using System.Configuration;
 using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
+using CodeBreaker.APIs.Factories.GameTypeFactories;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -176,7 +175,7 @@ app.MapGet("/games/{gameId:guid}", async (
     return x;
 });
 
-app.MapGet("/gametypes", async (
+app.MapGet("/gametypes", (
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper
 ) =>
 {

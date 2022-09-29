@@ -1,10 +1,10 @@
-﻿namespace CodeBreaker.LiveService.Shared;
+﻿namespace CodeBreaker.Shared.Models.Live;
 
 public record LiveHubArgs
 {
     private readonly string _name = string.Empty;
 
-    private readonly object _data = new ();
+    private readonly object _data = new();
 
     public LiveHubArgs(string name, object data)
     {

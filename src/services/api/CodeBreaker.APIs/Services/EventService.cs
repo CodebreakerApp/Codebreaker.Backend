@@ -2,8 +2,9 @@
 using System.Text.Json;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Shared.Exceptions;
 using CodeBreaker.Shared.Models.Data;
+using CodeBreaker.Shared.Models.Live;
 using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;

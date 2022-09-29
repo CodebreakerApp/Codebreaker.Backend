@@ -1,4 +1,4 @@
-﻿namespace CodeBreaker.APIs.Exceptions;
+﻿namespace CodeBreaker.Shared.Exceptions;
 
 public class NotFoundException : ApplicationException
 {

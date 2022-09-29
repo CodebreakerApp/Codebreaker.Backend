@@ -1,9 +1,9 @@
-﻿using CodeBreaker.APIs.Data.Factories.GameTypeFactories;
+﻿using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.Shared.Models.Data;
 
-namespace CodeBreaker.APIs.Data.Factories;
+namespace CodeBreaker.APIs.Factories;
 
-internal static class GameFactory
+public static class GameFactory
 {
     public static Game CreateWithRandomCode(string username, GameTypeFactory<string> gameTypeFactory) =>
         CreateWithRandomCode(username, gameTypeFactory.Create());
@@ -16,6 +16,6 @@ internal static class GameFactory
             CodeFactory.CreateRandomCode(gameType),
             DateTime.Now,
             null,
-            new List<Move> ()
+            new List<Move>()
         );
 }
