@@ -1,4 +1,4 @@
-﻿using CodeBreaker.LiveService.Shared;
+﻿using CodeBreaker.Shared.Models.Live;
 using LiveService;
 using Microsoft.AspNetCore.SignalR;
 

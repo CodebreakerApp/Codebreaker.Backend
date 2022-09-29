@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Shared.Models.Live;
 using CodeBreaker.LiveService;
 
 namespace LiveService;

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Azure.Messaging.EventHubs.Consumer;
-using CodeBreaker.LiveService.Shared;
+using CodeBreaker.Shared.Models.Live;
 
 namespace CodeBreaker.LiveService;
 
