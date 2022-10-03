@@ -30,7 +30,7 @@ public class GameService : IGameService
     public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date)
     {
         DateTime begin = new DateTime(date.Year, date.Month, date.Day);
-        DateTime end = new DateTime(date.Year, date.Month, date.Day + 1);
+        DateTime end = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
         return _dbContext.Games
             .Where(x => x.Start >= begin && x.Start < end)
             .AsAsyncEnumerable();
