@@ -60,10 +60,12 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
 	public virtual GameTypeFactory<TField> GetFactoryByName(string name)
     {
-        if (!_gameTypeFactories.ContainsKey(name))
+        string nameUpperCase = name.ToUpperInvariant();
+
+        if (!_gameTypeFactories.ContainsKey(nameUpperCase))
             throw new GameTypeNotFoundException();
 
-        return _gameTypeFactories[name.ToUpperInvariant()];
+        return _gameTypeFactories[nameUpperCase];
     }
 
     public virtual IEnumerable<GameTypeFactory<TField>> GetAllFactories() =>
