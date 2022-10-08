@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-using CodeBreaker.Shared.Exceptions;
 
 namespace CodeBreaker.APIs.Factories.GameTypeFactories;
 
@@ -33,6 +32,9 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
 
         return this;
     }
+
+    public GameTypeFactoryMapper<TField> Initialize(params GameTypeFactory<TField>[] gameTypeFactories) =>
+        Initialize(gameTypeFactories as IEnumerable<GameTypeFactory<TField>>);
 
     public GameTypeFactoryMapper<TField> Initialize(IEnumerable<Type> gameTypeFactoryTypes)
     {

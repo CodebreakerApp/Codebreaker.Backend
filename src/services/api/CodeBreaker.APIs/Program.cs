@@ -89,7 +89,11 @@ builder.Services.AddSingleton<EventHubProducerClient>(builder =>
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IGameCache, GameCache>();
-builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMapper<string>>(x => new GameTypeFactoryMapper<string>().Initialize());
+builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMapper<string>>(x => new GameTypeFactoryMapper<string>().Initialize(
+    new GameType6x4Factory(),
+    new GameType6x4MiniFactory(),
+    new GameType8x5Factory()
+));
 
 builder.Services.AddSingleton<IPublishEventService, EventService>();
 builder.Services.AddScoped<IGameService, GameService>();
