@@ -56,8 +56,8 @@ builder.Services.AddHostedService<EventHandlingService>();
 builder.Services.AddRequestDecompression();
 builder.Services.AddRateLimiter(options =>
 {
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
+    options.AddPolicy("standardLimiter", context =>
+        RateLimitPartition.GetConcurrencyLimiter("standardLimiter", key => new ConcurrencyLimiterOptions
         {
             PermitLimit = 10,
             QueueLimit = 5,
@@ -85,5 +85,7 @@ app.MapGet("/update-config", (
 .Produces(StatusCodes.Status204NoContent)
 .WithName("TriggerConfigUpdate")
 .WithSummary("Triggers the reload of the configuration.")
-.WithOpenApi();
+.WithOpenApi()
+.RequireRateLimiting("standardLimiter");
+
 app.Run();
