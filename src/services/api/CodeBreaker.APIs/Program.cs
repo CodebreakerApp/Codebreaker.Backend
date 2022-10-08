@@ -110,8 +110,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddRequestDecompression();
 builder.Services.AddRateLimiter(options =>
 {
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-        RateLimitPartition.GetConcurrencyLimiter("globalLimiter", key => new ConcurrencyLimiterOptions
+    options.AddPolicy("standardLimiter", context =>
+        RateLimitPartition.GetConcurrencyLimiter("standardLimiter", key => new ConcurrencyLimiterOptions
         {
             PermitLimit = 10,
             QueueLimit = 5,
@@ -150,7 +150,8 @@ app.MapGet("/games", (
 {
     x.Parameters[0].Description = "The of date to get the games from. (e.g. 2022-01-01)";
     return x;
-});
+})
+.RequireRateLimiting("standardLimiter");
 
 // Get game by id
 app.MapGet("/games/{gameId:guid}", async (
@@ -173,7 +174,8 @@ app.MapGet("/games/{gameId:guid}", async (
 {
     x.Parameters[0].Description = "The id of the game to get";
     return x;
-});
+})
+.RequireRateLimiting("standardLimiter");
 
 app.MapGet("/gametypes", (
     [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper
@@ -185,7 +187,8 @@ app.MapGet("/gametypes", (
 .Produces<GetGameTypesResponse>(StatusCodes.Status200OK)
 .WithName("GetGameTypes")
 .WithSummary("Gets the available game-types")
-.WithOpenApi();
+.WithOpenApi()
+.RequireRateLimiting("standardLimiter");
 
 // Create game
 app.MapPost("/games", async (
@@ -214,7 +217,8 @@ app.MapPost("/games", async (
 {
     x.RequestBody.Description = "The data of the game to create";
     return x;
-});
+})
+.RequireRateLimiting("standardLimiter");
 
 // Cancel or delete game
 app.MapDelete("/games/{gameId:guid}", async (
@@ -239,7 +243,8 @@ app.MapDelete("/games/{gameId:guid}", async (
     x.Parameters[0].Description = "The id of the game to delete or cancel";
     x.Parameters[1].Description = "Defines whether the game should be cancelled or deleted.";
     return x;
-});
+})
+.RequireRateLimiting("standardLimiter");
 
 // Create move for game
 app.MapPost("/games/{gameId:guid}/moves", async (
@@ -276,6 +281,7 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     x.Parameters[0].Description = "The id of the game to create a move for";
     x.RequestBody.Description = "The data for creating the move";
     return x;
-});
+})
+.RequireRateLimiting("standardLimiter");
 
 app.Run();
