@@ -89,7 +89,7 @@ public class CodeBreakerGameRunner
             CreateMoveRequest moveRequest = new(colorNames);
             _logger.SendMove(moveRequest.ToString(), gameId.ToString());
 
-            var responseMessage = await _httpClient.PostAsJsonAsync("move/6x4", moveRequest);
+            var responseMessage = await _httpClient.PostAsJsonAsync($"games/{gameId}/moves", moveRequest);
             responseMessage.EnsureSuccessStatusCode();
             response = await responseMessage.Content.ReadFromJsonAsync<CreateMoveResponse>();
 
