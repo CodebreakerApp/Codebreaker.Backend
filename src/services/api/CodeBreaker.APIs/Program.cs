@@ -74,8 +74,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string connectionString = builder.Configuration
-        .GetSection("CodeBreakerAPI")
-        .GetConnectionString("CodeBreakerConnection")
+        .GetSection("ApiService")
+        .GetConnectionString("CosmosConnection")
         ?? throw new ConfigurationErrorsException("No connection string found with the configuration.");
 
     options.UseCosmos(connectionString, "codebreaker");
