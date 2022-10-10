@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-using CodeBreaker.Shared.Exceptions;
 
 namespace CodeBreaker.APIs.Factories.GameTypeFactories;
 
@@ -34,6 +33,9 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
         return this;
     }
 
+    public GameTypeFactoryMapper<TField> Initialize(params GameTypeFactory<TField>[] gameTypeFactories) =>
+        Initialize(gameTypeFactories as IEnumerable<GameTypeFactory<TField>>);
+
     public GameTypeFactoryMapper<TField> Initialize(IEnumerable<Type> gameTypeFactoryTypes)
     {
         if (gameTypeFactoryTypes.Any(t => !t.IsSubclassOf(typeof(GameTypeFactory<TField>)) || t.IsAbstract))
@@ -49,7 +51,7 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
     /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
     /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
-	public virtual GameTypeFactory<TField> this[string name] =>
+	  public virtual GameTypeFactory<TField> this[string name] =>
         GetFactoryByName(name);
 
     /// <summary>
@@ -58,12 +60,14 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
     /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
     /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
-	public virtual GameTypeFactory<TField> GetFactoryByName(string name)
+	  public virtual GameTypeFactory<TField> GetFactoryByName(string name)
     {
-        if (!_gameTypeFactories.ContainsKey(name.ToUpperInvariant()))
+        string nameUpperCase = name.ToUpperInvariant();
+
+        if (!_gameTypeFactories.ContainsKey(nameUpperCase))
             throw new GameTypeNotFoundException();
 
-        return _gameTypeFactories[name.ToUpperInvariant()];
+        return _gameTypeFactories[nameUpperCase];
     }
 
     public virtual IEnumerable<GameTypeFactory<TField>> GetAllFactories() =>
