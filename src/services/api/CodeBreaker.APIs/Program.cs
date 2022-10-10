@@ -73,10 +73,11 @@ builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetr
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
-    string connectionString = builder.Configuration["ApiService:ConnectionStrings:CosmosConnection"]
-        ?? throw new ConfigurationErrorsException("No connection string found with the configuration.");
-
-    options.UseCosmos(connectionString, "codebreaker");
+    string accountEndpoint = builder.Configuration["ApiService:Cosmos:AccountEndpoint"]
+        ?? throw new ConfigurationErrorsException("ApiService:Cosmos:AccountEndpoint configuration is not available");
+    string databaseName = builder.Configuration["ApiService:Cosmos:DatabaseName"]
+        ?? throw new ConfigurationErrorsException("ApiService:Cosmos:DatabaseName configuration is not availabile");
+    options.UseCosmos(accountEndpoint, azureCredential, databaseName);
 });
 
 builder.Services.AddSingleton<EventHubProducerClient>(builder =>
