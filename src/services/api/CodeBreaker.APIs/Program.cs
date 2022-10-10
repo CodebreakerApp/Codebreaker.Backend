@@ -73,9 +73,7 @@ builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetr
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
-    string connectionString = builder.Configuration
-        .GetSection("ApiService")
-        .GetConnectionString("CosmosConnection")
+    string connectionString = builder.Configuration["ApiService:ConnectionStrings:CosmosConnection"]
         ?? throw new ConfigurationErrorsException("No connection string found with the configuration.");
 
     options.UseCosmos(connectionString, "codebreaker");
