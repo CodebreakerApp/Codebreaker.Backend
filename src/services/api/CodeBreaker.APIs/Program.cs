@@ -29,6 +29,7 @@ using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 using CodeBreaker.APIs.Factories.GameTypeFactories;
+using Azure.Core;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -222,6 +223,13 @@ app.MapPost("/games", async (
     }
     
     Game game = await gameService.CreateAsync(req.Username, gameTypeFactory);
+
+    using var activity = activitySource.StartActivity("Game started", ActivityKind.Server);
+    gamesStarted.Add(1);
+    activity?.AddBaggage("GameId", game.GameId.ToString());
+    activity?.AddBaggage("Name", req.Username);
+    activity?.AddEvent(new ActivityEvent("Game started"));
+
     return Results.Created($"/games/{game.GameId}", new CreateGameResponse(game.ToDto()));
 })
 .Produces<CreateGameResponse>(StatusCodes.Status201Created)
@@ -277,6 +285,10 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     {
         return Results.NotFound();
     }
+
+    using var activity = activitySource.StartActivity("Game Move", ActivityKind.Server);
+    activity?.AddBaggage("GameId", gameId.ToString());
+    movesDone.Add(1);
 
     KeyPegs? keyPegs = game.GetLastKeyPegsOrDefault();
 
