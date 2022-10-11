@@ -28,11 +28,12 @@ builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
     
     if (apiUri is null)
     {
-        string? codebreakeruri = builder.Configuration.GetSection("CodeBreakerBot")["APIUri"];
-        if (codebreakeruri is null) throw new InvalidOperationException("APIURI not retrieved");
+        string codebreakeruri = builder.Configuration["ApiBase"]
+            ?? throw new InvalidOperationException("ApiBase configuration not available"); ;
 
         apiUri = new Uri(codebreakeruri);
     }
+
     app?.Logger.UsingUri(apiUri.ToString());
     options.BaseAddress = apiUri;
 });
