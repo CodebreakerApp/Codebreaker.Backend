@@ -55,6 +55,7 @@ DefaultAzureCredential azureCredential = new();
 #endif
 var builder = WebApplication.CreateBuilder(args);
 
+// AppConfiguration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationErrorsException("AzureAppConfigurationEndpoint");
@@ -66,11 +67,16 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
 builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
-builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddApplicationInsightsTelemetry(options => options.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+// ApplicationInsights
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
+
+// Swagger/EndpointDocumentation
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Database
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
 {
     string accountEndpoint = builder.Configuration["ApiService:Cosmos:AccountEndpoint"]
@@ -80,14 +86,18 @@ builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =
     options.UseCosmos(accountEndpoint, azureCredential, databaseName);
 });
 
+// EventHub
 builder.Services.AddSingleton<EventHubProducerClient>(builder =>
 {
     ApiServiceOptions options = builder.GetRequiredService<ApiServiceOptions>();
     return new(options.EventHub.FullyQualifiedNamespace, options.EventHub.Name, azureCredential);
 });
 
+// Cache
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IGameCache, GameCache>();
+
+// Application Services
 builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMapper<string>>(x => new GameTypeFactoryMapper<string>().Initialize(
     new GameType6x4Factory(),
     new GameType6x4MiniFactory(),
@@ -98,6 +108,7 @@ builder.Services.AddSingleton<IPublishEventService, EventService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IMoveService, MoveService>();
 
+// CORS
 const string AllowCodeBreakerOrigins = "_allowCodeBreakerOrigins";
 builder.Services.AddCors(options =>
 {

@@ -13,14 +13,18 @@ using Microsoft.AspNetCore.Mvc;
 [assembly: InternalsVisibleTo("MMBot.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+
+// ApplicationInsights
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
+
 WebApplication? app = null;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger & EndpointDocumentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// HttpClient & Application Services
 builder.Services.AddHttpClient<CodeBreakerGameRunner>(options =>
 {
     // running with tye?
