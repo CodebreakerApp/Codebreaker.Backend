@@ -70,4 +70,6 @@ public class GameType<TField>
             _maxMoves = value;
         }
     }
+
+    public override string ToString() => Name;
 }

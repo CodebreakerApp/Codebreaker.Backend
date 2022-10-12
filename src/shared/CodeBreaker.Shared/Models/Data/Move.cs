@@ -66,6 +66,9 @@ public class Move<TField>
     public IReadOnlyList<TField> GuessPegs { get; init; } = new List<TField>();
 
     public KeyPegs? KeyPegs { get; set; }
+
+    public override string ToString() =>
+        $"{MoveNumber}, {string.Join("..", GuessPegs)}";
 }
 
 public record struct KeyPegs
