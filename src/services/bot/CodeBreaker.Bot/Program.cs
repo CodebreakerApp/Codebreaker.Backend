@@ -52,13 +52,13 @@ app.MapPost("/bots", (
     [FromServices] CodeBreakerTimer timer,
     [FromQuery] int? delay,
     [FromQuery] int? count,
-    [FromQuery] int? duration) =>
+    [FromQuery] int? thinkTime) =>
 {
     Guid id;
 
     try
     {
-        id = timer.Start(delay ?? 60, count ?? 3, duration ?? 3);
+        id = timer.Start(delay ?? 60, count ?? 3, thinkTime ?? 3);
     }
     catch (ArgumentOutOfRangeException)
     {
@@ -75,7 +75,7 @@ app.MapPost("/bots", (
 {
     x.Parameters[0].Description = "The delay between the games (seconds). If not specified, default values are used.";
     x.Parameters[1].Description = "The number of games to play. If not specified, default values are used.";
-    x.Parameters[2].Description = "The duration of a game (seconds). If not specified, default values are used.";
+    x.Parameters[2].Description = "The think time between game moves (seconds). If not specified, default values are used.";
     return x;
 });
 
