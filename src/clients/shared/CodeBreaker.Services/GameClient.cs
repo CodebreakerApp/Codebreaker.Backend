@@ -29,9 +29,16 @@ public class GameClient : IGameClient, IGameReportClient
     {
         await SetAuthentication();
         CreateGameRequest request = new(username, gameType);
-        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync($"/games", request);
+        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync("/games", request);
         responseMessage.EnsureSuccessStatusCode();
         return await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
+    }
+
+    public async Task CancelGameAsync(Guid gameId)
+    {
+        await SetAuthentication();
+        HttpResponseMessage responseMessage = await _httpClient.DeleteAsync($"/games/{gameId}?cancel=true");
+        responseMessage.EnsureSuccessStatusCode();
     }
 
     public async Task<CreateMoveResponse> SetMoveAsync(Guid gameId, params string[] colorNames)
