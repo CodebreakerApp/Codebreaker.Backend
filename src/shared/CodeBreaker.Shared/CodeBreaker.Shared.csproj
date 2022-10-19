@@ -4,6 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>CNInnovation.Codebreaker.Shared</PackageId>
+    <Authors>CN innovation</Authors>
+    <Company>CN innovation</Company>
+    <PackageDescription>This package is used by Codebreaker applications on the client and the server</PackageDescription>
+    <RepositoryUrl>https://github.com/CNInnovation/Codebreaker</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
