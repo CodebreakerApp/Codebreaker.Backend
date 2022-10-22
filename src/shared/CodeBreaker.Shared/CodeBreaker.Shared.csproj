@@ -8,7 +8,7 @@
     <Authors>CN innovation</Authors>
     <Company>CN innovation</Company>
     <PackageDescription>This package is used by Codebreaker applications on the client and the server</PackageDescription>
-    <RepositoryUrl>https://github.com/CNInnovation/Codebreaker</RepositoryUrl>
+    <RepositoryUrl>https://github.com/CNinnovation/codebreakerpackages</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
