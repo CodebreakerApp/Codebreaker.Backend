@@ -12,6 +12,8 @@
 
 [Guidelines](guidelines.md)
 
+[Codebreaker Packages Feed](https://pkgs.dev.azure.com/cnilearn/codebreakerpackages/_packaging/codebreaker/nuget/v3/index.json)
+
 ## Codebreaker Services
 
 * REST API to play games, writes information to Cosmos
