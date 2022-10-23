@@ -27,11 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0-rc.1.22426.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
+    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.0-beta1.24" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0-rc.2.22472.11" />
   </ItemGroup>
 
 </Project>
