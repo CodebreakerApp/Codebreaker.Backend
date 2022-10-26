@@ -1,8 +1,8 @@
-﻿using CodeBreaker.Shared.Models.Data;
+﻿using CodeBreaker.Shared.Models.Live.EventPayloads;
 
 namespace CodeBreaker.Services.EventArguments;
 
-public class OnGameEventArgs : EventArgs, ILiveEventArgs<Game?>
+public class OnGameEventArgs : EventArgs, ILiveEventArgs<GameCreatedPayload?>
 {
-    public Game? Data { get; init; }
+    public GameCreatedPayload? Data { get; init; }
 }

@@ -27,7 +27,7 @@ public class MoveService : IMoveService
         Game game = await _dbContext.GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         game.ApplyMove(move);
         await _dbContext.UpdateGameAsync(game);
-        await _eventService.FireMoveCreatedEventAsync(move);
+        await _eventService.FireMoveCreatedEventAsync(new (gameId, move));
         _gameCache.Set(gameId, game);
         _logger.SetMove(move.ToString() ?? string.Empty, move.KeyPegs?.ToString() ?? string.Empty);
         return game;
