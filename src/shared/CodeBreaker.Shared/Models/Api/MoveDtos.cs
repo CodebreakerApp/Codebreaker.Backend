@@ -1,6 +1,4 @@
-﻿using CodeBreaker.Shared.Models.Data;
-
-namespace CodeBreaker.Shared.Models.Api;
+﻿namespace CodeBreaker.Shared.Models.Api;
 
 public readonly record struct MoveDto<TField>(
     int MoveNumber,
