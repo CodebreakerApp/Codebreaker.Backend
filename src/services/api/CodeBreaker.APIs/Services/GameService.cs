@@ -46,7 +46,7 @@ public class GameService : IGameService
 		_gameCache.Set(game.GameId, game);
         await _dbContext.CreateGameAsync(game);
         _logger.GameStarted(game.ToString());
-        await _eventService.FireGameCreatedEventAsync(game);
+        await _eventService.FireGameCreatedEventAsync(new (game));
 		return game;
 	}
 

@@ -2,8 +2,8 @@
 using CodeBreaker.Services.Authentication;
 using CodeBreaker.Services.Authentication.Definitions;
 using CodeBreaker.Services.EventArguments;
-using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Live;
+using CodeBreaker.Shared.Models.Live.EventPayloads;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -80,8 +80,8 @@ public class LiveClient
 
     private void InitializeEventHandlers()
     {
-        _eventHandlers.Add(GameCreatedEventName, eventData => Handle<Game, OnGameEventArgs>(eventData, () => OnGameEvent));
-        _eventHandlers.Add(MoveCreatedEventName, eventData => Handle<Move, OnMoveEventArgs>(eventData, () => OnMoveEvent));
+        _eventHandlers.Add(GameCreatedEventName, eventData => Handle<GameCreatedPayload, OnGameEventArgs>(eventData, () => OnGameEvent));
+        _eventHandlers.Add(MoveCreatedEventName, eventData => Handle<MoveCreatedPayload, OnMoveEventArgs>(eventData, () => OnMoveEvent));
     }
 
     private void Handle<T, TArgs>(LiveHubArgs liveHubArgs, Func<EventHandler<TArgs>?> eventHandler)

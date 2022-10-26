@@ -2,9 +2,8 @@
 using System.Text.Json;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.Shared.Exceptions;
-using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Live;
+using CodeBreaker.Shared.Models.Live.EventPayloads;
 using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
@@ -18,16 +17,16 @@ public class EventService : IPublishEventService, IAsyncDisposable
         _eventHubPublisherClient = eventHubProducerClient;
     }
 
-    public Task FireGameCreatedEventAsync(Game game, CancellationToken token = default) =>
-        SendEventAsync(GameCreatedEventName, game, token);
+    public Task FireGameCreatedEventAsync(GameCreatedPayload payload, CancellationToken token = default) =>
+        SendEventAsync(GameCreatedEventName, payload, token);
 
-    public Task FireMoveCreatedEventAsync(Move move, CancellationToken token = default) =>
-        SendEventAsync(MoveCreatedEventName, move, token);
+    public Task FireMoveCreatedEventAsync(MoveCreatedPayload payload, CancellationToken token = default) =>
+        SendEventAsync(MoveCreatedEventName, payload, token);
 
-    private async Task SendEventAsync<TData>(string eventName, TData data, CancellationToken token = default)
+    private async Task SendEventAsync<TData>(string eventName, TData payload, CancellationToken token = default)
         where TData : notnull
     {
-        LiveHubArgs args = new (eventName, data);
+        LiveHubArgs args = new (eventName, payload);
         using EventDataBatch eventBatch = await _eventHubPublisherClient.CreateBatchAsync(token);
 
         if (!eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(args)))))
