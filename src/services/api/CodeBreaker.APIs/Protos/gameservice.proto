@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "CodeBreaker.Grpc";
+
+service GrpcGame {
+    rpc CreateGame (CreateGameRequest) returns (CreateGameReply);
+    rpc SetMove (SetMoveRequest) returns (SetMoveReply);
+}
+
+message GameReply {
+    string GameId = 1;
+    string Username = 2;
+    google.protobuf.Timestamp Start = 3;
+
+}
+
+message CreateGameRequest {
+    string GameId = 1;
+    string Username = 2;
+    string GameType = 3;
+}
+
+message CreateGameReply {
+    string GameId = 1;
+    GameReply Game = 2;
+}
+
+message SetMoveRequest {
+    string GameId = 1;
+    repeated string GuessPegs = 2;
+}
+
+message SetMoveReply {
+    string GameId = 1;
+    repeated string KeyPegs = 2;
+    bool Ended = 3;
+    bool Won = 4;
+}
