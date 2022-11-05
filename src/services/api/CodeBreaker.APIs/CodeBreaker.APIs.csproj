@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -15,11 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\gameservice.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Core" Version="1.25.0" />
     <PackageReference Include="Azure.Identity" Version="1.7.0" />
     <PackageReference Include="Azure.Messaging.EventHubs" Version="5.7.3" />
     <PackageReference Include="CNInnovation.Codebreaker.Data.Cosmos" Version="2.0.0-beta1.1" />
     <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.0-beta1.26" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0-rc.2.22476.2" />
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="5.3.0-preview" />
