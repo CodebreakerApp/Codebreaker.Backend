@@ -27,6 +27,12 @@ public static partial class Log
     public static partial void MoveWithInvalidGuessValues(this ILogger logger, string guesses);
 
     [LoggerMessage(
+        EventId = 3004,
+        Level = LogLevel.Warning,
+        Message = "Game type not found: `{gametype}`")]
+    public static partial void GameTypeNotFound(this ILogger logger, string gametype);
+
+    [LoggerMessage(
         EventId = 4000,
         Level = LogLevel.Information,
         Message = "Started a game `{game}`")]
