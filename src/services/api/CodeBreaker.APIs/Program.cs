@@ -29,7 +29,8 @@ using System.Diagnostics.Metrics;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 using CodeBreaker.APIs.Factories.GameTypeFactories;
-using Azure.Core;
+using CodeBreaker.APIs.Grpc;
+using CodeBreaker.APIs;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -76,6 +77,8 @@ builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetr
 // Swagger/EndpointDocumentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddGrpc();
 
 // Database
 builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
@@ -148,6 +151,8 @@ app.UseSwaggerUI();
 // Endpoints
 // -------------------------
 
+app.MapGrpcService<GrpcGameController>();
+
 app.MapGet("/games", (
     [FromQuery] DateTime date,
     [FromServices] IGameService gameService
@@ -219,6 +224,7 @@ app.MapPost("/games", async (
     }
     catch (GameTypeNotFoundException)
     {
+        app.Logger.GameTypeNotFound(req.GameType);
         return Results.BadRequest("Gametype does not exist");
     }
     
@@ -275,7 +281,7 @@ app.MapPost("/games/{gameId:guid}/moves", async (
     [FromServices] IMoveService moveService) =>
 {
     Game game;
-    Move move = new Move(0, req.GuessPegs.ToList(), null);
+    Move move = new (0, req.GuessPegs.ToList(), null);
 
     try
     {
