@@ -10,7 +10,7 @@ using Grpc.Core;
 
 namespace CodeBreaker.APIs.Grpc;
 
-public class GrpcGameController : CodeBreaker.Grpc.GrpcGame.GrpcGameBase
+public class GrpcGameController : GrpcGame.GrpcGameBase
 {
     private readonly IGameService _gameService;
     private readonly IMoveService _moveService;
