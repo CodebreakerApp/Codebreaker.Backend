@@ -1,5 +1,4 @@
-﻿using System.Data;
-using CodeBreaker.Bot.Api;
+﻿using CodeBreaker.Bot.Api;
 using CodeBreaker.Bot.Exceptions;
 
 namespace CodeBreaker.Bot;

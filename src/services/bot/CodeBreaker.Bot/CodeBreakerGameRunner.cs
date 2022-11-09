@@ -1,5 +1,4 @@
 ﻿using CodeBreaker.Shared.Models.Api;
-using static CodeBreaker.Shared.Models.Data.Colors;
 
 namespace CodeBreaker.Bot;
 
