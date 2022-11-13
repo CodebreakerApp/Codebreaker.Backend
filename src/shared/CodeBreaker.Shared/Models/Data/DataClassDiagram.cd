@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="CodeBreaker.Shared.Models.Data.Moves.Move6x4">
+    <Position X="16.25" Y="9.25" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Moves\Move6x4.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Moves.MoveBase">
+    <Position X="16.25" Y="6.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Models\Data\Moves\MoveBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Games.Game6x4">
+    <Position X="16.5" Y="20.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Games\Game6x4.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Games.GameBase">
+    <Position X="16.5" Y="14.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIIAAAAAACAAgAEEAQFgAAAAAAAQAEAAAQIAAAQAAAA=</HashCode>
+      <FileName>Models\Data\Games\GameBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.GameTypes.GameType6x4">
+    <Position X="3.75" Y="18" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Models\Data\GameTypes\GameType6x4.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.GameTypes.GameTypeBase">
+    <Position X="3.75" Y="15" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AIEAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\GameTypes\GameTypeBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Fields.ColorField">
+    <Position X="2.25" Y="9" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\ColorField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Fields.ColorShapeField">
+    <Position X="6.25" Y="9" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AIAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\ColorShapeField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CodeBreaker.Shared.Models.Data.Fields.FieldBase">
+    <Position X="4.25" Y="6.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\FieldBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Moves.IMoveVisitable">
+    <Position X="14.5" Y="4.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Moves\IMoveVisitable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Moves.IMoveVisitor">
+    <Position X="18.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Moves\IMoveVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Moves.IMoveVisitor&lt;TResult&gt;">
+    <Position X="21.25" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Moves\IMoveVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Games.IGameVisitable">
+    <Position X="16.75" Y="12.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Games\IGameVisitable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Games.IGameVisitor">
+    <Position X="21" Y="12.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Games\IGameVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Games.IGameVisitor&lt;TResult&gt;">
+    <Position X="14.25" Y="12.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Games\IGameVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.GameTypes.IGameTypeVisitable">
+    <Position X="7.25" Y="12.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\GameTypes\IGameTypeVisitable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.GameTypes.IGameTypeVisitor&lt;TResult&gt;">
+    <Position X="1.75" Y="12.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\GameTypes\IGameTypeVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.GameTypes.IGameTypeVisitor">
+    <Position X="4.5" Y="12.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\GameTypes\IGameTypeVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Fields.IFieldVisitable">
+    <Position X="1.75" Y="4.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\IFieldVisitable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Fields.IFieldVisitor">
+    <Position X="5.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\IFieldVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CodeBreaker.Shared.Models.Data.Fields.IFieldVisitor&lt;TResult&gt;">
+    <Position X="8.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Data\Fields\IFieldVisitor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
