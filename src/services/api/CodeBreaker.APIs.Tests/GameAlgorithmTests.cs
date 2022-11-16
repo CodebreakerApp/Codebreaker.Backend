@@ -110,6 +110,12 @@ public class TestData : IEnumerable<object[]>
             new string[] { Green,  Yellow, White, Red },
             new KeyPegs(3, 0)
         };
+        yield return new object[]
+        {
+            new string[] { White, Black, Yellow, Black },
+            new string[] { Black, Blue,  Black,  White },
+            new KeyPegs(0, 3)
+        };
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
