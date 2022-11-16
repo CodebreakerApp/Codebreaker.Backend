@@ -33,16 +33,15 @@ internal static class GameExtensions
             }
 
         // check white
-        for (int i = 0; i < guessPegsToCheck.Count; i++)
+        foreach (string value in guessPegsToCheck)
         {
-            string value = guessPegsToCheck[i];
-
             // value not in code
             if (!codeToCheck.Contains(value))
                 continue;
 
-            // value peg was already checked
-            if (whitePegs.Contains(value))
+            // value peg was already added to the white pegs often enough
+            // (max. the number in the codeToCheck)
+            if (whitePegs.Count(x => x == value) == codeToCheck.Count(x => x == value))
                 continue;
 
             whitePegs.Add(value);
