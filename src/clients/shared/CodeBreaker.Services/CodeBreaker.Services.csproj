@@ -18,10 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.0-beta1.26" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.47.2" />
+    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.0-beta1.28" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.48.1" />
   </ItemGroup>
 
 </Project>
