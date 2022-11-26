@@ -41,7 +41,6 @@ stages:
           SourceFolder: packages
           Contents: '**/*.nuget'
           TargetFolder: '$(build.artifactstagingdirectory)'
-        condition: succeedOrFailed()
 
       - task: PublishPipelineArtifact@1
         displayName: 'Publish Nuget package artifact'
