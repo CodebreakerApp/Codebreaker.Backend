@@ -36,13 +36,27 @@ stages:
         displayName: 'dotnet pack'
       
       - task: CopyFiles@2
-        displayName: 'copy nuget package to $(build.artifactstagingdirectory)'
+        displayName: 'copy nuget package to $(build.ArtifactStagingDirectory)'
         inputs:
           SourceFolder: packages
           Contents: '**/*.nuget'
-          TargetFolder: '$(build.artifactstagingdirectory)'
+          TargetFolder: '$(build.ArtifactStagingDirectory)'
 
-      - task: PublishPipelineArtifact@1
-        displayName: 'Publish Nuget package artifact'
-        inputs:
-          artifact: shared
+      - publish: packages
+        artifact: 'Shared'
+        displayName: 'Publish shared library'
+
+  - stage: 'Publish'
+    displayName: 'Publish to Azure Artifacts'
+    jobs:
+    - job: PublishNuGetJob
+      displayName: 'Publish NuGet Package to Azure Artifacts'
+      pool:
+        vmImage: ubuntu-latest
+      
+      steps:
+        - download: current
+          artifact: 'Shared'
+          patterns: '**/*.nuget'
+          displayName: 'Download pipeline artifact'
+        
