@@ -17,9 +17,14 @@ pool:
 variables:
   buildConfiguration: 'Release'
   projectDirectory: 'src/shared/CodeBreaker.Shared'
+  projectFile: 'src/shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj'
+  lib-version: 2.0-beta.1$(Build.BuildNumber)
 
 steps:
 - script: |
-    cd $(projectDirectory)
-    dotnet build --configuration $(buildConfiguration)
+    echo 'library version: $(lib-version)'
+    dotnet build --configuration $(buildConfiguration) $(projectFile)
   displayName: 'dotnet build $(buildConfiguration)'
+
+- script: dotnet pack -c $(buildConfiguration) $(projectFile)
+  displayName: 'dotnet pack'
