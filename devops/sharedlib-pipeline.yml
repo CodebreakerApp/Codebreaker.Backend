@@ -11,20 +11,39 @@ trigger:
     include:
     - src/shared/CodeBreaker.Shared
 
-pool:
-  vmImage: ubuntu-latest
-
 variables:
   buildConfiguration: 'Release'
   projectDirectory: 'src/shared/CodeBreaker.Shared'
   projectFile: 'src/shared/CodeBreaker.Shared/CodeBreaker.Shared.csproj'
   lib-version: 2.0-beta.1$(Build.BuildNumber)
 
-steps:
-- script: |
-    echo 'library version: $(lib-version)'
-    dotnet build --configuration $(buildConfiguration) $(projectFile)
-  displayName: 'dotnet build $(buildConfiguration)'
+stages:
+  - stage: 'BuildAndPackage'
+    displayName: 'Build and package the library'
+    jobs:
+    - job: BuildAndPackageJob
+      displayName: 'Build and Package'
+      pool:
+        vmImage: ubuntu-latest
 
-- script: dotnet pack -c $(buildConfiguration) $(projectFile)
-  displayName: 'dotnet pack'
+      steps:
+      - script: |
+          echo '$(lib-version)'
+          dotnet build --configuration $(buildConfiguration) $(projectFile)
+        displayName: 'dotnet build $(buildConfiguration)'
+
+      - script: dotnet pack -c $(buildConfiguration) $(projectFile) /p:Version=$(lib-version) -o packages
+        displayName: 'dotnet pack'
+      
+      - task: CopyFiles@2
+        displayName: 'copy nuget package to $(build.artifactstagingdirectory)'
+        inputs:
+          SourceFolder: packages
+          Contents: '**/*.nuget'
+          TargetFolder: '$(build.artifactstagingdirectory)'
+        condition: succeedOrFailed()
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Nuget package artifact'
+        inputs:
+          artifact: shared
