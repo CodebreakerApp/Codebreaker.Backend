@@ -25,7 +25,7 @@ stages:
       displayName: 'Build and Package'
       pool:
         vmImage: ubuntu-latest
-
+        
       steps:
       - script: |
           echo '$(lib-version)'
@@ -54,9 +54,18 @@ stages:
       pool:
         vmImage: ubuntu-latest
       
+      variables:
+        feedpath: "https://pkgs.dev.azure.com/cnilearn/YamlPipelines/_packaging/yamlpipelinesfeed/nuget/v3/index.json"
+        apikey: "testkey"
+
       steps:
         - download: current
           artifact: 'Shared'
-          patterns: '**/*.nuget'
           displayName: 'Download pipeline artifact'
         
+        - task: NuGetAuthenticate@0
+          displayName: 'Authenticate with Project Artifacts Feed'
+
+        - script: | 
+            dotnet nuget push "todopath" --source $(feedpath) --api-key $(apikey)
+          displayName: "push to feed"
