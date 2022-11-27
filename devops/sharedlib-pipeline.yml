@@ -57,7 +57,7 @@ stages:
           displayName: 'Download pipeline artifact'
         
         - script: |
-            ls -al $(Pipeline.Workspace)
+            ls -al $(Pipeline.Workspace)/drop
         
         - task: NuGetAuthenticate@0
           displayName: 'Authenticate with Project Artifacts Feed'
