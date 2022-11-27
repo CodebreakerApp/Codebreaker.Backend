@@ -56,12 +56,9 @@ stages:
           artifact: drop
           displayName: 'Download pipeline artifact'
         
-        - script: |
-            ls -al $(Pipeline.Workspace)/drop
-        
         - task: NuGetAuthenticate@0
           displayName: 'Authenticate with Project Artifacts Feed'
 
         - script: | 
-            dotnet nuget push "$(Pipeline.Workspace)/drop/*.nuget" --source $(feedpath) --api-key $(apikey)
+            dotnet nuget push "$(Pipeline.Workspace)/drop/*.nupkg" --source $(feedpath) --api-key $(apikey)
           displayName: "push to feed"
