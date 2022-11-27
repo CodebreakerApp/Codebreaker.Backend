@@ -22,6 +22,9 @@ stages:
       displayName: 'Build and Package'
       pool:
         vmImage: ubuntu-latest
+      
+      variables:
+        packageDirectory: $(Build.ArtifactStagingDirectory)
         
       steps:
       - script: |
@@ -29,10 +32,10 @@ stages:
           dotnet build --configuration $(buildConfiguration) $(projectFile)
         displayName: 'dotnet build $(buildConfiguration)'
 
-      - script: dotnet pack -c $(buildConfiguration) $(projectFile) /p:Version=$(lib-version) -o $(Build.ArtifactStagingDirectory)
+      - script: dotnet pack -c $(buildConfiguration) $(projectFile) /p:Version=$(lib-version) -o $(packageDirectory)
         displayName: 'dotnet pack'
 
-      - publish: '$(Build/ArtifactStagingDirectory)'
+      - publish: $(packageDirectory)
         artifact: drop
         displayName: 'Publish shared library'
 
