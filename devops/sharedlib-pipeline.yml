@@ -29,10 +29,10 @@ stages:
           dotnet build --configuration $(buildConfiguration) $(projectFile)
         displayName: 'dotnet build $(buildConfiguration)'
 
-      - script: dotnet pack -c $(buildConfiguration) $(projectFile) /p:Version=$(lib-version) -o $(Build.ArtifactStagingDirectory)/packages
+      - script: dotnet pack -c $(buildConfiguration) $(projectFile) /p:Version=$(lib-version) -o $(Build.ArtifactStagingDirectory)
         displayName: 'dotnet pack'
 
-      - publish: '$(Build/ArtifactStagingDirectory)/packages'
+      - publish: '$(Build/ArtifactStagingDirectory)'
         artifact: drop
         displayName: 'Publish shared library'
 
