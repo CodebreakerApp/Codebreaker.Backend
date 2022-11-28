@@ -75,5 +75,5 @@ stages:
             deployToSlotOrASE: true
             ResourceGroupName: 'codebreaker'
             SlotName: 'staging'
-            packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
+            packageForLinux: '$(Pipeline.Workspace)/drop/CodeBreaker.Blazor.zip'
             RuntimeStack: 'DOTNETCORE|7.0'
