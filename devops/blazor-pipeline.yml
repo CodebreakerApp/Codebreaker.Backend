@@ -35,6 +35,10 @@ stages:
           dotnet build -c $(buildConfiguration) $(solutionFile)
           dotnet publish -c $(buildConfiguration) $(solutionFile) -o $(outputDirectory)
         displayName: 'dotnet build'
+      
+      - publish: $(outputDirectory)
+        artifact: drop
+        displayName: 'publish to artifact pipeline'
 
   - stage: 'Publish'
     displayName: 'Publish to Azure AppService'
