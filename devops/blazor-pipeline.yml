@@ -1,0 +1,65 @@
+# Build and publish Codebreaker Blazor to Azure AppService
+
+trigger:
+ branches:
+   include:
+     - main
+ paths:
+   include:
+   - src/clients/blazor/*
+   - src/ui/blazor/CodeBreaker.UI.MudBlazor/*
+   - src/ui/blazor/CodeBraker.UI.Shared/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+  solutionFile: 'src/CodeBreaker.Blazor.sln'
+
+stages:
+  - stage: 'Build'
+    displayName: 'Build the Blazor app with Mud'
+    jobs:
+    - job: BuildAndPublishJob
+      displayName: 'Build Blazor Mud'
+    
+      pool:
+        vmImage: ubuntu-latest
+    
+      variables:
+        outputDirectory: $(Build.ArtifactStagingDirectory)
+    
+      steps:
+      - script: |
+          dotnet build -c $(buildConfiguration) $(solutionFile)
+          dotnet publish -c $(buildConfiguration) $(solutionFile) -o $(outputDirectory)
+        displayName: 'dotnet build'
+
+  - stage: 'Publish'
+    displayName: 'Publish to Azure AppService'
+    dependsOn: 'Build'
+
+    jobs:
+    - job: PublishJob
+      displayName: 'Publish to Azure AppService'
+
+      pool:
+        vmImage: ubuntu-latest
+
+      steps:
+        - download: current
+          artifact: drop
+          displayName: 'Download pipeline artifact'
+
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'azuremvpconnection'
+            appType: 'webAppLinux'
+            WebAppName: 'codebreaker-mud'
+            deployToSlotOrASE: true
+            ResourceGroupName: 'codebreaker'
+            SlotName: 'staging'
+            packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+            RuntimeStack: 'DOTNETCORE|7.0'
