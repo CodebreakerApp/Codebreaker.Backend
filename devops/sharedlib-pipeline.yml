@@ -6,7 +6,7 @@ trigger:
     - main
   paths:  
     include:
-    - src/shared/CodeBreaker.Shared
+    - src/shared/CodeBreaker.Shared/*
 
 variables:
   buildConfiguration: 'Release'
