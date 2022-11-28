@@ -16,6 +16,7 @@ pool:
 variables:
   buildConfiguration: 'Release'
   solutionFile: 'src/CodeBreaker.Blazor.sln'
+  projectFile: 'src/clients/blazor/CodeBreaker.Blazor/CodeBreaker.Blazor.csproj'
 
 stages:
   - stage: 'Build'
@@ -32,9 +33,9 @@ stages:
     
       steps:
       - script: |
-          dotnet build -c $(buildConfiguration) $(solutionFile)
+          dotnet build -c $(buildConfiguration) $(projectFile)
         displayName: 'dotnet build'
-      
+     
       - task: DotNetCoreCLI@2
         inputs:
           command: publish
