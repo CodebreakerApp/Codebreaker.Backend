@@ -33,20 +33,26 @@ stages:
       steps:
       - script: |
           dotnet build -c $(buildConfiguration) $(solutionFile)
-          dotnet publish -c $(buildConfiguration) $(solutionFile) -o $(outputDirectory)
         displayName: 'dotnet build'
+      
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: publish
+          publishWebProjects: True
+          arguments: '--configuration $(buildConfiguration) --output $(outputDirectory)'
+          zipAfterPublish: True
       
       - publish: $(outputDirectory)
         artifact: drop
         displayName: 'publish to artifact pipeline'
 
-  - stage: 'Publish'
-    displayName: 'Publish to Azure AppService'
+  - stage: 'DeployStaging'
+    displayName: 'Deploy to Azure AppService'
     dependsOn: 'Build'
 
     jobs:
-    - job: PublishJob
-      displayName: 'Publish to Azure AppService'
+    - job: DeployStagingJob
+      displayName: 'Deploy to Azure AppService'
 
       pool:
         vmImage: ubuntu-latest
@@ -65,5 +71,5 @@ stages:
             deployToSlotOrASE: true
             ResourceGroupName: 'codebreaker'
             SlotName: 'staging'
-            packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+            packageForLinux: '$(Pipeline/Workspace)/drop/**/*.zip'
             RuntimeStack: 'DOTNETCORE|7.0'
