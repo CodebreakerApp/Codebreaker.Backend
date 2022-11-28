@@ -71,5 +71,5 @@ stages:
             deployToSlotOrASE: true
             ResourceGroupName: 'codebreaker'
             SlotName: 'staging'
-            packageForLinux: '$(Pipeline/Workspace)/drop/**/*.zip'
+            packageForLinux: '$(Pipeline/Workspace)/drop/*.zip'
             RuntimeStack: 'DOTNETCORE|7.0'
