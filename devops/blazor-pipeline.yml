@@ -61,6 +61,9 @@ stages:
         - download: current
           artifact: drop
           displayName: 'Download pipeline artifact'
+        
+        - script: ls -al '$(Pipeline/Workspace)/drop'
+          displayName: 'ls -al $(Pipeline/Workspace)/drop'
 
         - task: AzureRmWebAppDeployment@4
           inputs:
@@ -71,5 +74,5 @@ stages:
             deployToSlotOrASE: true
             ResourceGroupName: 'codebreaker'
             SlotName: 'staging'
-            packageForLinux: '$(Pipeline/Workspace)/drop/*.zip'
+            packageForLinux: '$(Pipeline/Workspace)/**/*.zip'
             RuntimeStack: 'DOTNETCORE|7.0'
