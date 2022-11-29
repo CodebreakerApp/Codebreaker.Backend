@@ -37,6 +37,7 @@ stages:
         inputs:
           command: publish
           publishWebProjects: False
+          projects: '$(projectFile)'
           arguments: '--configuration $(buildConfiguration) --output $(outputDirectory)'
           zipAfterPublish: True
       
