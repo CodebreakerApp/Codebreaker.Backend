@@ -9,5 +9,7 @@ public interface IAuthService
 
     bool IsAuthenticated { get; }
 
+    Task RegisterPersistentTokenCacheAsync();
+
     Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default);
 }
