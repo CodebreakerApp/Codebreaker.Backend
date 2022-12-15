@@ -1,4 +1,5 @@
 ﻿using CodeBreaker.Services.Authentication.Definitions;
+using CodeBreaker.Services.EventArguments;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
@@ -31,9 +32,9 @@ public class AuthService : IAuthService
 
     private readonly IPublicClientApplication _publicClientApplication;
 
-    public UserInformation? LastUserInformation { get; private set; }
+    private UserInformation? _lastUserInformation;
 
-    public bool IsAuthenticated => LastUserInformation is not null;
+    public event EventHandler<OnAuthenticationStateChangedEventArgs>? OnAuthenticationStateChanged;
 
     public AuthService(ILogger<AuthService> logger)
     {
@@ -51,6 +52,18 @@ public class AuthService : IAuthService
         var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
         cacheHelper.RegisterCache(_publicClientApplication.UserTokenCache);
     }
+
+    public UserInformation? LastUserInformation
+    {
+        get => _lastUserInformation;
+        private set
+        {
+            _lastUserInformation = value;
+            OnAuthenticationStateChanged?.Invoke(this, new());
+        }
+    }
+
+    public bool IsAuthenticated => LastUserInformation is not null;
 
     public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default)
     {
@@ -85,6 +98,16 @@ public class AuthService : IAuthService
             _logger.LogError("Unable to aquire token silently.");
             throw;
         }
+    }
+
+    public async Task LogoutAsync(CancellationToken cancellationToken = default)
+    {
+        var accounts = await GetAccountsAsync(cancellationToken);
+
+        foreach (var account in accounts)
+            await _publicClientApplication.RemoveAsync(account);
+
+        LastUserInformation = null;
     }
 
     private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation = default)
