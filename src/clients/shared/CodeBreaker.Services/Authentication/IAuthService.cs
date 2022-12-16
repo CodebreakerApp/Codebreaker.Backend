@@ -14,6 +14,8 @@ public interface IAuthService
 
     Task RegisterPersistentTokenCacheAsync();
 
+    Task<bool> TryAquireTokenSilentlyAsync(IAuthDefinition authDefinition, CancellationToken cancellationToken = default);
+
     Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default);
 
     Task LogoutAsync(CancellationToken cancellationToken = default);

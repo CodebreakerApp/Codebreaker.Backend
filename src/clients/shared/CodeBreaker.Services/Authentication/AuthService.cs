@@ -65,13 +65,34 @@ public class AuthService : IAuthService
 
     public bool IsAuthenticated => LastUserInformation is not null;
 
-    public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default)
+    public async Task<bool> TryAquireTokenSilentlyAsync(IAuthDefinition authDefinition, CancellationToken cancellationToken = default)
     {
-        IAccount? account = (await GetAccountsAsync(cancellation)).FirstOrDefault();
+        IAccount? account = (await GetAccountsAsync(cancellationToken)).FirstOrDefault();
 
         try
         {
-            AuthenticationResult result = await _publicClientApplication.AcquireTokenSilent(authHandler.Claims, account).ExecuteAsync(cancellation);
+            AuthenticationResult result = await _publicClientApplication.AcquireTokenSilent(authDefinition.Claims, account).ExecuteAsync(cancellationToken);
+            LastUserInformation = UserInformation.FromAuthenticationResult(result);
+            return true;
+        }
+        catch (MsalUiRequiredException)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to aquire token silently.");
+            throw;
+        }
+    }
+
+    public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authDefinition, CancellationToken cancellationToken = default)
+    {
+        IAccount? account = (await GetAccountsAsync(cancellationToken)).FirstOrDefault();
+
+        try
+        {
+            AuthenticationResult result = await _publicClientApplication.AcquireTokenSilent(authDefinition.Claims, account).ExecuteAsync(cancellationToken);
             LastUserInformation = UserInformation.FromAuthenticationResult(result);
             return result;
         }
@@ -82,20 +103,20 @@ public class AuthService : IAuthService
             try
             {
                 AuthenticationResult result = await _publicClientApplication
-                    .AcquireTokenInteractive(authHandler.Claims)
-                    .ExecuteAsync(cancellation);
+                    .AcquireTokenInteractive(authDefinition.Claims)
+                    .ExecuteAsync(cancellationToken);
                 LastUserInformation = UserInformation.FromAuthenticationResult(result);
                 return result;
             }
             catch (MsalException msalEx)
             {
-                _logger.LogError("Unable to aquire token interactively.", msalEx);
+                _logger.LogError(msalEx, "Unable to aquire token interactively.");
                 throw;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Unable to aquire token silently.");
+            _logger.LogError(ex, "Unable to aquire token silently.");
             throw;
         }
     }
