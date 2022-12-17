@@ -1,6 +1,8 @@
 ﻿using CodeBreaker.Services.Authentication.Definitions;
+using CodeBreaker.Services.EventArguments;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace CodeBreaker.Services.Authentication;
 
@@ -17,36 +19,80 @@ public class AuthService : IAuthService
     //private const string PolicyEditProfile = "";
     //private const string PolicyResetPassword = "";
 
-    private static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
-    public static string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
-    //public static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
-    //public static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
+    private readonly static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
+    public readonly static string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
+    //public readonly static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
+    //public readonly static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
+
+    private readonly static string PersistentTokenCacheDirectory = Path.Combine(MsalCacheHelper.UserRootDirectory, ".codebreaker");
+
+    private readonly static string PersistentTokenCacheFileName = "codebreaker_token_cache.txt";
 
     private readonly ILogger _logger;
 
-    private IPublicClientApplication PublicClientApplication { get; }
+    private readonly IPublicClientApplication _publicClientApplication;
 
-    public UserInformation? LastUserInformation { get; private set; }
+    private UserInformation? _lastUserInformation;
 
-    public bool IsAuthenticated => LastUserInformation != null;
+    public event EventHandler<OnAuthenticationStateChangedEventArgs>? OnAuthenticationStateChanged;
 
     public AuthService(ILogger<AuthService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        PublicClientApplication = PublicClientApplicationBuilder.Create(ClientId)
+        _publicClientApplication = PublicClientApplicationBuilder.Create(ClientId)
             .WithB2CAuthority(AuthoritySignUpSignIn)
             .WithRedirectUri(RedirectUri)
             //.WithLogging(Log, LogLevel.Info, false) // don't log P(ersonally) I(dentifiable) I(nformation) details on a regular basis
             .Build();
     }
 
-    public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authHandler, CancellationToken cancellation = default)
+    public async Task RegisterPersistentTokenCacheAsync()
     {
-        IAccount? account = (await GetAccountsAsync(cancellation)).FirstOrDefault();
+        var storageProperties = new StorageCreationPropertiesBuilder(PersistentTokenCacheFileName, PersistentTokenCacheDirectory).Build();
+        var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
+        cacheHelper.RegisterCache(_publicClientApplication.UserTokenCache);
+    }
+
+    public UserInformation? LastUserInformation
+    {
+        get => _lastUserInformation;
+        private set
+        {
+            _lastUserInformation = value;
+            OnAuthenticationStateChanged?.Invoke(this, new());
+        }
+    }
+
+    public bool IsAuthenticated => LastUserInformation is not null;
+
+    public async Task<bool> TryAquireTokenSilentlyAsync(IAuthDefinition authDefinition, CancellationToken cancellationToken = default)
+    {
+        IAccount? account = (await GetAccountsAsync(cancellationToken)).FirstOrDefault();
 
         try
         {
-            AuthenticationResult result = await PublicClientApplication.AcquireTokenSilent(authHandler.Claims, account).ExecuteAsync(cancellation);
+            AuthenticationResult result = await _publicClientApplication.AcquireTokenSilent(authDefinition.Claims, account).ExecuteAsync(cancellationToken);
+            LastUserInformation = UserInformation.FromAuthenticationResult(result);
+            return true;
+        }
+        catch (MsalUiRequiredException)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unable to aquire token silently.");
+            throw;
+        }
+    }
+
+    public async Task<AuthenticationResult> AquireTokenAsync(IAuthDefinition authDefinition, CancellationToken cancellationToken = default)
+    {
+        IAccount? account = (await GetAccountsAsync(cancellationToken)).FirstOrDefault();
+
+        try
+        {
+            AuthenticationResult result = await _publicClientApplication.AcquireTokenSilent(authDefinition.Claims, account).ExecuteAsync(cancellationToken);
             LastUserInformation = UserInformation.FromAuthenticationResult(result);
             return result;
         }
@@ -56,28 +102,38 @@ public class AuthService : IAuthService
 
             try
             {
-                AuthenticationResult result = await PublicClientApplication
-                    .AcquireTokenInteractive(authHandler.Claims)
-                    .ExecuteAsync(cancellation);
+                AuthenticationResult result = await _publicClientApplication
+                    .AcquireTokenInteractive(authDefinition.Claims)
+                    .ExecuteAsync(cancellationToken);
                 LastUserInformation = UserInformation.FromAuthenticationResult(result);
                 return result;
             }
             catch (MsalException msalEx)
             {
-                _logger.LogError("Unable to aquire token interactively.", msalEx);
+                _logger.LogError(msalEx, "Unable to aquire token interactively.");
                 throw;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Unable to aquire token silently.");
+            _logger.LogError(ex, "Unable to aquire token silently.");
             throw;
         }
+    }
+
+    public async Task LogoutAsync(CancellationToken cancellationToken = default)
+    {
+        var accounts = await GetAccountsAsync(cancellationToken);
+
+        foreach (var account in accounts)
+            await _publicClientApplication.RemoveAsync(account);
+
+        LastUserInformation = null;
     }
 
     private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation = default)
     {
         cancellation.ThrowIfCancellationRequested();
-        return PublicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
+        return _publicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
     }
 }

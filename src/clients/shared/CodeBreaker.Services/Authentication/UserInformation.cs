@@ -21,4 +21,6 @@ public record UserInformation(
             GetClaim("extension_GamerName") ?? throw new MissingClaimException("extension_GamerName")
         );
     }
+
+    public string FullName => $"{FirstName} {LastName}";
 }
