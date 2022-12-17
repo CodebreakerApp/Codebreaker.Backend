@@ -1,6 +1,8 @@
 ﻿using CodeBreaker.Services.Authentication.Definitions;
 using CodeBreaker.Services.EventArguments;
+using CodeBreaker.Services.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
 
@@ -8,21 +10,23 @@ namespace CodeBreaker.Services.Authentication;
 
 public class AuthService : IAuthService
 {
-    private const string TenantName = "codebreaker3000";
-    private const string Tenant = $"{TenantName}.onmicrosoft.com";
-    private const string AzureAdB2CHostname = $"{TenantName}.b2clogin.com";
+    private readonly AuthOptions _authOptions;
 
-    private const string ClientId = "cda69052-a9ff-4263-a630-2786e89e5075";
+    private string TenantName => _authOptions.TenantName;
 
-    private const string RedirectUri = $"https://{AzureAdB2CHostname}/oauth2/nativeclient";
-    private const string PolicySignUpSignIn = "B2C_1_SUSI";
-    //private const string PolicyEditProfile = "";
-    //private const string PolicyResetPassword = "";
+    private string Tenant => $"{TenantName}.onmicrosoft.com";
 
-    private readonly static string AuthorityBase = $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
-    public readonly static string AuthoritySignUpSignIn = $"{AuthorityBase}{PolicySignUpSignIn}";
-    //public readonly static string AuthorityEditProfile = $"{AuthorityBase}{PolicyEditProfile}";
-    //public readonly static string AuthorityResetPassword = $"{AuthorityBase}{PolicyResetPassword}";
+    private string AzureAdB2CHostname => $"{TenantName}.b2clogin.com";
+
+    private string RedirectUri => $"https://{AzureAdB2CHostname}/oauth2/nativeclient";
+
+    private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
+
+    private string AuthoritySignUpSignIn => $"{AuthorityBase}{_authOptions.Policies.SignUpSignInPolicy}";
+
+    private string AuthorityEditProfile => $"{AuthorityBase}{_authOptions.Policies.EditProfilePolicy}";
+
+    private string AuthorityResetPassword => $"{AuthorityBase}{_authOptions.Policies.ResetPasswordPolicy}";
 
     private readonly static string PersistentTokenCacheDirectory = Path.Combine(MsalCacheHelper.UserRootDirectory, ".codebreaker");
 
@@ -36,10 +40,11 @@ public class AuthService : IAuthService
 
     public event EventHandler<OnAuthenticationStateChangedEventArgs>? OnAuthenticationStateChanged;
 
-    public AuthService(ILogger<AuthService> logger)
+    public AuthService(ILogger<AuthService> logger, IOptions<AuthOptions> authOptions)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _publicClientApplication = PublicClientApplicationBuilder.Create(ClientId)
+        _authOptions = authOptions.Value;
+        _publicClientApplication = PublicClientApplicationBuilder.Create(_authOptions.ClientId)
             .WithB2CAuthority(AuthoritySignUpSignIn)
             .WithRedirectUri(RedirectUri)
             //.WithLogging(Log, LogLevel.Info, false) // don't log P(ersonally) I(dentifiable) I(nformation) details on a regular basis
@@ -134,6 +139,6 @@ public class AuthService : IAuthService
     private Task<IEnumerable<IAccount>> GetAccountsAsync(CancellationToken cancellation = default)
     {
         cancellation.ThrowIfCancellationRequested();
-        return _publicClientApplication.GetAccountsAsync(PolicySignUpSignIn);
+        return _publicClientApplication.GetAccountsAsync(_authOptions.Policies.SignUpSignInPolicy);
     }
 }
