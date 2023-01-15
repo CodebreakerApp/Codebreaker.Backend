@@ -39,7 +39,7 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
 
     public async Task DeleteGameAsync(Guid gameId)
     {
-        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Game game = await GetGameAsync(gameId, false) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         Games.Remove(game);
         await SaveChangesAsync();
     }
@@ -51,7 +51,7 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
         await SaveChangesAsync();
     }
 
-    public Task<Game?> GetGameAsync(Guid gameId, bool withTracking = false) =>
+    public Task<Game?> GetGameAsync(Guid gameId, bool withTracking = true) =>
         Games
             .AsTracking(withTracking ? QueryTrackingBehavior.TrackAll : QueryTrackingBehavior.NoTracking)
             .WithPartitionKey(gameId.ToString())

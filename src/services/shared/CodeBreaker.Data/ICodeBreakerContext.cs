@@ -9,7 +9,7 @@ public interface ICodeBreakerContext
     Task CreateGameAsync(Game game);
     Task DeleteGameAsync(Guid gameId);
     Task CancelGameAsync(Guid gameId);
-    Task<Game?> GetGameAsync(Guid gameId);
+    Task<Game?> GetGameAsync(Guid gameId, bool withTracking = true);
     IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date);
     IAsyncEnumerable<Game> GetGamesByDateAsync(DateTime date);
     Task UpdateGameAsync(Game game);
