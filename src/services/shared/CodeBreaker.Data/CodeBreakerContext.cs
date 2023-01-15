@@ -39,20 +39,23 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
 
     public async Task DeleteGameAsync(Guid gameId)
     {
-        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Game game = await GetGameAsync(gameId, false) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         Games.Remove(game);
         await SaveChangesAsync();
     }
 
     public async Task CancelGameAsync(Guid gameId)
     {
-        Game game = await GetGameAsync(gameId) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Game game = await GetGameAsync(gameId, true) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         game.End = DateTime.Now;
         await SaveChangesAsync();
     }
 
-    public Task<Game?> GetGameAsync(Guid gameId) =>
-        Games.SingleOrDefaultAsync(g => g.GameId == gameId);
+    public Task<Game?> GetGameAsync(Guid gameId, bool withTracking = true) =>
+        Games
+            .AsTracking(withTracking ? QueryTrackingBehavior.TrackAll : QueryTrackingBehavior.NoTracking)
+            .WithPartitionKey(gameId.ToString())
+            .SingleOrDefaultAsync(g => g.GameId == gameId);
 
     public IAsyncEnumerable<Game> GetGamesByDateAsync(DateTime date) =>
         GetGamesByDateAsync(DateOnly.FromDateTime(date));
