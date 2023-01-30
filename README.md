@@ -35,10 +35,10 @@
 
 ## Codebreaker Client apps
 
-* Blazor app to play games and show game results
+* Blazor app to play games and show game results using [MudBlazor](https://www.mudblazor.com/), [FastBlazor](https://github.com/microsoft/fast-blazor), and native, pure Blazor with only CSS
 * WinUI app to play games calling the API, and show live services
 * WPF app to play games calling the API
-* .NET MAUI App to play games calling the API
+* .NET MAUI App to play games calling the API (Android, iOS, Windows)
 
 ## Azure Services in use
 
@@ -48,6 +48,7 @@
 * Azure SignalR Services
 * Azure App Configuration
 * Azure Event Hub
+* Azure App Services
 
 ## To be defined and developed
 
