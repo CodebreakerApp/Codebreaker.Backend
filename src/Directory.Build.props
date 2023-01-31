@@ -6,6 +6,7 @@
     <RepositoryUrl>https://github.com/CNinnovation/codebreaker</RepositoryUrl>
     <Copyright>(c) CN innovation</Copyright>
     <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup>
