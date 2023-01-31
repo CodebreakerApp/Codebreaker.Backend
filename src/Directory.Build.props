@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <Product>Codebreaker</Product>
+    <Authors>CN innovation</Authors>
+    <Company>CN innovation</Company>
+    <RepositoryUrl>https://github.com/CNinnovation/codebreaker</RepositoryUrl>
+    <Copyright>(c) CN innovation</Copyright>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VersionPrefix>2.0.1</VersionPrefix>
+  </PropertyGroup>
+</Project>

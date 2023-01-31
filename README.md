@@ -1,22 +1,36 @@
 # Codebreaker
 
+## Builds
+
+### Libraries
+
+[![Shared](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-shared.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-shared.yml)
+
+[![Client Services](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-services.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-services.yml)
+
+[![MVVM NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml)
+
+[![Data](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml)
+
+### APIs
+
 [![API](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml)
 
 [![Bot](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml)
 
 [![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml)
 
-[![Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/azure-static-web-apps-ambitious-smoke-0612ff603.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/azure-static-web-apps-ambitious-smoke-0612ff603.yml)
+### Clients
 
-[![Android](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml)
+[![Pure Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml)
 
-[![Data NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml)
+[![Mud Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml)
 
-[![Services Client NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-services.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-services.yml)
+[![Fast Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml)
 
-[![Shared NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-shared.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-shared.yml)
+[![MAUI Android](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml)
 
-[![MVVM NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml)
+[![WinUI](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml)
 
 ## Guidelines
 

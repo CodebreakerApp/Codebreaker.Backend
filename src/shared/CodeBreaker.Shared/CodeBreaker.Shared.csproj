@@ -9,12 +9,9 @@
   
   <PropertyGroup>
     <PackageId>CNInnovation.Codebreaker.Shared</PackageId>
-    <Authors>CN innovation</Authors>
-    <Company>CN innovation</Company>
     <PackageDescription>
       Contains Codebreaker model types used by applications on the client and the server
     </PackageDescription>
-    <RepositoryUrl>https://github.com/CNinnovation/codebreakerpackages</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
