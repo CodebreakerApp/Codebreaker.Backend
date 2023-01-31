@@ -54,6 +54,10 @@
 * WPF app to play games calling the API
 * .NET MAUI App to play games calling the API (Android, iOS, Windows)
 
+* [Blazor Pure CSS](https://codebreaker-pure.azurewebsites.net/)
+* [Blazor MudBlazor](https://codebreaker-mud.azurewebsites.net/)
+* [Blazor Microsoft.Fast](https://codebreaker-fast.azurewebsites.net/)
+
 ## Azure Services in use
 
 * Azure Container Apps
