@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot", "services
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Bot.Tests", "services\bot\CodeBreaker.Bot.Tests\CodeBreaker.Bot.Tests.csproj", "{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Shared", "shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj", "{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{996B6FDF-23A1-4980-BD1A-A742F04F3FA6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB5FA2E3-3D81-4382-AB4C-7224C7BF5BBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
