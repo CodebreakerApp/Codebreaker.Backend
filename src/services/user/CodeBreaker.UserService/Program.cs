@@ -5,7 +5,11 @@ using CodeBreaker.UserService.Options;
 using CodeBreaker.UserService.Services;
 using Microsoft.Extensions.Azure;
 
-TokenCredential azureCredential = new AzureCliCredential();//DefaultAzureCredential();
+#if DEBUG
+TokenCredential azureCredential = new AzureCliCredential();
+#else
+TokenCredential azureCredential = new DefaultAzureCredential();
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,13 +42,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/gamer-names/{gamerName}/check", async (string gamerName, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
+app.MapGet("/gamer-names/{gamerName}/valid", async (string gamerName, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
     new GamerNameValidityResponse(await gamerNameService.CheckGamerNameAsync(gamerName, cancellationToken)))
 .WithName("CheckGamerName")
 .WithDescription("Checks whether the specified gamerName is valid")
 .WithOpenApi();
 
-app.MapGet("/gamer-names/suggested", (int? count, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
+app.MapGet("/gamer-names/suggestions", (int? count, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
     new GamerNameSuggestionsResponse(gamerNameService.SuggestGamerNamesAsync(count ?? 10, cancellationToken)))
 .WithName("SuggestGamerNames")
 .WithDescription("Suggessts possible and available gamer names")
