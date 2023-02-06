@@ -28,11 +28,8 @@ internal class GamerNameService : IGamerNameService
         _cache = cache;
     }
 
-    public async Task<bool> CheckGamerNameAsync(string gamerName, CancellationToken cancellationToken = default)
+    public async Task<bool> IsGamerNameTakenAsync(string gamerName, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(gamerName)) return false;
-        if (gamerName.Length < 5 || gamerName.Length > 50) return false;
-
         string[] scopes = new[] { "https://graph.microsoft.com/.default" };
         TokenCredentialOptions options = new() { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
         ClientSecretCredential clientSecretCredential = new(_gamerNameCheckOptions.TenantId, _gamerNameCheckOptions.ClientId, _gamerNameCheckOptions.ClientSecret, options);
@@ -79,7 +76,10 @@ internal class GamerNameService : IGamerNameService
             }
 
             combinations[i] = candidate;
-            yield return $"{parts.First[candidate.Item1]}-{parts.Second[candidate.Item2]}-{candidate.Item3}";
+
+            var first = parts.First[candidate.Item1].ToCharArray();
+            first[0] = char.ToUpper(first[0]);
+            yield return $"{new string(first)}{parts.Second[candidate.Item2]}{candidate.Item3}";
         }
     }
 

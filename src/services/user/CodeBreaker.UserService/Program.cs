@@ -1,6 +1,7 @@
 using Azure.Core;
 using Azure.Identity;
 using CodeBreaker.Shared.Models.Users.Api;
+using CodeBreaker.UserService.Models.Api;
 using CodeBreaker.UserService.Options;
 using CodeBreaker.UserService.Services;
 using Microsoft.Extensions.Azure;
@@ -32,6 +33,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddTransient<IAzureActiveDirectoryB2CApiConnectorService, AzureActiveDirectoryB2CApiConnectorService>();
 builder.Services.AddTransient<IGamerNameService, GamerNameService>();
 
 var app = builder.Build();
@@ -42,8 +44,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/gamer-names/{gamerName}/valid", async (string gamerName, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
-    new GamerNameValidityResponse(await gamerNameService.CheckGamerNameAsync(gamerName, cancellationToken)))
+app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IAzureActiveDirectoryB2CApiConnectorService apiConnectorService, CancellationToken cancellationToken) =>
+{
+    var response = await apiConnectorService.ValidateBeforeUserCreationAsync(request, cancellationToken);
+
+    if (response is BeforeCreatingUserValidationErrorResponse)
+        return Results.BadRequest(response);    // HTTP code 400 is necessary for a validationErrorResponse
+
+    return Results.Ok(response);
+})
 .WithName("CheckGamerName")
 .WithDescription("Checks whether the specified gamerName is valid")
 .WithOpenApi();
