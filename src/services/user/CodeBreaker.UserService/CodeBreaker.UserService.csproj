@@ -12,6 +12,7 @@
     <PackageReference Include="Azure.Identity" Version="1.8.1" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="5.2.0" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.6.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.52.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.49.1" />

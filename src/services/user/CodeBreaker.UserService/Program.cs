@@ -5,6 +5,7 @@ using CodeBreaker.UserService.Models.Api;
 using CodeBreaker.UserService.Options;
 using CodeBreaker.UserService.Services;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 
 #if DEBUG
 TokenCredential azureCredential = new AzureCliCredential();
@@ -14,12 +15,10 @@ TokenCredential azureCredential = new DefaultAzureCredential();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<GamerNameCheckOptions>(options =>
+builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    options.TenantId = "6a4e85c9-8636-4a94-a31b-894074bd6f9b";
-    options.ClientId = "ca68b649-c212-406d-b0d7-5ac7f3ccbcea";
-    options.ClientSecret = "eiu8Q~xe5tUUEPG4~nc6JHOWqnr205Hly4KXhbA4";
-    options.GamerNameAttributeKey = "extension_dd21590c971e431494da34e2a8d47cce_GamerName";
+    options.Connect(new Uri("https://codebreaker.azconfig.io"), azureCredential);
+    options.ConfigureKeyVault(keyvaultOptions => keyvaultOptions.SetCredential(azureCredential));
 });
 
 builder.Services.AddAzureClients(builder =>
@@ -27,6 +26,8 @@ builder.Services.AddAzureClients(builder =>
     builder.UseCredential(azureCredential);
     builder.AddBlobServiceClient(new Uri("https://codebreakerstorage.blob.core.windows.net"));
 });
+
+builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));
 
 builder.Services.AddDistributedMemoryCache();
 
