@@ -1,11 +1,17 @@
+using System.Globalization;
 using Azure.Core;
 using Azure.Identity;
+using CodeBreaker.Shared.Models.Users;
 using CodeBreaker.Shared.Models.Users.Api;
+using CodeBreaker.Shared.Validators.Users;
 using CodeBreaker.UserService.Models.Api;
 using CodeBreaker.UserService.Options;
 using CodeBreaker.UserService.Services;
+using FastExpressionCompiler;
+using FluentValidation;
+using Mapster;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Configuration;
 
 #if DEBUG
 TokenCredential azureCredential = new AzureCliCredential();
@@ -15,27 +21,54 @@ TokenCredential azureCredential = new DefaultAzureCredential();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Azure
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(new Uri("https://codebreaker.azconfig.io"), azureCredential);
     options.ConfigureKeyVault(keyvaultOptions => keyvaultOptions.SetCredential(azureCredential));
 });
-
 builder.Services.AddAzureClients(builder =>
 {
     builder.UseCredential(azureCredential);
     builder.AddBlobServiceClient(new Uri("https://codebreakerstorage.blob.core.windows.net"));
 });
 
+// Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));
 
+// Cache
 builder.Services.AddDistributedMemoryCache();
 
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IAzureActiveDirectoryB2CApiConnectorService, AzureActiveDirectoryB2CApiConnectorService>();
+// Localization
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    CultureInfo german = new("de");
+    CultureInfo english = new("en-US");
+    CultureInfo[] supportedCultures = new[] { german, english };
+    QueryStringRequestCultureProvider queryString = new() { QueryStringKey = "lang", UIQueryStringKey = "lang" };
+    AcceptLanguageHeaderRequestCultureProvider langHeader = new();
+    options.RequestCultureProviders = new IRequestCultureProvider[2] { queryString, langHeader };
+    options.SupportedUICultures = supportedCultures;
+    options.SupportedCultures = supportedCultures;
+    options.DefaultRequestCulture = new RequestCulture(english);
+});
+
+// Custom services
+builder.Services.AddTransient<IUserValidationService, UserValidationService>();
 builder.Services.AddTransient<IGamerNameService, GamerNameService>();
+
+// Validation
+builder.Services.AddScoped<IValidator<User>, UserValidator>();
+
+// Mapping
+TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileFast();
+TypeAdapterConfig<BeforeCreatingUserRequest, User>
+    .NewConfig()
+    .Map(dest => dest.GamerName, src => src.Extension_dd21590c971e431494da34e2a8d47cce_GamerName);
 
 var app = builder.Build();
 
@@ -45,14 +78,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IAzureActiveDirectoryB2CApiConnectorService apiConnectorService, CancellationToken cancellationToken) =>
+app.UseRequestLocalization();
+
+app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IUserValidationService userValidationService, CancellationToken cancellationToken) =>
 {
-    var response = await apiConnectorService.ValidateBeforeUserCreationAsync(request, cancellationToken);
+    var user = request.Adapt<User>();
+    var result = await userValidationService.ValidateUserAsync(user, cancellationToken);
 
-    if (response is BeforeCreatingUserValidationErrorResponse)
-        return Results.BadRequest(response);    // HTTP code 400 is necessary for a validationErrorResponse
+    if (result.IsValid)
+        return Results.Ok(new BeforeCreatingUserSuccessResponse());
 
-    return Results.Ok(response);
+    return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
+    
 })
 .WithName("CheckGamerName")
 .WithDescription("Checks whether the specified gamerName is valid")

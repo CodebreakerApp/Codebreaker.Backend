@@ -13,6 +13,10 @@
       Contains Codebreaker model types used by applications on the client and the server
     </PackageDescription>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.4.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
