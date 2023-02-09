@@ -12,6 +12,7 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Options;
 
 #if DEBUG
 TokenCredential azureCredential = new AzureCliCredential();
@@ -44,6 +45,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     CultureInfo german = new("de");
@@ -78,7 +80,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseRequestLocalization();
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IUserValidationService userValidationService, CancellationToken cancellationToken) =>
 {
