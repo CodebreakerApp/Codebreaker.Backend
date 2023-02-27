@@ -73,7 +73,6 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     public virtual IEnumerable<GameTypeFactory<TField>> GetAllFactories() =>
         _gameTypeFactories.Values;
 
-
     private ImmutableDictionary<string, GameTypeFactory<TField>> CreateDictionaryForTypes(IEnumerable<Type> gameTypeFactoryTypes) =>
         gameTypeFactoryTypes
             .Select(f =>
