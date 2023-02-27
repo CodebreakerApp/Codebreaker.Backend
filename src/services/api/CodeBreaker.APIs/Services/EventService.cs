@@ -8,7 +8,7 @@ using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
 
-public class EventService : IPublishEventService, IAsyncDisposable
+public sealed class EventService : IPublishEventService, IAsyncDisposable
 {
     private readonly EventHubProducerClient _eventHubPublisherClient;
 
