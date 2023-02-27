@@ -56,7 +56,7 @@ public static class GameEndpoints
         .WithSummary("Get games by the given date")
         .WithOpenApi(op =>
         {
-            op.Parameters[0].Description = "The of date to get the games from. (e.g. 2022-01-01)";
+            op.Parameters[0].Description = "The of date to get the games from. (e.g. 2023-01-01)";
             return op;
         });
 
