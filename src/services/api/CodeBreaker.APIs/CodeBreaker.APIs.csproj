@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Utilities\GamesJsonSerializerContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="nuget.config" />
   </ItemGroup>
 
