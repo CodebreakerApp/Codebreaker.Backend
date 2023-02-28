@@ -63,11 +63,13 @@ builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
 
-// JSON Serialization
+#if NET8_0_OR_GREATER
+// JSON Serialization - do not enable this before .NET 8
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.AddContext<GamesJsonSerializerContext>();
 });
+#endif
 
 // ApplicationInsights
 builder.Services.AddApplicationInsightsTelemetry();
