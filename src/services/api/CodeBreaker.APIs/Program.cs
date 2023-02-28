@@ -22,6 +22,7 @@ using System.Threading.RateLimiting;
 using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Grpc;
 using CodeBreaker.APIs.Endpoints;
+using Microsoft.AspNetCore.Http.Json;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -60,7 +61,15 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 });
 builder.Services.AddAzureAppConfiguration();
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
-builder.Services.AddSingleton(x => x.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
+
+#if NET8_0_OR_GREATER
+// JSON Serialization - do not enable this before .NET 8
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.AddContext<GamesJsonSerializerContext>();
+});
+#endif
 
 // ApplicationInsights
 builder.Services.AddApplicationInsightsTelemetry();
