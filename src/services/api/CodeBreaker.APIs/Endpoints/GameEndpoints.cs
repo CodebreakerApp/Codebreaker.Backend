@@ -85,8 +85,7 @@ public static class GameEndpoints
         group.MapPost("/", async Task<Results<Created<CreateGameResponse>, BadRequest<string>>> (
             [FromBody] CreateGameRequest req,
             [FromServices] IGameTypeFactoryMapper<string> gameTypeFactoryMapper,
-            [FromServices] IGameService gameService,
-            [FromServices] ActivitySource activitySource) =>
+            [FromServices] IGameService gameService) =>
         {
             GameTypeFactory<string> gameTypeFactory;
 

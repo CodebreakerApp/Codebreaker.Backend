@@ -62,7 +62,6 @@ public class TestGamesApi : PlaywrightTest
         Assert.That(match, Is.True);
     }
 
-
     [Test]
     public async Task ShouldCreateA6x4GameAndReturnMoveResult()
     {
@@ -80,7 +79,6 @@ public class TestGamesApi : PlaywrightTest
             ["gameType"] = "6x4Game"
         };
 
-        // JsonElement jsonExpected = JsonDocument.Parse(expected).RootElement;
         var response = await _request.PostAsync($"{_baseUrl}/games", new()
         {
             DataObject = request
