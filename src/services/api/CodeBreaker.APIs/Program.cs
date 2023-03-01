@@ -1,10 +1,7 @@
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
 
-using CodeBreaker.APIs.Options;
-using CodeBreaker.APIs.Services;
-using CodeBreaker.APIs.Services.Cache;
-using CodeBreaker.APIs.Utilities;
+
 
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
