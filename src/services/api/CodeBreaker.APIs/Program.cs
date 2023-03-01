@@ -1,41 +1,19 @@
+using System.Runtime.CompilerServices;
+using System.Threading.RateLimiting;
+
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
 
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
-#if USEPROMETHEUS
-using OpenTelemetry;
-using OpenTelemetry.Metrics;
-
-using System.Configuration;
-#endif
-
-using System.Runtime.CompilerServices;
-using System.Threading.RateLimiting;
-
-using CodeBreaker.APIs.Factories.GameTypeFactories;
-using CodeBreaker.APIs.Grpc;
-using CodeBreaker.APIs.Endpoints;
-
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-
 
 // ASP.NET Core registers the ASP.NET Core ActivitySource as singleton with the DI container.
 // To keep this instance active, and activities are only started from the API endpoints, create
 // one here, and pass it to the Map method
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
-
-#if USEPROMETHEUS
-using MeterProvider meterProvider = Sdk.CreateMeterProviderBuilder()
-    .AddMeter("CodeBreaker.APIs")
-    .AddPrometheusExporter(opt =>
-    {
-        opt.StartHttpListener = true;
-        opt.HttpListenerPrefixes = new string[] { "http://localhost:9184/" };
-    }).Build();
-#endif
 
 #if DEBUG
 AzureCliCredential azureCredential = new();
@@ -47,13 +25,20 @@ var builder = WebApplication.CreateBuilder(args);
 // AppConfiguration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new ConfigurationErrorsException("AzureAppConfigurationEndpoint");
+    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new InvalidOperationException("AzureAppConfigurationEndpoint");
     options.Connect(new Uri(endpoint), azureCredential)
         .Select(KeyFilter.Any, LabelFilter.Null)
         .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
+
+builder.Logging.AddOpenTelemetryLogging();
+
 builder.Services.AddAzureAppConfiguration();
+
+builder.Services.AddOpenTelemetryTracing();
+builder.Services.AddOpenTelemetryMetrics();
+
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
 
