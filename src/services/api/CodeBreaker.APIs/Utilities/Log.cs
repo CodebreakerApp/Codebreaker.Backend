@@ -33,6 +33,12 @@ public static partial class Log
     public static partial void GameTypeNotFound(this ILogger logger, string gametype);
 
     [LoggerMessage(
+        EventId = 3005,
+        Level = LogLevel.Warning,
+        Message = "Game {id} not found in database")]
+    public static partial void GameIdNotFound(this ILogger logger, Guid id);
+
+    [LoggerMessage(
         EventId = 4000,
         Level = LogLevel.Information,
         Message = "Started a game `{game}`")]
@@ -58,15 +64,9 @@ public static partial class Log
 
     [LoggerMessage(
         EventId = 4004,
-        Level = LogLevel.Warning,
+        Level = LogLevel.Information,
         Message = "Game {id} not retrieved from cache")]
     public static partial void GameNotCached(this ILogger logger, Guid id);
-
-    [LoggerMessage(
-        EventId = 4005,
-        Level = LogLevel.Warning,
-        Message = "Game {id} not found in database")]
-    public static partial void GameIdNotFound(this ILogger logger, Guid id);
 
     [LoggerMessage(
         EventId = 4006,
