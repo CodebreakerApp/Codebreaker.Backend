@@ -13,15 +13,15 @@ namespace CodeBreaker.APIs.Endpoints;
 
 public static class GameEndpoints
 {
-    private static readonly Meter s_meter;
+    public static readonly Meter Meter;
     private static readonly Counter<int> s_gamesStarted;
     private static readonly Counter<int> s_movesDone;
 
     static GameEndpoints()
     {
-        s_meter = new("CodeBreaker.APIs", "1.0.0");
-        s_gamesStarted = s_meter.CreateCounter<int>("games-started", "games", "the number of games started");
-        s_movesDone = s_meter.CreateCounter<int>("moves-done", "moves", "the number of moves done");
+        Meter = new("CodeBreaker.GameAPI", "2.0.1");
+        s_gamesStarted = Meter.CreateCounter<int>("games-started", "games", "the number of games started");
+        s_movesDone = Meter.CreateCounter<int>("moves-done", "moves", "the number of moves done");
     }
 
     public static void MapGameEndpoints(this IEndpointRouteBuilder routes, ILogger logger, ActivitySource activitySource)
