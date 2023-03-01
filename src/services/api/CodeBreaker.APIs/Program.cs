@@ -1,6 +1,8 @@
+using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 
+using Azure.Core.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
 
@@ -16,7 +18,24 @@ using Microsoft.Extensions.Options;
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 
 #if DEBUG
-AzureCliCredential azureCredential = new();
+using AzureEventSourceListener listener =
+    AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
+
+DefaultAzureCredentialOptions options = new()
+{
+    Diagnostics =
+    {
+        LoggedHeaderNames = { "x-ms-request-id" },
+        LoggedQueryParameters = { "api-version " },
+        IsAccountIdentifierLoggingEnabled = true,
+        IsDistributedTracingEnabled = true,
+        IsLoggingContentEnabled = true,
+        IsLoggingEnabled = true,
+        IsTelemetryEnabled = true,
+    }
+};
+DefaultAzureCredential azureCredential = new(options);
+
 #else
 DefaultAzureCredential azureCredential = new();
 #endif
