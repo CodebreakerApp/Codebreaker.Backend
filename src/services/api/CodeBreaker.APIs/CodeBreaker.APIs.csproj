@@ -26,7 +26,7 @@
     <PackageReference Include="Azure.Core" Version="1.28.0" />
     <PackageReference Include="Azure.Identity" Version="1.8.2" />
     <PackageReference Include="Azure.Messaging.EventHubs" Version="5.7.5" />
-    <PackageReference Include="CNInnovation.Codebreaker.Data.Cosmos" Version="2.0.1-beta.1.15" />
+    <PackageReference Include="CNInnovation.Codebreaker.Data.Cosmos" Version="2.0.1-beta.1.16" />
     <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.6" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
