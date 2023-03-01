@@ -1,7 +1,8 @@
 ﻿using CodeBreaker.APIs.Factories;
 using CodeBreaker.APIs.Factories.GameTypeFactories;
-using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.Shared.Models.Data;
+
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CodeBreaker.APIs.Services;
 
@@ -9,7 +10,7 @@ public class GameService : IGameService
 {
 	private readonly ICodeBreakerContext _dbContext;
 
-	private readonly IGameCache _gameCache;
+	private readonly IMemoryCache _gameCache;
 
 	private readonly ILogger _logger;
 
@@ -36,9 +37,19 @@ public class GameService : IGameService
             .AsAsyncEnumerable();
     }
 
-	public virtual async ValueTask<Game?> GetAsync(Guid id) =>
-		_gameCache.GetOrDefault(id)
-		?? await _dbContext.Games.FindAsync(id);
+    public virtual async ValueTask<Game?> GetAsync(Guid id)
+    {
+        return await _gameCache.GetOrCreateAsync<Game?>(id, async entry =>
+        {
+            Game? game = await _dataRepository.GetGameAsync(id, withTracking: false);
+            if (game is null)
+            {
+                _logger.GameIdNotFound(id);
+                return null;
+            }
+            return game;
+        });
+    }
 
 	public virtual async Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory)
 	{

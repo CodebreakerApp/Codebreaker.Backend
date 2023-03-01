@@ -100,7 +100,6 @@ builder.Services.AddSingleton<EventHubProducerClient>(builder =>
 
 // Cache
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<IGameCache, GameCache>();
 
 // Application Services
 builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMapper<string>>(x => new GameTypeFactoryMapper<string>().Initialize(
