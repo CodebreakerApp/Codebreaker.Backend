@@ -1,11 +1,8 @@
 ﻿using CodeBreaker.Shared.Models.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeBreaker.Data;
-public interface ICodeBreakerContext
+public interface ICodeBreakerRepository
 {
-    DbSet<Game> Games { get; }
-
     Task CreateGameAsync(Game game);
     Task DeleteGameAsync(Guid gameId);
     Task CancelGameAsync(Guid gameId);
