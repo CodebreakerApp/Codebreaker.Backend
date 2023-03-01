@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2fa07316-b442-4f12-979b-91a7cba7ff13</UserSecretsId>
-    <DefineConstants>USEPROMETHEUS</DefineConstants>
     <ApplicationInsightsResourceId>/subscriptions/7221029f-b7dc-4ab8-b117-111900d0d73c/resourceGroups/codebreaker/providers/microsoft.insights/components/codebreakerinsights</ApplicationInsightsResourceId>
     <PublishProfile>DefaultContainer</PublishProfile>
   </PropertyGroup>
@@ -34,7 +33,13 @@
     <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="5.3.0-preview" />
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.3.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="OpenTelemetry" Version="1.4.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.4.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="1.3.0-rc.2" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.4.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.14" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.14" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc9.14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
