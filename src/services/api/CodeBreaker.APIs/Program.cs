@@ -1,8 +1,6 @@
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
 
-
-
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
@@ -19,7 +17,6 @@ using System.Threading.RateLimiting;
 using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.APIs.Grpc;
 using CodeBreaker.APIs.Endpoints;
-using Microsoft.AspNetCore.Http.Json;
 
 [assembly: InternalsVisibleTo("CodeBreaker.APIs.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -79,7 +76,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddGrpc();
 
 // Database
-builder.Services.AddDbContext<ICodeBreakerContext, CodeBreakerContext>(options =>
+builder.Services.AddDbContext<ICodeBreakerRepository, CodeBreakerContext>(options =>
 {
     string accountEndpoint = builder.Configuration["ApiService:Cosmos:AccountEndpoint"]
         ?? throw new InvalidOperationException("ApiService:Cosmos:AccountEndpoint configuration is not available");

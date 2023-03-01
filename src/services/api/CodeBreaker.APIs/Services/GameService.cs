@@ -8,7 +8,7 @@ namespace CodeBreaker.APIs.Services;
 
 public class GameService : IGameService
 {
-	private readonly ICodeBreakerContext _dbContext;
+	private readonly ICodeBreakerRepository _dataRepository;
 
 	private readonly IMemoryCache _gameCache;
 
@@ -16,9 +16,9 @@ public class GameService : IGameService
 
     private readonly IPublishEventService _eventService;
 
-	public GameService(ICodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
+	public GameService(ICodeBreakerRepository dataRepository, IMemoryCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
 	{
-		_dbContext = dbContext;
+		_dataRepository = dataRepository;
 		_gameCache = gameCache;
 		_logger = logger;
         _eventService = eventService;
@@ -27,14 +27,9 @@ public class GameService : IGameService
     public virtual IAsyncEnumerable<Game> GetByDate(DateTime date) =>
         GetByDate(DateOnly.FromDateTime(date));
 
-
     public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date)
     {
-        var begin = new DateTime(date.Year, date.Month, date.Day);
-        var end = new DateTime(date.Year, date.Month, date.Day).AddDays(1);
-        return _dbContext.Games
-            .Where(x => x.Start >= begin && x.Start < end)
-            .AsAsyncEnumerable();
+        return _dataRepository.GetGamesByDateAsync(date);
     }
 
     public virtual async ValueTask<Game?> GetAsync(Guid id)
@@ -51,11 +46,11 @@ public class GameService : IGameService
         });
     }
 
-	public virtual async Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory)
+    public virtual async Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory)
 	{
 		Game game = GameFactory.CreateWithRandomCode(username, gameTypeFactory);
 		_gameCache.Set(game.GameId, game);
-        await _dbContext.CreateGameAsync(game);
+        await _dataRepository.CreateGameAsync(game);
         _logger.GameStarted(game.ToString());
         await _eventService.FireGameCreatedEventAsync(new (game));
 		return game;
@@ -63,14 +58,14 @@ public class GameService : IGameService
 
 	public virtual async Task CancelAsync(Guid id)
 	{
-        await _dbContext.CancelGameAsync(id);
+        await _dataRepository.CancelGameAsync(id);
 		_gameCache.Remove(id);
         _logger.GameEnded(id.ToString());
 	}
 
 	public virtual async Task DeleteAsync(Guid id)
 	{
-        await _dbContext.DeleteGameAsync(id);
+        await _dataRepository.DeleteGameAsync(id);
         _gameCache.Remove(id);
         _logger.GameEnded(id.ToString());
     }
