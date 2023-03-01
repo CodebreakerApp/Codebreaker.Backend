@@ -1,6 +1,7 @@
 ﻿using CodeBreaker.APIs.Extensions;
-using CodeBreaker.APIs.Services.Cache;
 using CodeBreaker.Shared.Models.Data;
+
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CodeBreaker.APIs.Services;
 
@@ -8,13 +9,13 @@ public class MoveService : IMoveService
 {
 	private readonly CodeBreakerContext _dbContext;
 
-	private readonly IGameCache _gameCache;
+	private readonly IMemoryCache _gameCache;
 
 	private readonly ILogger _logger;
 
     private readonly IPublishEventService _eventService;
 
-	public MoveService(CodeBreakerContext dbContext, IGameCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
+	public MoveService(CodeBreakerContext dbContext, IMemoryCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
     {
         _dbContext = dbContext;
         _gameCache = gameCache;
