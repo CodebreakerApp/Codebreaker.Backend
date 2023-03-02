@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics.Metrics;
 
-using CodeBreaker.APIs.Factories.GameTypeFactories;
-using CodeBreaker.APIs.Services;
 using CodeBreaker.Shared.Models.Api;
 using CodeBreaker.Shared.Models.Data;
-using CodeBreaker.Shared.Models.Extensions;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

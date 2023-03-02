@@ -51,8 +51,8 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
     /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
     /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
-	  public virtual GameTypeFactory<TField> this[string name] =>
-        GetFactoryByName(name);
+    public virtual GameTypeFactory<TField> this[string name] =>
+      GetFactoryByName(name);
 
     /// <summary>
     /// Gets the a <see cref="GameTypeFactory"/> by its name.
@@ -60,7 +60,7 @@ public class GameTypeFactoryMapper<TField> : IGameTypeFactoryMapper<TField>
     /// <param name="name">The name of the requested <see cref="GameTypeFactory"/>.</param>
     /// <returns>The requested <see cref="GameTypeFactory"/>.</returns>
     /// <exception cref="GameTypeNotFoundException">Thrown when no <see cref="GameTypeFactory"/> with the given name exists.</exception>
-	  public virtual GameTypeFactory<TField> GetFactoryByName(string name)
+    public virtual GameTypeFactory<TField> GetFactoryByName(string name)
     {
         string nameUpperCase = name.ToUpperInvariant();
 
