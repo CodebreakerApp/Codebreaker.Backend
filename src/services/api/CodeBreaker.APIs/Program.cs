@@ -18,7 +18,7 @@ using Microsoft.Extensions.Options;
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 
 #if DEBUG
-using AzureEventSourceListener listener =
+using var listener =
     AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
 
 DefaultAzureCredentialOptions options = new()
