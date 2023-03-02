@@ -56,7 +56,7 @@ builder.Logging.AddOpenTelemetryLogging();
 builder.Services.AddAzureAppConfiguration();
 
 builder.Services.AddOpenTelemetryTracing();
-builder.Services.AddOpenTelemetryMetrics();
+// builder.Services.AddOpenTelemetryMetrics();
 
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ApiServiceOptions>>().Value);
