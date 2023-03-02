@@ -1,5 +1,4 @@
 ﻿using CodeBreaker.Shared.Models.Data;
-using CodeBreaker.Shared.Models.Extensions;
 
 namespace CodeBreaker.APIs.Extensions;
 
