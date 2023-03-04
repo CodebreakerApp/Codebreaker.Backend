@@ -12,26 +12,29 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
-
-#if DEBUG
-TokenCredential azureCredential = new AzureCliCredential();
-#else
-TokenCredential azureCredential = new DefaultAzureCredential();
-#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
+TokenCredential azureCredential = builder.Environment.IsDevelopment()
+    ? new AzureCliCredential()
+    : new ManagedIdentityCredential();
+
 // Azure
+string configEndpoint = builder.Configuration.GetRequired("AzureAppConfigurationEndpoint");
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    options.Connect(new Uri("https://codebreaker.azconfig.io"), azureCredential);
-    options.ConfigureKeyVault(keyvaultOptions => keyvaultOptions.SetCredential(azureCredential));
+    options.Connect(new Uri(configEndpoint), azureCredential)
+        .Select(KeyFilter.Any, LabelFilter.Null)
+        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
-builder.Services.AddAzureClients(builder =>
+builder.Services.AddAzureClients(azureServiceBuilder =>
 {
-    builder.UseCredential(azureCredential);
-    builder.AddBlobServiceClient(new Uri("https://codebreakerstorage.blob.core.windows.net"));
+    azureServiceBuilder.UseCredential(azureCredential);
+    string storageEndpoint = builder.Configuration.GetRequired("AzureBlobStorageEndpoint");
+    azureServiceBuilder.AddBlobServiceClient(new Uri(storageEndpoint));
 });
 
 // Config
@@ -51,7 +54,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     CultureInfo german = new("de");
     CultureInfo english = new("en-US");
     CultureInfo[] supportedCultures = new[] { german, english };
-    QueryStringRequestCultureProvider queryString = new() { QueryStringKey = "lang", UIQueryStringKey = "lang" };
+    QueryStringRequestCultureProvider queryString = new();
     AcceptLanguageHeaderRequestCultureProvider langHeader = new();
     options.RequestCultureProviders = new IRequestCultureProvider[2] { queryString, langHeader };
     options.SupportedUICultures = supportedCultures;
