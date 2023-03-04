@@ -20,6 +20,8 @@
 
 [![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml)
 
+[![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml)
+
 ### Clients
 
 [![Pure Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml)
