@@ -5,8 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>02ea62b1-332b-4b39-8d2f-0aeafa1a971f</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <PublishProfile>DefaultContainer</PublishProfile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +29,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NET.Build.Containers" Version="0.2.7" />
   </ItemGroup>
 
   <ItemGroup>
