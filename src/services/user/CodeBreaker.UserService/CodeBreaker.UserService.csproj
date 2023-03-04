@@ -6,7 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>02ea62b1-332b-4b39-8d2f-0aeafa1a971f</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\Validators\**" />
+    <Content Remove="Models\Validators\**" />
+    <EmbeddedResource Remove="Models\Validators\**" />
+    <None Remove="Models\Validators\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.8.1" />
@@ -26,10 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\CodeBreaker.Shared\CodeBreaker.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Validators\" />
   </ItemGroup>
 
 </Project>
