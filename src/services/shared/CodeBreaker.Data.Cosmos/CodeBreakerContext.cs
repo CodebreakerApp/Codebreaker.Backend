@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CodeBreaker.Data;
 
-public class CodeBreakerContext : DbContext, ICodeBreakerContext
+public class CodeBreakerContext : DbContext, ICodeBreakerRepository
 {
     private readonly ILogger _logger;
 
@@ -63,7 +63,7 @@ public class CodeBreakerContext : DbContext, ICodeBreakerContext
     public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date)
     {
         DateTime begin = new (date.Year, date.Month, date.Day);
-        DateTime end = new (date.Year, date.Month, date.Day + 1);
+        DateTime end = begin.AddDays(1);
 
         return Games
             .AsNoTracking()

@@ -1,14 +1,17 @@
 ﻿using System.Text;
 using System.Text.Json;
+
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
+
 using CodeBreaker.Shared.Models.Live;
 using CodeBreaker.Shared.Models.Live.EventPayloads;
+
 using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
 namespace CodeBreaker.APIs.Services;
 
-public class EventService : IPublishEventService, IAsyncDisposable
+public sealed class EventService : IPublishEventService, IAsyncDisposable
 {
     private readonly EventHubProducerClient _eventHubPublisherClient;
 

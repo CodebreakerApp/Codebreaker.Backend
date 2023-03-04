@@ -6,7 +6,7 @@ public abstract class GameTypeFactory : GameTypeFactory<string>
 {
     public GameTypeFactory(string name) : base(name) { }
 
-    public override abstract GameType Create();
+    public abstract override GameType Create();
 }
 
 public abstract class GameTypeFactory<TField>
