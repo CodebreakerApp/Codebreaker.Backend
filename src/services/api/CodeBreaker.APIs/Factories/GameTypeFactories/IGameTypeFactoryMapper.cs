@@ -12,11 +12,5 @@ public interface IGameTypeFactoryMapper<TField>
 
     IEnumerable<GameTypeFactory<TField>> GetAllFactories();
 
-    GameTypeFactoryMapper<TField> Initialize();
-
-    GameTypeFactoryMapper<TField> Initialize(Assembly assemblyToCheck);
-
     GameTypeFactoryMapper<TField> Initialize(IEnumerable<GameTypeFactory<TField>> gameTypeFactories);
-
-    GameTypeFactoryMapper<TField> Initialize(IEnumerable<Type> gameTypeFactoryTypes);
 }
