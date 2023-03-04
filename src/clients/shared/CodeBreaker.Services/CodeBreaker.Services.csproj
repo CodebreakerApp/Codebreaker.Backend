@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Mudblazor;FastUI</Configurations>
@@ -18,15 +18,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.0-beta1.28" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.0" />
+    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.48.1" />
-    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.25.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.50.0" />
+    <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.26.0" />
   </ItemGroup>
 
 </Project>
