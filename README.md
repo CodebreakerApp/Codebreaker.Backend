@@ -21,9 +21,16 @@
 **main**|[![Pure Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml)|[![Mud Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml)|[![Fast Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml)
 
 ### More Clients
+
 |Branch|Android|Win UI|
 |:--:|:--:|:--:
 **main**|[![MAUI Android](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml)|[![WinUI](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml)
+
+### Integration Tests
+
+|Branch|Game API|
+|:--:|:--:|
+**main**|[![Test Game API Integration](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreakerapi-integrationtests.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreakerapi-integrationtests.yml)
 
 ## Guidelines
 
