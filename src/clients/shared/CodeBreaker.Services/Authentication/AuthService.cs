@@ -18,11 +18,15 @@ public class AuthService : IAuthService
 
     private string AzureAdB2CHostname => $"{TenantName}.b2clogin.com";
 
-    private string RedirectUri => $"https://{AzureAdB2CHostname}/oauth2/nativeclient";
+    private string RedirectUri => _authOptions.RedirectUri;
 
     private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
 
     private string AuthoritySignUpSignIn => $"{AuthorityBase}{_authOptions.Policies.SignUpSignInPolicy}";
+
+    private string AuthoritySignUp=> $"{AuthorityBase}{_authOptions.Policies.SignUpPolicy}";
+
+    private string AuthoritySignIn => $"{AuthorityBase}{_authOptions.Policies.SignInPolicy}";
 
     private string AuthorityEditProfile => $"{AuthorityBase}{_authOptions.Policies.EditProfilePolicy}";
 
