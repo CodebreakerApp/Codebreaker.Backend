@@ -1,5 +1,4 @@
 ﻿using CodeBreaker.APIs.Factories;
-using CodeBreaker.APIs.Factories.GameTypeFactories;
 using CodeBreaker.Shared.Models.Data;
 
 using Microsoft.Extensions.Caching.Memory;
@@ -9,12 +8,10 @@ namespace CodeBreaker.APIs.Services;
 public class GameService : IGameService
 {
 	private readonly ICodeBreakerRepository _dataRepository;
-
 	private readonly IMemoryCache _gameCache;
-
 	private readonly ILogger _logger;
-
     private readonly IPublishEventService _eventService;
+    private readonly TimeSpan _gameEntryCacheExpiration = TimeSpan.FromMinutes(5);
 
 	public GameService(ICodeBreakerRepository dataRepository, IMemoryCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
 	{
@@ -42,6 +39,7 @@ public class GameService : IGameService
                 _logger.GameIdNotFound(id);
                 return null;
             }
+            entry.SlidingExpiration = _gameEntryCacheExpiration;
             return game;
         });
     }
@@ -49,10 +47,14 @@ public class GameService : IGameService
     public virtual async Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory)
 	{
 		Game game = GameFactory.CreateWithRandomCode(username, gameTypeFactory);
-		_gameCache.Set(game.GameId, game);
+        MemoryCacheEntryOptions cacheEntryOptions = new()
+        {
+           SlidingExpiration = _gameEntryCacheExpiration,
+        };
+        _gameCache.Set(game.GameId, game, cacheEntryOptions);
         await _dataRepository.CreateGameAsync(game);
         _logger.GameStarted(game.ToString());
-        await _eventService.FireGameCreatedEventAsync(new (game));
+        await _eventService.FireGameCreatedEventAsync(new(game));
 		return game;
 	}
 
