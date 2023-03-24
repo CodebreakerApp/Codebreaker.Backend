@@ -18,23 +18,24 @@ using Microsoft.Extensions.Options;
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 
 #if DEBUG
-using var listener =
-    AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
+//using var listener =
+//    AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
 
-DefaultAzureCredentialOptions options = new()
-{
-    Diagnostics =
-    {
-        LoggedHeaderNames = { "x-ms-request-id" },
-        LoggedQueryParameters = { "api-version " },
-        IsAccountIdentifierLoggingEnabled = true,
-        IsDistributedTracingEnabled = true,
-        IsLoggingContentEnabled = true,
-        IsLoggingEnabled = true,
-        IsTelemetryEnabled = true,
-    }
-};
-DefaultAzureCredential azureCredential = new(options);
+//DefaultAzureCredentialOptions options = new()
+//{
+//    Diagnostics =
+//    {
+//        LoggedHeaderNames = { "x-ms-request-id" },
+//        LoggedQueryParameters = { "api-version " },
+//        IsAccountIdentifierLoggingEnabled = true,
+//        IsDistributedTracingEnabled = true,
+//        IsLoggingContentEnabled = true,
+//        IsLoggingEnabled = true,
+//        IsTelemetryEnabled = true,
+//    }
+//};
+//DefaultAzureCredential azureCredential = new(options);
+AzureCliCredential azureCredential = new();
 
 #else
 DefaultAzureCredential azureCredential = new();
