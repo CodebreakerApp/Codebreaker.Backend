@@ -1,4 +1,6 @@
-﻿using CodeBreaker.APIs.Factories;
+﻿using System.Threading;
+using CodeBreaker.APIs.Factories;
+using CodeBreaker.Queuing.ReportService.Services;
 using CodeBreaker.Shared.Models.Data;
 
 using Microsoft.Extensions.Caching.Memory;
@@ -12,26 +14,31 @@ public class GameService : IGameService
 	private readonly ILogger _logger;
     private readonly IPublishEventService _eventService;
     private readonly TimeSpan _gameEntryCacheExpiration = TimeSpan.FromMinutes(5);
+    private readonly IGameQueuePublisherService _reportGamePublisherService;
 
-	public GameService(ICodeBreakerRepository dataRepository, IMemoryCache gameCache, ILogger<GameService> logger, IPublishEventService eventService)
+    public GameService(
+        ICodeBreakerRepository dataRepository,
+        IMemoryCache gameCache,
+        ILogger<GameService> logger,
+        IPublishEventService eventService,
+        IGameQueuePublisherService reportGamePublisherService
+    )
 	{
 		_dataRepository = dataRepository;
 		_gameCache = gameCache;
 		_logger = logger;
         _eventService = eventService;
+        _reportGamePublisherService = reportGamePublisherService;
 	}
 
     public virtual IAsyncEnumerable<Game> GetByDate(DateTime date) =>
         GetByDate(DateOnly.FromDateTime(date));
 
-    public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date)
-    {
-        return _dataRepository.GetGamesByDateAsync(date);
-    }
+    public virtual IAsyncEnumerable<Game> GetByDate(DateOnly date) =>
+        _dataRepository.GetGamesByDateAsync(date);
 
-    public virtual async ValueTask<Game?> GetAsync(Guid id)
-    {
-        return await _gameCache.GetOrCreateAsync<Game?>(id, async entry =>
+    public virtual async ValueTask<Game?> GetAsync(Guid id) =>
+        await _gameCache.GetOrCreateAsync(id, async entry =>
         {
             Game? game = await _dataRepository.GetGameAsync(id, withTracking: false);
             if (game is null)
@@ -42,7 +49,6 @@ public class GameService : IGameService
             entry.SlidingExpiration = _gameEntryCacheExpiration;
             return game;
         });
-    }
 
     public virtual async Task<Game> CreateAsync(string username, GameTypeFactory<string> gameTypeFactory)
 	{
@@ -60,10 +66,20 @@ public class GameService : IGameService
 
 	public virtual async Task CancelAsync(Guid id)
 	{
+        Game? game = await _dataRepository.GetGameAsync(id);
+
+        if (game is null)
+        {
+            _logger.GameIdNotFound(id);
+            return;
+
+        }
         await _dataRepository.CancelGameAsync(id);
-		_gameCache.Remove(id);
+        _gameCache.Remove(id);
         _logger.GameEnded(id.ToString());
-	}
+        Queuing.ReportService.Transfer.Game reportGame = new(game.GameId, game.Start, game.End);
+        await _reportGamePublisherService.EnqueueMessageAsync(reportGame);
+    }
 
 	public virtual async Task DeleteAsync(Guid id)
 	{

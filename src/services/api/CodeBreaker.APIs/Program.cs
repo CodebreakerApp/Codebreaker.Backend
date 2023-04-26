@@ -5,7 +5,9 @@ using System.Threading.RateLimiting;
 using Azure.Core.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
-
+using CodeBreaker.Queuing.ReportService.Options;
+using CodeBreaker.Queuing.ReportService.Services;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
@@ -52,11 +54,19 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 
-builder.Logging.AddOpenTelemetryLogging();
+builder.Services.AddAzureClients(options =>
+{
+    Uri queueUri = new(builder.Configuration["ApiService:Storage:Queue:ServiceUri"] ?? throw new InvalidOperationException("ApiService:Storage:Queue:ServiceUri configuration is not available"));
+    options.AddQueueServiceClient(queueUri);
+    // Add EventHubClient here
+    options.UseCredential(azureCredential);
+});
+
+//builder.Logging.AddOpenTelemetryLogging();
 
 builder.Services.AddAzureAppConfiguration();
 
-builder.Services.AddOpenTelemetryTracing();
+//builder.Services.AddOpenTelemetryTracing();
 // builder.Services.AddOpenTelemetryMetrics();
 
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));
@@ -108,6 +118,8 @@ builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMap
 ));
 
 builder.Services.AddSingleton<IPublishEventService, EventService>();
+builder.Services.Configure<GameQueueOptions>(builder.Configuration.GetRequiredSection("ApiService:Storage:Queue:GamesQueue"));
+builder.Services.AddScoped<IGameQueuePublisherService, GameQueueService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IMoveService, MoveService>();
 
