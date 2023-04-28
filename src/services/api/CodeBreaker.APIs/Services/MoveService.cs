@@ -36,8 +36,7 @@ public class MoveService : IMoveService
 
         if (game.Ended)
         {
-            Queuing.ReportService.Transfer.Game reportGame = new(game.GameId, game.Start, game.End);
-            await _reportGamePublisherService.EnqueueMessageAsync(reportGame, cancellationToken);
+            await _reportGamePublisherService.EnqueueMessageAsync(game.ToReportServiceDto(), cancellationToken);
             _gameCache.Remove(gameId);
         }
         else
@@ -45,8 +44,7 @@ public class MoveService : IMoveService
             _gameCache.Set(gameId, game);
         }
 
-        // Allways update the game in the game-service database
-        // TODO: Or eventually delete it instead?
+        // Always update the game in the game-service database
         await _repository.UpdateGameAsync(game);
 
         await _eventService.FireMoveCreatedEventAsync(new(gameId, move), cancellationToken);

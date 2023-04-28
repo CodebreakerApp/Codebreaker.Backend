@@ -64,7 +64,7 @@ public class GameService : IGameService
 		return game;
 	}
 
-	public virtual async Task CancelAsync(Guid id)
+    public virtual async Task CancelAsync(Guid id)
 	{
         Game? game = await _dataRepository.GetGameAsync(id);
 
@@ -77,8 +77,7 @@ public class GameService : IGameService
         await _dataRepository.CancelGameAsync(id);
         _gameCache.Remove(id);
         _logger.GameEnded(id.ToString());
-        Queuing.ReportService.Transfer.Game reportGame = new(game.GameId, game.Start, game.End);
-        await _reportGamePublisherService.EnqueueMessageAsync(reportGame);
+        await _reportGamePublisherService.EnqueueMessageAsync(game.ToReportServiceDto());
     }
 
 	public virtual async Task DeleteAsync(Guid id)
