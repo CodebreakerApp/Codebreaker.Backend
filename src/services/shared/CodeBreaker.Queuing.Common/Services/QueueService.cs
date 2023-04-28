@@ -34,7 +34,7 @@ public abstract class QueueService<TMessage>
     /// <param name="cancellationToken">The cancellation token.</param>
     public async Task EnqueueMessageAsync(TMessage message, CancellationToken cancellationToken = default)
     {
-        var queueClient = await CreateQueueClient();
+        var queueClient = CreateQueueClient();
         var messageBody = JsonSerializer.Serialize(message);
         _logger.EnqueuedItem(messageBody);
         await queueClient.SendMessageAsync(messageBody, cancellationToken);
@@ -63,7 +63,7 @@ public abstract class QueueService<TMessage>
     /// </exception>
     public async Task<QueueMessage<TMessage>> DequeueMessageAsync(TimeSpan visibilityTimeout, CancellationToken cancellationToken = default)
     {
-        var queueClient = await CreateQueueClient();
+        var queueClient = CreateQueueClient();
         cancellationToken.ThrowIfCancellationRequested();
         var result = await queueClient.ReceiveMessageAsync(visibilityTimeout, cancellationToken);
         var message = result.Value;
@@ -112,15 +112,11 @@ public abstract class QueueService<TMessage>
     /// <param name="cancellationToken">The cancellation token.</param>
     public async Task RemoveMessageAsync(string messageId, string popReceipt, CancellationToken cancellationToken = default)
     {
-        var queueClient = await CreateQueueClient();
+        var queueClient = CreateQueueClient();
         await queueClient.DeleteMessageAsync(messageId, popReceipt, cancellationToken);
         _logger.RemovedItem(messageId);
     }
 
-    private async Task<QueueClient> CreateQueueClient()
-    {
-        var client = _queueServiceClient.GetQueueClient(_queueName);
-        await client.CreateIfNotExistsAsync();
-        return client;
-    }
+    private QueueClient CreateQueueClient() =>
+        _queueServiceClient.GetQueueClient(_queueName);
 }
