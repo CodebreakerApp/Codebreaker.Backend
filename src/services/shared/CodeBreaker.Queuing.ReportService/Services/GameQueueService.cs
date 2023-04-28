@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace CodeBreaker.Queuing.ReportService.Services;
 
-public class GameQueueService : QueueService<Game>, IGameQueueReceiverService, IGameQueuePublisherService
+public class GameQueueService : QueueService<GameDto>, IGameQueueReceiverService, IGameQueuePublisherService
 {
     public GameQueueService(ILogger<GameQueueService> logger, QueueServiceClient queueServiceClient, IOptions<GameQueueOptions> options) : base(logger, queueServiceClient, options.Value.Name)
     {

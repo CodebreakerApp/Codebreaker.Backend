@@ -4,5 +4,5 @@ namespace CodeBreaker.Queuing.ReportService.Services;
 
 public interface IGameQueuePublisherService
 {
-    Task EnqueueMessageAsync(Game game, CancellationToken cancellationToken = default);
+    Task EnqueueMessageAsync(GameDto game, CancellationToken cancellationToken = default);
 }

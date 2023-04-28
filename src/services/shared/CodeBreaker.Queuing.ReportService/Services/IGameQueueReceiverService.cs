@@ -5,9 +5,9 @@ namespace CodeBreaker.Queuing.ReportService.Services;
 
 public interface IGameQueueReceiverService
 {
-    Task<QueueMessage<Game>> DequeueMessageAsync(CancellationToken cancellationToken = default);
+    Task<QueueMessage<GameDto>> DequeueMessageAsync(CancellationToken cancellationToken = default);
 
-    Task<QueueMessage<Game>> DequeueAndRemoveMessageAsync(CancellationToken cancellationToken = default);
+    Task<QueueMessage<GameDto>> DequeueAndRemoveMessageAsync(CancellationToken cancellationToken = default);
 
-    Task RemoveMessageAsync(QueueMessage<Game> message, CancellationToken cancellationToken = default);
+    Task RemoveMessageAsync(QueueMessage<GameDto> message, CancellationToken cancellationToken = default);
 }

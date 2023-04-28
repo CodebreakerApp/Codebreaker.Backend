@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Linq.Expressions;
-using CodeBreaker.Data.Common;
+﻿using CodeBreaker.Data.Common;
 using CodeBreaker.Data.Common.Exceptions;
 using CodeBreaker.Data.ReportService.DbContexts;
 using CodeBreaker.Data.ReportService.Models;
@@ -32,8 +30,8 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
 
     public IAsyncEnumerable<Game> GetAsync(DateTime from, DateTime to) =>
         Games
-        .Where(x => x.Start >= from && x.Start <= to)
-        .AsAsyncEnumerable();
+            .Where(x => x.Start >= from && x.Start <= to)
+            .AsAsyncEnumerable();
 
     public async Task<Game?> GetOrDefaultAsync(Guid id, CancellationToken cancellationToken = default) =>
         await Games
@@ -45,12 +43,7 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
 
     public async Task CreateAsync(Game game, CancellationToken cancellationToken = default)
     {
-        var trackedEntity = _gameContext.ChangeTracker.Entries<Game>().SingleOrDefault(x => x.Entity.Id == game.Id);
-
-        if (trackedEntity == null)
-            Games.Add(game);
-        else
-            trackedEntity.CurrentValues.SetValues(game);
+        Games.Add(game);
 
         try
         {
@@ -59,12 +52,12 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogError(ex, "Error while creating the game");
-            throw new CreateException("Could not create the game due to an concurrency error in the database", ex);
+            throw new RepositoryException("Could not create the game due to an concurrency error in the database", ex);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error while creating the game");
-            throw new CreateException("Could not create the game", ex);
+            throw new RepositoryException("Could not create the game", ex);
         }
 
         _logger.EntityCreated(EntityName, game.Id.ToString());
@@ -72,13 +65,8 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
 
     public async Task UpdateAsync(Game game, CancellationToken cancellationToken = default)
     {
-        var trackedEntity = _gameContext.ChangeTracker.Entries<Game>().SingleOrDefault(x => x.Entity.Id == game.Id);
-
-        if (trackedEntity == null)
-            Games.Update(game);
-        else
-            trackedEntity.CurrentValues.SetValues(game);
-
+        Games.Update(game);
+     
         try
         {
             await _gameContext.SaveChangesAsync();
@@ -86,12 +74,12 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogError(ex, "Error while updating the game with the id {id}", game.Id);
-            throw new UpdateException("Could not update the game due to an concurrency error in the database", ex);
+            throw new RepositoryException("Could not update the game due to an concurrency error in the database", ex);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error while updating the game with the id {id}", game.Id);
-            throw new UpdateException("Could not update the game", ex);
+            throw new RepositoryException("Could not update the game", ex);
         }
 
         _logger.EntityUpdated(EntityName, game.Id.ToString()!);
@@ -109,12 +97,12 @@ public class GameRepository : IQueryableGameRepository, IGameRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogError(ex, "Error while deleting the game with the id {id}", id);
-            throw new UpdateException("Could not delete the game due to an concurrency error in the database", ex);
+            throw new RepositoryException("Could not delete the game due to an concurrency error in the database", ex);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Error while deleting the game with the id {id}", id);
-            throw new UpdateException("Could not delete the game", ex);
+            throw new RepositoryException("Could not delete the game", ex);
         }
 
         _logger.EntityDeleted(EntityName, entity.Id.ToString()!);

@@ -4,9 +4,15 @@ namespace CodeBreaker.Data.ReportService.Models;
 
 public class Game : IIdentifyable<Guid>
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; init; }
 
-    public DateTime Start { get; set; }
+    public required string Type { get; init; }
 
-    public DateTime? End { get; set; }
+    public required string Username { get; init; }
+
+    public required DateTime Start { get; init; }
+
+    public required DateTime? End { get; init; }
+
+    public required IReadOnlyCollection<Move> Moves { get; init; }
 }
