@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData;
 using CodeBreaker.ReportService.OData;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.ApplicationInsights.Extensibility;
 
 DefaultAzureCredential azureCredential = new();
 
@@ -30,6 +31,10 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 });
 
 builder.Services.AddAzureAppConfiguration();
+
+// Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 
 // Database
 builder.Services.AddDbContext<GameContext>(options =>

@@ -5,6 +5,7 @@ using CodeBreaker.Queuing.ReportService.Options;
 using CodeBreaker.Queuing.ReportService.Services;
 using CodeBreaker.ReportService.QueueWorker.Options;
 using CodeBreaker.ReportService.QueueWorker.Services;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ Host.CreateDefaultBuilder()
     })
     .ConfigureServices((context, services) =>
     {
+        // Azure Clients
         services.AddAzureClients(options =>
         {
             Uri queueUri = new(context.Configuration["ReportService:Storage:Queue:ServiceUri"] ?? throw new InvalidOperationException("not found"));
@@ -39,6 +41,11 @@ Host.CreateDefaultBuilder()
             options.UseCredential(azureCredential);
         });
 
+        // ApplicationInsights
+        services.AddApplicationInsightsTelemetry();
+        services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
+
+        // EF Core
         services.AddDbContext<GameContext>(options =>
         {
             string accountEndpoint = context.Configuration["ReportService:Cosmos:AccountEndpoint"] ?? throw new InvalidOperationException();
@@ -48,6 +55,7 @@ Host.CreateDefaultBuilder()
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution);
         });
 
+        // Application Services
         services.AddSingleton<IGameRepository, GameRepository>();
         services.Configure<GameQueueOptions>(context.Configuration.GetRequiredSection("ReportService:Storage:Queue:GamesQueue"));
         services.AddSingleton<IGameQueueReceiverService, GameQueueService>();
