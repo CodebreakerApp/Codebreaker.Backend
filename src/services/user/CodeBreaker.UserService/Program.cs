@@ -24,14 +24,14 @@ string configEndpoint = builder.Configuration.GetRequired("AzureAppConfiguration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(new Uri(configEndpoint), azureCredential)
-        .Select(KeyFilter.Any, LabelFilter.Null)
-        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .Select("UserService*", LabelFilter.Null)
+        .Select("UserService*", builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 builder.Services.AddAzureClients(azureServiceBuilder =>
 {
     azureServiceBuilder.UseCredential(azureCredential);
-    string storageEndpoint = builder.Configuration.GetRequired("AzureBlobStorageEndpoint");
+    string storageEndpoint = builder.Configuration.GetRequired("UserService:Storage:Blob:Endpoint");
     azureServiceBuilder.AddBlobServiceClient(new Uri(storageEndpoint));
 });
 

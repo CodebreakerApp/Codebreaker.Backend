@@ -26,8 +26,8 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 {
     string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new InvalidOperationException("AzureAppConfigurationEndpoint");
     options.Connect(new Uri(endpoint), azureCredential)
-        .Select(KeyFilter.Any, LabelFilter.Null)
-        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .Select("ApiService*", LabelFilter.Null)
+        .Select("ApiService*", builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 
