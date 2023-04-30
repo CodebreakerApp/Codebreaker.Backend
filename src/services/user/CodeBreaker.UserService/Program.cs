@@ -17,9 +17,7 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-TokenCredential azureCredential = builder.Environment.IsDevelopment()
-    ? new AzureCliCredential()
-    : new ManagedIdentityCredential();
+DefaultAzureCredential azureCredential = new();
 
 // Azure
 string configEndpoint = builder.Configuration.GetRequired("AzureAppConfigurationEndpoint");

@@ -11,11 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
-#if DEBUG
-AzureCliCredential azureCredential = new();
-#else
+
 DefaultAzureCredential azureCredential = new();
-#endif
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // AppConfiguration
