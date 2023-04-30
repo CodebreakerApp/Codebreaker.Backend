@@ -73,7 +73,7 @@ public class QueueService : IHostedService
             {
                 await _gameRepository.CreateAsync(dbGame, cancellationToken);
             }
-            catch (CreateException ex)
+            catch (RepositoryException ex)
             {
                 _logger.LogError(ex, "Error storing the game with the id {id} to the database", queueMessage.Id);
                 continue;
