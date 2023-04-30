@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-AzureCliCredential azureCredential = new();
+DefaultAzureCredential azureCredential = new();
 Host.CreateDefaultBuilder()
     .ConfigureHostConfiguration(configuration =>
     {

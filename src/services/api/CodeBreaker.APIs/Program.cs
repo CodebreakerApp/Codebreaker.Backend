@@ -2,7 +2,6 @@ using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 
-using Azure.Core.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
 using CodeBreaker.Queuing.ReportService.Options;
@@ -19,29 +18,7 @@ using Microsoft.Extensions.Options;
 // one here, and pass it to the Map method
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 
-#if DEBUG
-//using var listener =
-//    AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
-
-//DefaultAzureCredentialOptions options = new()
-//{
-//    Diagnostics =
-//    {
-//        LoggedHeaderNames = { "x-ms-request-id" },
-//        LoggedQueryParameters = { "api-version " },
-//        IsAccountIdentifierLoggingEnabled = true,
-//        IsDistributedTracingEnabled = true,
-//        IsLoggingContentEnabled = true,
-//        IsLoggingEnabled = true,
-//        IsTelemetryEnabled = true,
-//    }
-//};
-//DefaultAzureCredential azureCredential = new(options);
-AzureCliCredential azureCredential = new();
-
-#else
 DefaultAzureCredential azureCredential = new();
-#endif
 var builder = WebApplication.CreateBuilder(args);
 
 // AppConfiguration
@@ -62,11 +39,11 @@ builder.Services.AddAzureClients(options =>
     options.UseCredential(azureCredential);
 });
 
-//builder.Logging.AddOpenTelemetryLogging();
+builder.Logging.AddOpenTelemetryLogging();
 
 builder.Services.AddAzureAppConfiguration();
 
-//builder.Services.AddOpenTelemetryTracing();
+builder.Services.AddOpenTelemetryTracing();
 // builder.Services.AddOpenTelemetryMetrics();
 
 builder.Services.Configure<ApiServiceOptions>(builder.Configuration.GetSection("ApiService"));

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.OData;
 using CodeBreaker.ReportService.OData;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
-AzureCliCredential azureCredential = new();
+DefaultAzureCredential azureCredential = new();
 
 var builder = WebApplication.CreateBuilder(args);
 
