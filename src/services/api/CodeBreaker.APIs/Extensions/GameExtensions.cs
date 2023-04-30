@@ -49,7 +49,7 @@ internal static class GameExtensions
         KeyPegs keyPegs = new(black, whitePegs.Count);
 
         if (keyPegs.Total > game.Type.Holes)
-            throw new InvalidOperationException("Their are more keyPegs than holes"); // Should not be the case
+            throw new InvalidOperationException("There are more keyPegs than holes"); // Should not be the case
 
         move.KeyPegs = keyPegs;
 
