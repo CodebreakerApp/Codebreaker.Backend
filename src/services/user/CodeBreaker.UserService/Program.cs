@@ -10,6 +10,7 @@ using CodeBreaker.UserService.Services;
 using FastExpressionCompiler;
 using FluentValidation;
 using Mapster;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
@@ -34,6 +35,8 @@ builder.Services.AddAzureClients(azureServiceBuilder =>
     string storageEndpoint = builder.Configuration.GetRequired("UserService:Storage:Blob:Endpoint");
     azureServiceBuilder.AddBlobServiceClient(new Uri(storageEndpoint));
 });
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));
