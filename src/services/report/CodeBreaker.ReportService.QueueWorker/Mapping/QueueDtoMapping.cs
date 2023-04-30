@@ -13,13 +13,13 @@ internal static class QueueDtoMapping
             Username = game.Username,
             Start = game.Start,
             End = game.End,
-            Moves = game.Moves?.Select(ToModel) as IReadOnlyCollection<Move> ?? Array.Empty<Move>()
+            Moves = game.Moves?.Select(ToModel).ToList() ?? new List<Move>()
         };
 
     public static Move ToModel(this MoveDto move) =>
         new()
         {
-            GuessPegs = move.GuessPegs,
+            GuessPegs = move.GuessPegs.ToList(),
             KeyPegs = move.KeyPegs.ToModel()
         };
 

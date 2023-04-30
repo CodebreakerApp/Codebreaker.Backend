@@ -11,7 +11,7 @@ internal static class ReportServiceMapping
             game.Username,
             game.Start,
             game.End,
-            game.Moves.Select(ToReportServiceDto) as IReadOnlyCollection<MoveDto> ?? Array.Empty<MoveDto>()
+            game.Moves.Select(ToReportServiceDto).ToList()
         );
 
     public static MoveDto ToReportServiceDto(this Move move) =>
