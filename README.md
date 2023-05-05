@@ -10,9 +10,9 @@
 
 ### APIs
 
-|Banch|Game API|Bot|Live|User|
-|:--:|:--:|:--:|:--:|:--:|
-**main**|[![API](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml)|[![Bot](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml)|[![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml)|[![User](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml)
+|Banch|Game API|Bot|Live|User|Report-WebApi|Report-QueueWorker|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+**main**|[![API](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml)|[![Bot](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml)|[![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml)|[![User](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml)|[![Report - WebApi](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-report-webapi.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-report-webapi.yml)|[![Report - QueueWorker](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-report-queueworker.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-report-queueworker.yml)
 
 ### Blazor Clients
 

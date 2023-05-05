@@ -10,6 +10,7 @@ using CodeBreaker.UserService.Services;
 using FastExpressionCompiler;
 using FluentValidation;
 using Mapster;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
@@ -17,25 +18,25 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-TokenCredential azureCredential = builder.Environment.IsDevelopment()
-    ? new AzureCliCredential()
-    : new ManagedIdentityCredential();
+DefaultAzureCredential azureCredential = new();
 
 // Azure
 string configEndpoint = builder.Configuration.GetRequired("AzureAppConfigurationEndpoint");
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(new Uri(configEndpoint), azureCredential)
-        .Select(KeyFilter.Any, LabelFilter.Null)
-        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
+        .Select("UserService*", LabelFilter.Null)
+        .Select("UserService*", builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 builder.Services.AddAzureClients(azureServiceBuilder =>
 {
     azureServiceBuilder.UseCredential(azureCredential);
-    string storageEndpoint = builder.Configuration.GetRequired("AzureBlobStorageEndpoint");
+    string storageEndpoint = builder.Configuration.GetRequired("UserService:Storage:Blob:Endpoint");
     azureServiceBuilder.AddBlobServiceClient(new Uri(storageEndpoint));
 });
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));
