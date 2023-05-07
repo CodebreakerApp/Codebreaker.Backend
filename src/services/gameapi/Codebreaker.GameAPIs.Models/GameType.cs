@@ -1,4 +1,4 @@
-﻿namespace CodeBreaker.Common.Models.Data;
+﻿namespace Codebreaker.GameAPIs.Models;
 
 public enum GameType
 {

@@ -1,4 +1,5 @@
-﻿namespace CodeBreaker.GameAPIs.Models;
+﻿namespace Codebreaker.GameAPIs.Models;
+
 public enum ResultValue : byte
 {
     Incorrect = 0,

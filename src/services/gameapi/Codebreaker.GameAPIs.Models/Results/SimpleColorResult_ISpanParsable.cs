@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CodeBreaker.GameAPIs.Models;
+namespace Codebreaker.GameAPIs.Models;
 
 public readonly partial struct SimpleColorResult : ISpanParsable<SimpleColorResult>
 {

@@ -1,9 +1,10 @@
-﻿namespace CodeBreaker.GameAPIs.Models;
-public readonly partial record struct ColorResult : ISpanFormattable
+﻿namespace Codebreaker.GameAPIs.Models;
+
+public readonly partial record struct ShapeAndColorResult : ISpanFormattable
 {
     public string ToString(string? format = default, IFormatProvider? formatProvider = default)
     {
-        var destination = new char[3].AsSpan();
+        var destination = new char[5].AsSpan();
         if (TryFormat(destination, out _, format.AsSpan(), formatProvider))
         {
             return destination.ToString();
@@ -14,9 +15,9 @@ public readonly partial record struct ColorResult : ISpanFormattable
         }
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default, IFormatProvider? provider = default)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        if (destination.Length < 3)
+        if (destination.Length < 5)
         {
             charsWritten = 0;
             return false;
@@ -25,7 +26,9 @@ public readonly partial record struct ColorResult : ISpanFormattable
         destination[0] = (char)(Correct + '0');
         destination[1] = ':';
         destination[2] = (char)(WrongPosition + '0');
-        charsWritten = 3;
+        destination[3] = ':';
+        destination[4] = (char)(ColorOrShape + '0');
+        charsWritten = 5;
         return true;
     }
 }

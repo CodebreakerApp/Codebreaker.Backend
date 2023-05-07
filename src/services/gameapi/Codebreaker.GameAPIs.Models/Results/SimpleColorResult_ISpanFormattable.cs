@@ -1,9 +1,10 @@
-﻿namespace CodeBreaker.GameAPIs.Models;
+﻿namespace Codebreaker.GameAPIs.Models;
 public readonly partial struct SimpleColorResult :  ISpanFormattable
 {
     public string ToString(string? format = default, IFormatProvider? formatProvider = default)
     {
-        char[] buffer = new char[7];
+        int length = _results.Length;
+        char[] buffer = new char[(length << 1) - 1];
         if (TryFormat(buffer.AsSpan(), out int _))
         {
             return new string(buffer);
@@ -20,18 +21,20 @@ public readonly partial struct SimpleColorResult :  ISpanFormattable
         ReadOnlySpan<char> format = default,
         IFormatProvider? provider = default)
     {
-        if (destination.Length < 7)
+        int length = _results.Length;
+        if (destination.Length < ((length << 1) - 1))
         {
             charsWritten = 0;
             return false;
         }
 
-        for (int i = 0, j = 0; i < 4; i++, j += 2)
+
+        for (int i = 0, j = 0; i < length; i++, j += 2)
         {
             destination[j] = (char)((byte)_results[i] + '0'); 
-            if (j < 6) destination[j + 1] = ':';
+            if (j < (length * 2 - 2)) destination[j + 1] = ':';
         }
-        charsWritten = 7;
+        charsWritten = length * 2 - 1;
         return true;
     }
 }

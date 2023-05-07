@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CodeBreaker.Common.Models.Data;
+namespace Codebreaker.GameAPIs.Models;
 
 [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Primary constructor warnings with preview, remove suppression with a new preview")]
 public abstract class Move(Guid gameId, Guid moveId, int moveNumber)

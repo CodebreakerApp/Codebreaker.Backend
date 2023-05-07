@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CodeBreaker.Common.Models.Data;
+namespace Codebreaker.GameAPIs.Models;
 
 //public abstract record class Game(Guid GameId, string GameType, string PlayerName, int Holes, int MaxMoves);
 
