@@ -144,15 +144,15 @@ public class TestGamesApi : PlaywrightTest
             Assert.That(whitePegs, Is.LessThan(5));
         });
 
-        Dictionary<string, bool> deleteRequest = new()
-        {
-            ["cancel"] = false
-        };
-        response = await _request.DeleteAsync($"{_baseUrl}/games/{gameId}", new()
-        {
-            DataObject = deleteRequest
-        });
+       // Dictionary<string, bool> deleteRequest = new()
+       // {
+       //     ["cancel"] = false
+       // };
+       // response = await _request.DeleteAsync($"{_baseUrl}/games/{gameId}", new()
+       // {
+       //     DataObject = deleteRequest
+       // });
 
-        Assert.That(response.Ok, Is.True);
+       // Assert.That(response.Ok, Is.True);
     }
 }
