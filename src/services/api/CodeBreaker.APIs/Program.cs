@@ -2,11 +2,10 @@ using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 
+using Azure.Core.Diagnostics;
 using Azure.Identity;
 using Azure.Messaging.EventHubs.Producer;
-using CodeBreaker.Queuing.ReportService.Options;
-using CodeBreaker.Queuing.ReportService.Services;
-using Microsoft.Extensions.Azure;
+
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +17,28 @@ using Microsoft.Extensions.Options;
 // one here, and pass it to the Map method
 ActivitySource activitySource = new("CNinnovation.CodeBreaker.API");
 
+#if DEBUG
+using var listener =
+    AzureEventSourceListener.CreateConsoleLogger(EventLevel.Informational);
+
+DefaultAzureCredentialOptions options = new()
+{
+    Diagnostics =
+    {
+        LoggedHeaderNames = { "x-ms-request-id" },
+        LoggedQueryParameters = { "api-version " },
+        IsAccountIdentifierLoggingEnabled = true,
+        IsDistributedTracingEnabled = true,
+        IsLoggingContentEnabled = true,
+        IsLoggingEnabled = true,
+        IsTelemetryEnabled = true,
+    }
+};
+DefaultAzureCredential azureCredential = new(options);
+
+#else
 DefaultAzureCredential azureCredential = new();
+#endif
 var builder = WebApplication.CreateBuilder(args);
 
 // AppConfiguration
@@ -26,17 +46,9 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 {
     string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new InvalidOperationException("AzureAppConfigurationEndpoint");
     options.Connect(new Uri(endpoint), azureCredential)
-        .Select("ApiService*", LabelFilter.Null)
-        .Select("ApiService*", builder.Environment.EnvironmentName)
+        .Select(KeyFilter.Any, LabelFilter.Null)
+        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
-});
-
-builder.Services.AddAzureClients(options =>
-{
-    Uri queueUri = new(builder.Configuration["ApiService:Storage:Queue:ServiceUri"] ?? throw new InvalidOperationException("ApiService:Storage:Queue:ServiceUri configuration is not available"));
-    options.AddQueueServiceClient(queueUri);
-    // Add EventHubClient here
-    options.UseCredential(azureCredential);
 });
 
 builder.Logging.AddOpenTelemetryLogging();
@@ -95,8 +107,6 @@ builder.Services.AddSingleton<IGameTypeFactoryMapper<string>, GameTypeFactoryMap
 ));
 
 builder.Services.AddSingleton<IPublishEventService, EventService>();
-builder.Services.Configure<GameQueueOptions>(builder.Configuration.GetRequiredSection("ApiService:Storage:Queue:GamesQueue"));
-builder.Services.AddScoped<IGameQueuePublisherService, GameQueueService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IMoveService, MoveService>();
 
