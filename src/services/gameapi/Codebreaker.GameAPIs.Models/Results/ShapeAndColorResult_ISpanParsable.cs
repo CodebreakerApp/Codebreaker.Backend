@@ -23,7 +23,7 @@ public readonly partial record struct ShapeAndColorResult : ISpanParsable<ShapeA
         result = s switch
         {
             { Length: > 5 or < 5 } => default,
-            [var x, ':', var y, ':', var z] => new ShapeAndColorResult((byte)(x - '0'), (byte)(y - '0'), (byte)(z - '0')),
+            [var x, Separator, var y, Separator, var z] => new ShapeAndColorResult((byte)(x - '0'), (byte)(y - '0'), (byte)(z - '0')),
             _ => default,
         };
 

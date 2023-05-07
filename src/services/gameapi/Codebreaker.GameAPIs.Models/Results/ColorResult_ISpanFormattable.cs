@@ -23,7 +23,7 @@ public readonly partial record struct ColorResult : ISpanFormattable
         }
 
         destination[0] = (char)(Correct + '0');
-        destination[1] = ':';
+        destination[1] = Separator;
         destination[2] = (char)(WrongPosition + '0');
         charsWritten = 3;
         return true;

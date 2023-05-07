@@ -9,6 +9,7 @@ public enum ResultValue : byte
 
 public readonly partial struct SimpleColorResult
 {
+    private const char Separator = ':';
     private readonly ResultValue[] _results;
     public SimpleColorResult(ResultValue[] results) =>
         _results = results;

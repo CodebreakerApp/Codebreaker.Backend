@@ -28,11 +28,10 @@ public readonly partial struct SimpleColorResult :  ISpanFormattable
             return false;
         }
 
-
         for (int i = 0, j = 0; i < length; i++, j += 2)
         {
             destination[j] = (char)((byte)_results[i] + '0'); 
-            if (j < (length * 2 - 2)) destination[j + 1] = ':';
+            if (j < (length * 2 - 2)) destination[j + 1] = Separator;
         }
         charsWritten = length * 2 - 1;
         return true;

@@ -24,7 +24,7 @@ public readonly partial record struct ColorResult : ISpanParsable<ColorResult>
         result = s switch
         {
             { Length: > 3 or < 3 } => default,
-            [var correct, ':', var wrongpos] => new ColorResult(correct - '0', wrongpos - '0'),
+            [var correct, Separator, var wrongpos] => new ColorResult(correct - '0', wrongpos - '0'),
             _ => default,
         };
 

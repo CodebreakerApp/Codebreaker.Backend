@@ -24,9 +24,9 @@ public readonly partial record struct ShapeAndColorResult : ISpanFormattable
         }
 
         destination[0] = (char)(Correct + '0');
-        destination[1] = ':';
+        destination[1] = Separator;
         destination[2] = (char)(WrongPosition + '0');
-        destination[3] = ':';
+        destination[3] = Separator;
         destination[4] = (char)(ColorOrShape + '0');
         charsWritten = 5;
         return true;
