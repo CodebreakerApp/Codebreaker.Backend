@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Codebreaker.GameAPIs.Models;
+﻿namespace Codebreaker.GameAPIs.Models;
 
 public abstract class Move(Guid gameId, Guid moveId, int moveNumber)
 {
@@ -10,11 +8,11 @@ public abstract class Move(Guid gameId, Guid moveId, int moveNumber)
 }
 
 public class Move<TField, TResult>(Guid GameId, Guid MoveId, int MoveNumber)
-    : Move(GameId, MoveId, MoveNumber)
+    : Move(GameId, MoveId, MoveNumber), IFormattable
 {
     public required ICollection<TField> GuessPegs { get; init; }
     public required TResult KeyPegs { get; init; }
 
-    public override string ToString() =>
+    public string ToString(string? format = default, IFormatProvider? formatProvider = default) =>
         $"{MoveNumber}, {string.Join(".", GuessPegs)}";
 }
