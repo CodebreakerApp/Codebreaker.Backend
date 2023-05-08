@@ -42,13 +42,9 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
             .HasValue<ShapeGame>("Shape");
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return SaveChangesAsync(acceptAllChangesOnSuccess: true, cancellationToken: cancellationToken);
-    }
-
     public override EntityEntry<TEntity> Add<TEntity>(TEntity entity)
     {
+        // StartData is a shadow property which is used as the partition key
         if (entity is Game g)
         {
             var entry = Entry(entity);
@@ -62,37 +58,34 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
     public DbSet<ShapeGame> GamesShapes => Set<ShapeGame>();
     public DbSet<SimpleGame> GamesSimple => Set<SimpleGame>();
 
-    public async Task CreateGameAsync(Game game)
+    public async Task CreateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
         Games.Add(game);
-        await SaveChangesAsync();
+        await SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Created game with id {gameId}", game.GameId);
     }
 
-    public async Task UpdateGameAsync(Game game)
+    public async Task UpdateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
         Games.Update(game);
-        await SaveChangesAsync();
+        await SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Updated game with id {gameId}", game.GameId);
     }
 
-    public async Task DeleteGameAsync(Guid gameId)
+    public async Task DeleteGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
-        Game game = await GetGameAsync(gameId, false) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
+        Game game = await GetGameAsync(gameId, false, cancellationToken) ?? throw new GameNotFoundException($"Game with id {gameId} not found");
         Games.Remove(game);
-        await SaveChangesAsync();
+        await SaveChangesAsync(cancellationToken);
     }
 
-    public Task<Game?> GetGameAsync(Guid gameId, bool withTracking = true) =>
+    public Task<Game?> GetGameAsync(Guid gameId, bool withTracking = true, CancellationToken cancellationToken = default) =>
         Games
             .AsTracking(withTracking ? QueryTrackingBehavior.TrackAll : QueryTrackingBehavior.NoTracking)
             .WithPartitionKey(gameId.ToString())
-            .SingleOrDefaultAsync(g => g.GameId == gameId);
+            .SingleOrDefaultAsync(g => g.GameId == gameId, cancellationToken);
 
-    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateTime date) =>
-        GetGamesByDateAsync(DateOnly.FromDateTime(date));
-
-    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date)
+    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
     {
         DateTime begin = new(date.Year, date.Month, date.Day);
         DateTime end = begin.AddDays(1);
@@ -105,7 +98,7 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
             .AsAsyncEnumerable();
     }
 
-    public Task<IEnumerable<Game>> GetMyGamesAsync(string gamerName)
+    public Task<IEnumerable<Game>> GetMyGamesAsync(string gamerName, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
