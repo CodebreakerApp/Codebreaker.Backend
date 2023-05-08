@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Models
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebeaker.GameAPIs.Models.Tests", "..\Codebreaker.GameAPIs.Models.Tests\Codebeaker.GameAPIs.Models.Tests.csproj", "{A2778A47-B1C2-455A-9B7F-22ECCC3C58E5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Data.Cosmos", "..\Codebreaker.GameAPIs.Data.Cosmos\Codebreaker.GameAPIs.Data.Cosmos.csproj", "{B2596975-6E12-4A21-9077-3959009D4621}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.GameAPIs.Data.SqlServer", "..\Codebreaker.GameAPIs.Data.SqlServer\Codebreaker.GameAPIs.Data.SqlServer.csproj", "{D2BD845E-B72D-4E7E-965A-9DB99118E228}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.GameAPIs.Data.Cosmos.Tests", "..\Codebreaker.GameAPIs.Data.Cosmos.Tests\Codebreaker.GameAPIs.Data.Cosmos.Tests.csproj", "{3FF37B4C-4C4E-4B55-B3DA-6EDC5BDC31AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +27,18 @@ Global
 		{A2778A47-B1C2-455A-9B7F-22ECCC3C58E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2778A47-B1C2-455A-9B7F-22ECCC3C58E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2778A47-B1C2-455A-9B7F-22ECCC3C58E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2596975-6E12-4A21-9077-3959009D4621}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2596975-6E12-4A21-9077-3959009D4621}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2596975-6E12-4A21-9077-3959009D4621}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2596975-6E12-4A21-9077-3959009D4621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2BD845E-B72D-4E7E-965A-9DB99118E228}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2BD845E-B72D-4E7E-965A-9DB99118E228}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2BD845E-B72D-4E7E-965A-9DB99118E228}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2BD845E-B72D-4E7E-965A-9DB99118E228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FF37B4C-4C4E-4B55-B3DA-6EDC5BDC31AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FF37B4C-4C4E-4B55-B3DA-6EDC5BDC31AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FF37B4C-4C4E-4B55-B3DA-6EDC5BDC31AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FF37B4C-4C4E-4B55-B3DA-6EDC5BDC31AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
