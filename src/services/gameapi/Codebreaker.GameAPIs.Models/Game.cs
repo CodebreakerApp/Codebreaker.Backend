@@ -1,10 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace Codebreaker.GameAPIs.Models;
 
-namespace Codebreaker.GameAPIs.Models;
-
-//public abstract record class Game(Guid GameId, string GameType, string PlayerName, int Holes, int MaxMoves);
-
-[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Primary constructor warnings with preview, remove suppression with a new preview")]
 public abstract class Game(
     Guid gameId,
     GameType gameType,
@@ -13,24 +8,16 @@ public abstract class Game(
     int holes,
     int maxMoves)
 {
-    /// <summary>
-    /// The Id of the game.
-    /// Used as partitionKey and primaryKey in Cosmos.
-    /// </summary>
-    public Guid GameId => gameId;
-    public GameType GameType => gameType;
-
-    public string Playername => playerName;
-
+    public Guid GameId { get; private set; } = gameId;
+    public GameType GameType { get; private set; } = gameType;
+    public string PlayerName { get; private set; } = playerName;
     public IReadOnlyList<string> Code { get; init; } = new List<string>();
-
-    public DateTime StartTime => startTime;
-
+    public DateTime StartTime { get; private set; } = startTime;
     public DateTime? Endtime { get; set; }
-
-    public int Holes => holes;
-
-    public int MaxMoves => maxMoves;
+    public int Holes { get; private set; } = holes;
+    public int MaxMoves { get; private set; } = maxMoves;
+    public bool Completed { get; set; } = false;
+    public bool Won { get; set; } = false;
 }
 
 public class Game<TField, TResult>(
