@@ -135,22 +135,31 @@ public static class GameExtensions
         // Check black and white keyPegs
         List<ShapeAndColorField> codesToCheck = new(game.Codes);
         List<ShapeAndColorField> guessPegsToCheck = new(move.GuessPegs);
+        List<ShapeAndColorField> remainingCodesToCheck = new();
+        List<ShapeAndColorField> remainingGuessPegsToCheck = new();
 
         byte black = 0;
         byte blue = 0;
         byte white = 0;
-        List<string> bluePegs = new List<string>();
-        List<string> whitePegs = new();
 
         // check black (correct color and shape)
         for (int i = 0; i < guessPegsToCheck.Count; i++)
+        {
             if (guessPegsToCheck[i] == codesToCheck[i])
             {
                 black++;
-                codesToCheck.RemoveAt(i);
-                guessPegsToCheck.RemoveAt(i);
-                i--;
             }
+            else
+            {
+                remainingCodesToCheck.Add(codesToCheck[i]);
+                remainingGuessPegsToCheck.Add(guessPegsToCheck[i]);
+            }
+        }
+
+        codesToCheck = remainingCodesToCheck;
+        remainingCodesToCheck = new(codesToCheck);
+        guessPegsToCheck = remainingGuessPegsToCheck;
+        remainingGuessPegsToCheck = new();
 
         // check blue (correct shape and color on a wrong position)
         for (int i = 0; i < guessPegsToCheck.Count; i++)
@@ -159,10 +168,16 @@ public static class GameExtensions
             if (codeField is not null)
             {
                 blue++;
-                codesToCheck.Remove(codeField);
-                guessPegsToCheck.Remove(guessPegsToCheck[i]);
+                remainingCodesToCheck.Remove(codeField); // remove for the white check
+            }
+            else
+            {
+                remainingGuessPegsToCheck.Add(guessPegsToCheck[i]);  // add for the white check
             }
         }
+
+        codesToCheck = remainingCodesToCheck;
+        guessPegsToCheck = remainingGuessPegsToCheck;
 
         // check white (either the shape or the color is correct on a wrong position)
         for (int i = 0; i < guessPegsToCheck.Count; i++)

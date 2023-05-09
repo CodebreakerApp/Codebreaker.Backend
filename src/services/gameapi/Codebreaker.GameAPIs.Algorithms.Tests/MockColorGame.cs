@@ -10,7 +10,6 @@ public class MockColorGame : ICalculatableGame<ColorField, ColorResult>
     public DateTime EndTime { get; set; }
     public bool Won { get; set; }
 
-    private List<ColorField> _fields = new();
     public required IEnumerable<ColorField> Fields { get; init; }
     public required ICollection<ColorField> Codes { get; init; }
 
