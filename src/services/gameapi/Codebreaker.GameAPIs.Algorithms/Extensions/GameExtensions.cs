@@ -1,33 +1,8 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-
-using Codebreaker.GameAPIs.Models;
-
-[assembly: InternalsVisibleTo("Codebreaker.GameAPIs.Algorithms.Tests")]
+﻿using Codebreaker.GameAPIs.Models;
 
 namespace Codebreaker.GameAPIs.Extensions;
 
-
-
-public interface ICalculatableGame<TField, TResult>
-{
-    int Holes { get; }
-    int MaxMoves { get; }
-    DateTime EndTime { get; set; }
-    bool Won { get; set; }
-    IEnumerable<TField> Fields { get; }
-    ICollection<TField> Codes { get; init; }
-    ICollection<ICalculatableMove<TField, TResult>> Moves { get; }
-}
-
-public interface ICalculatableMove<TField, TResult>
-{
-    int MoveNumber { get; set; }
-    ICollection<TField> GuessPegs { get; }
-    TResult KeyPegs { get; set; }
-}
-
-internal static class GameExtensions
+public static class GameExtensions
 {
     public static void ApplyMove(this ICalculatableGame<ColorField, ColorResult> game, ICalculatableMove<ColorField, ColorResult> move)
     {
