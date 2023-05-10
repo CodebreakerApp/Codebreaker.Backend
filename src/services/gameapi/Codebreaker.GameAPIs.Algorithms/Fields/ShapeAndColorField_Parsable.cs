@@ -18,7 +18,7 @@ public partial record class ShapeAndColorField : IParsable<ShapeAndColorField>
 
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out ShapeAndColorField result)
     {
-        result = null;
+        result = default;
         if (s is null)
         {
             return false;

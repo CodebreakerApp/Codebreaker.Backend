@@ -7,19 +7,23 @@ public class MockShapeGame : ICalculatableGame<ShapeAndColorField, ShapeAndColor
 {
     public int Holes { get; init; }
     public int MaxMoves { get; init; }
-    public DateTime EndTime { get; set; }
+    public DateTime? EndTime { get; set; }
     public bool Won { get; set; }
 
     public required IEnumerable<ShapeAndColorField> Fields { get; init; }
     public required ICollection<ShapeAndColorField> Codes { get; init; }
 
-    private List<ICalculatableMove<ShapeAndColorField, ShapeAndColorResult>> _moves = new();
+    private readonly List<ICalculatableMove<ShapeAndColorField, ShapeAndColorResult>> _moves = new();
     public ICollection<ICalculatableMove<ShapeAndColorField, ShapeAndColorResult>> Moves => _moves;
+
+    public DateTime StartTime { get; }
+    public TimeSpan? Duration { get; set; }
+    public int LastMoveNumber { get; set; }
 }
 
 public class MockShapeMove : ICalculatableMove<ShapeAndColorField, ShapeAndColorResult>
 {
     public int MoveNumber { get; set; }
     public required ICollection<ShapeAndColorField> GuessPegs { get; init; }
-    public ShapeAndColorResult KeyPegs { get; set; }
+    public ShapeAndColorResult? KeyPegs { get; set; }
 }

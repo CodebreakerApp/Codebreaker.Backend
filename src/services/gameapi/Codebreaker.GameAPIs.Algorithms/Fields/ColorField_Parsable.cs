@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Codebreaker.GameAPIs.Models;
+
 public partial record class ColorField : IParsable<ColorField>
 {
     public static ColorField Parse(string s, IFormatProvider? provider = default)
@@ -19,7 +20,7 @@ public partial record class ColorField : IParsable<ColorField>
     {
         if (s is null)
         {
-            result = null;
+            result = default;
             return false;
         }
         result = new ColorField(s);

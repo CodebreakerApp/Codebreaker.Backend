@@ -4,7 +4,11 @@ namespace Codebreaker.GameAPIs.Extensions;
 
 public static class GameExtensions
 {
-    public static void ApplyMove(this ICalculatableGame<ColorField, ColorResult> game, ICalculatableMove<ColorField, ColorResult> move)
+    public static bool Ended<TField, TResult>(this ICalculatableGame<TField, TResult> game)
+        where TResult: struct
+        => game.EndTime is not null;
+
+    public static void ApplyColorMove(this ICalculatableGame<ColorField, ColorResult> game, ICalculatableMove<ColorField, ColorResult> move)
     {
         if (game.Holes != move.GuessPegs.Count)
             throw new ArgumentException($"Invalid guess number {move.GuessPegs.Count} for {game.Holes} holes");
@@ -12,8 +16,10 @@ public static class GameExtensions
         if (move.GuessPegs.Any(guessPeg => !game.Fields.Contains(guessPeg)))
             throw new ArgumentException("The guess contains an invalid value");
 
-        // Change MoveCount
-        move.MoveNumber = game.Moves.LastOrDefault()?.MoveNumber + 1 ?? 0;
+        game.LastMoveNumber++;
+
+        if (game.LastMoveNumber != move.MoveNumber)
+            throw new ArgumentException($"Incorrect move number received {move.MoveNumber}");
 
         // Check black and white keyPegs
         List<ColorField> codesToCheck = new(game.Codes);
@@ -63,10 +69,11 @@ public static class GameExtensions
         if (resultPegs.Correct == game.Holes || game.Moves.Count >= game.MaxMoves)
         { 
             game.EndTime = DateTime.UtcNow;
+            game.Duration = game.EndTime - game.StartTime;
         }
     }
 
-    public static void ApplyMove(this ICalculatableGame<ColorField, SimpleColorResult> game, ICalculatableMove<ColorField, SimpleColorResult> move)
+    public static void ApplySimpleMove(this ICalculatableGame<ColorField, SimpleColorResult> game, ICalculatableMove<ColorField, SimpleColorResult> move)
     {
         if (game.Holes != move.GuessPegs.Count)
             throw new ArgumentException($"Invalid guess number {move.GuessPegs.Count} for {game.Holes} holes");
@@ -74,14 +81,17 @@ public static class GameExtensions
         if (move.GuessPegs.Any(guessPeg => !game.Fields.Contains(guessPeg)))
             throw new ArgumentException("The guess contains an invalid value");
 
-        // Change MoveCount
-        move.MoveNumber = game.Moves.LastOrDefault()?.MoveNumber + 1 ?? 0;
+        game.LastMoveNumber++;
+
+        if (game.LastMoveNumber != move.MoveNumber)
+            throw new ArgumentException($"Incorrect move number received {move.MoveNumber}");
 
         // Check black and white keyPegs
         List<ColorField> codesToCheck = new(game.Codes);
         List<ColorField> guessPegsToCheck = new(move.GuessPegs);
 
-        ResultValue[] results = new ResultValue[game.Holes];
+        var results = Enumerable.Repeat(ResultValue.Incorrect, 4).ToArray();
+
         for (int i = 0; i < results.Length; i++)
         {
             results[i] = ResultValue.Incorrect;
@@ -109,6 +119,7 @@ public static class GameExtensions
         if (game.Won || game.Moves.Count >= game.MaxMoves)
         {
             game.EndTime = DateTime.UtcNow;
+            game.Duration = game.EndTime - game.StartTime;
         }
 
         move.KeyPegs = new SimpleColorResult(results);
@@ -116,7 +127,7 @@ public static class GameExtensions
         game.Moves.Add(move);
     }
 
-    public static void ApplyMove(this ICalculatableGame<ShapeAndColorField, ShapeAndColorResult> game, ICalculatableMove<ShapeAndColorField, ShapeAndColorResult> move)
+    public static void ApplyShapeMove(this ICalculatableGame<ShapeAndColorField, ShapeAndColorResult> game, ICalculatableMove<ShapeAndColorField, ShapeAndColorResult> move)
     {
         if (game.Holes != move.GuessPegs.Count)
             throw new ArgumentException($"Invalid guess number {move.GuessPegs.Count} for {game.Holes} holes");
@@ -129,8 +140,10 @@ public static class GameExtensions
         if (move.GuessPegs.Select(f => f.Shape).Any(shape => !game.Fields.Select(c => c.Shape).Contains(shape)))
             throw new ArgumentException("The guess contains an invalid shape");
 
-        // Change MoveCount
-        move.MoveNumber = game.Moves.LastOrDefault()?.MoveNumber + 1 ?? 0;
+        game.LastMoveNumber++;
+
+        if (game.LastMoveNumber != move.MoveNumber)
+            throw new ArgumentException($"Incorrect move number received {move.MoveNumber}");
 
         // Check black and white keyPegs
         List<ShapeAndColorField> codesToCheck = new(game.Codes);
@@ -164,7 +177,7 @@ public static class GameExtensions
         // check blue (correct shape and color on a wrong position)
         for (int i = 0; i < guessPegsToCheck.Count; i++)
         {
-            var codeField = codesToCheck.FirstOrDefault(c => c == guessPegsToCheck[i]);
+            ShapeAndColorField? codeField = codesToCheck.FirstOrDefault(c => c == guessPegsToCheck[i]);
             if (codeField is not null)
             {
                 blue++;
@@ -208,6 +221,7 @@ public static class GameExtensions
         if (resultPegs.Correct == game.Holes || game.Moves.Count >= game.MaxMoves)
         {
             game.EndTime = DateTime.UtcNow;
+            game.Duration = game.EndTime - game.StartTime;
         }
     }
 }

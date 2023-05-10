@@ -66,7 +66,7 @@ public class ShapeGame5x5x4AlgorithmTests
     //    });
     //}
 
-    private ShapeAndColorResult TestSkeleton(ShapeAndColorField[] codes, ShapeAndColorField[] guesses)
+    private static ShapeAndColorResult TestSkeleton(ShapeAndColorField[] codes, ShapeAndColorField[] guesses)
     {
         MockShapeGame game = new()
         {
@@ -83,9 +83,9 @@ public class ShapeGame5x5x4AlgorithmTests
             GuessPegs = new List<ShapeAndColorField>(guesses)
         };
 
-        game.ApplyMove(move);
+        game.ApplyShapeMove(move);
 
-        return game.Moves.First().KeyPegs;
+        return game.Moves.First().KeyPegs ?? throw new InvalidOperationException();
     }
 }
 

@@ -64,7 +64,7 @@ public class ColorGame6x4AlgorithmTests
         });
     }
 
-    private ColorResult TestSkeleton(string[] codes, string[] guesses)
+    private static ColorResult TestSkeleton(string[] codes, string[] guesses)
     {
         MockColorGame game = new()
         {
@@ -81,9 +81,10 @@ public class ColorGame6x4AlgorithmTests
             GuessPegs = new List<ColorField>(guesses.Select(g => new ColorField(g)))
         };
         
-        game.ApplyMove(move);
+        game.ApplyColorMove(move);
 
-        return game.Moves.First().KeyPegs;
+        var keypegs = game.Moves.First().KeyPegs;
+        return keypegs is not null ? keypegs.Value : throw new InvalidOperationException();
     }
 }
 
