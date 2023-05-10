@@ -1,8 +1,7 @@
 ﻿using System.Globalization;
 
+using Codebreaker.GameAPIs.Exceptions;
 using Codebreaker.GameAPIs.Models;
-using Codebreaker.GameAPIs.Models.Data;
-using Codebreaker.GameAPIs.Models.Exceptions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -27,7 +26,7 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {       
-        modelBuilder.HasDefaultContainer("GameContainer3");
+        modelBuilder.HasDefaultContainer("GamesContainer3");
 
         modelBuilder.Entity<Game>().HasKey(g => g.GameId);
         modelBuilder.Entity<Game>().Property<string>(ColumnNames.StartDate);
@@ -53,6 +52,17 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
         return base.Add(entity);
     }
 
+    public override ValueTask<EntityEntry> AddAsync(object entity, CancellationToken cancellationToken = default)
+    {
+        // StartData is a shadow property which is used as the partition key
+        if (entity is Game g)
+        {
+            var entry = Entry(entity);
+            entry.Property(ColumnNames.StartDate).CurrentValue = DateOnly.FromDateTime(g.StartTime).ToString(CultureInfo.InvariantCulture);
+        }
+        return base.AddAsync(entity, cancellationToken);
+    }
+
     public DbSet<Game> Games => Set<Game>();
     public DbSet<ColorGame> GamesColor => Set<ColorGame>();
     public DbSet<ShapeGame> GamesShapes => Set<ShapeGame>();
@@ -60,7 +70,8 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
 
     public async Task CreateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
-        Games.Add(game);
+        Add(game);
+//        Games.Add(game);
         await SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Created game with id {gameId}", game.GameId);
     }
@@ -85,21 +96,44 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
             .WithPartitionKey(gameId.ToString())
             .SingleOrDefaultAsync(g => g.GameId == gameId, cancellationToken);
 
-    public IAsyncEnumerable<Game> GetGamesByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Game>> GetGamesByDateAsync(GameType gameType, DateOnly date, CancellationToken cancellationToken = default)
     {
-        DateTime begin = new(date.Year, date.Month, date.Day);
-        DateTime end = begin.AddDays(1);
-
-        return Games
-            .AsNoTracking()
-            .Where(g => g.StartTime >= begin && g.StartTime < end)
-            .OrderByDescending(g => g.StartTime)
+        // use the partition key to filter by date
+        var games = await Games.AsNoTracking()
+            .WithPartitionKey(date.ToString())
+            .Where(g => g.Won == true)
+            .Where(g => g.GameType == gameType)
+            .OrderBy(g => g.Duration)
             .Take(100)
-            .AsAsyncEnumerable();
+            .ToListAsync(cancellationToken);
+
+        return games;
     }
 
-    public Task<IEnumerable<Game>> GetMyGamesAsync(string gamerName, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Game>> GetMyGamesAsync(string playerName, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var games = await Games.AsNoTracking()
+            .Where(g => g.PlayerName == playerName)
+            .OrderByDescending(g => g.StartTime)
+            .Take(100)
+            .ToListAsync(cancellationToken);
+
+        return games;
+    }
+
+    public async Task<IEnumerable<Game>> GetMyRunningGamesAsync(string playerName, CancellationToken cancellationToken = default)
+    {
+        DateTime end = DateTime.Now;
+        DateTime start = end.AddDays(-3);
+
+        var games = await Games.AsNoTracking()
+            .Where(g => g.PlayerName == playerName)
+            .Where(g => g.EndTime == null)
+            .Where(g => g.StartTime > start && g.StartTime < end)
+            .OrderByDescending(g => g.StartTime)
+            .Take(40)
+            .ToListAsync(cancellationToken);
+
+        return games;
     }
 }

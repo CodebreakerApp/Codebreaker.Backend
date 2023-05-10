@@ -1,5 +1,5 @@
+using Codebreaker.GameAPIs.Factories;
 using Codebreaker.GameAPIs.Models;
-using Codebreaker.GameAPIs.Models.Factories;
 
 using static Azure.Core.HttpHeader;
 
