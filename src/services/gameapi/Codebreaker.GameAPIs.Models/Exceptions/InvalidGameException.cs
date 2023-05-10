@@ -1,4 +1,4 @@
-﻿namespace Codebreaker.GameAPIs.Models.Exceptions;
+﻿namespace Codebreaker.GameAPIs.Exceptions;
 
 public class InvalidGameException : Exception
 {
