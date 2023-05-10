@@ -1,62 +1,26 @@
-﻿using CodeBreaker.Shared.Models.Data;
+﻿namespace Codebreaker.GameAPIs.Extensions;
 
-namespace CodeBreaker.APIs.Extensions;
-
-internal static class GameExtensions
+public static class GameExtensions
 {
+    public static bool Ended(this Game game) => game.EndTime != null;
+
     public static void ApplyMove(this Game game, Move move)
     {
-        if (game.Type.Holes != move.GuessPegs.Count)
-            throw new ArgumentException($"Invalid guess number {move.GuessPegs.Count} for {game.Type.Holes} holes");
-
-        if (move.GuessPegs.Any(guessPeg => !game.Type.Fields.Contains(guessPeg)))
-            throw new ArgumentException("The guess contains an invalid value");
-
-        // Change MoveCount
-        move.MoveNumber = game.GetLastMoveOrDefault()?.MoveNumber + 1 ?? 0;
-
-        // Check black and white keyPegs
-        List<string> codeToCheck = new(game.Code);
-        List<string> guessPegsToCheck = new(move.GuessPegs);
-        int black = 0;
-        List<string> whitePegs = new();
-
-        // check black
-        for (int i = 0; i < guessPegsToCheck.Count; i++)
-            if (guessPegsToCheck[i] == codeToCheck[i])
-            {
-                black++;
-                codeToCheck.RemoveAt(i);
-                guessPegsToCheck.RemoveAt(i);
-                i--;
-            }
-
-        // check white
-        foreach (string value in guessPegsToCheck)
+        if (game is SimpleGame sg && move is SimpleMove sm)
         {
-            // value not in code
-            if (!codeToCheck.Contains(value))
-                continue;
-
-            // value peg was already added to the white pegs often enough
-            // (max. the number in the codeToCheck)
-            if (whitePegs.Count(x => x == value) == codeToCheck.Count(x => x == value))
-                continue;
-
-            whitePegs.Add(value);
+            sg.ApplySimpleMove(sm);
         }
-
-        KeyPegs keyPegs = new(black, whitePegs.Count);
-
-        if (keyPegs.Total > game.Type.Holes)
-            throw new InvalidOperationException("There are more keyPegs than holes"); // Should not be the case
-
-        move.KeyPegs = keyPegs;
-
-        game.Moves.Add(move);
-
-        // all holes correct  OR  maxmoves reached
-        if (keyPegs.Black == game.Type.Holes || game.Moves.Count >= game.Type.MaxMoves)
-            game.End = DateTime.Now;
+        else if (game is ColorGame cg && move is ColorMove cm)
+        {
+            cg.ApplyColorMove(cm);
+        }
+        else if (game is ShapeGame scg && move is ShapeMove scm)
+        {
+            scg.ApplyShapeMove(scm);
+        }
+        else
+        {
+            throw new InvalidOperationException("invalid game");
+        }
     }
 }

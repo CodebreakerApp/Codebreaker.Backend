@@ -4,17 +4,23 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
     <UserSecretsId>2fa07316-b442-4f12-979b-91a7cba7ff13</UserSecretsId>
     <ApplicationInsightsResourceId>/subscriptions/7221029f-b7dc-4ab8-b117-111900d0d73c/resourceGroups/codebreaker/providers/microsoft.insights/components/codebreakerinsights</ApplicationInsightsResourceId>
     <PublishProfile>DefaultContainer</PublishProfile>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Grpc\GrpcGameController.cs" />
     <Compile Remove="Utilities\GamesJsonSerializerContext.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="nuget.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Grpc\GrpcGameController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,8 +31,7 @@
     <PackageReference Include="Azure.Core" Version="1.31.0" />
     <PackageReference Include="Azure.Identity" Version="1.8.2" />
     <PackageReference Include="Azure.Messaging.EventHubs" Version="5.9.0" />
-    <PackageReference Include="CNInnovation.Codebreaker.Data.Cosmos" Version="2.0.1-beta.1.16" />
-    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.6" />
+    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.9" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
@@ -42,12 +47,14 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.14" />
     <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc9.14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.0-preview.3.23174.2" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\CodeBreaker.Queuing.ReportService\CodeBreaker.Queuing.ReportService.csproj" />
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Algorithms\Codebreaker.GameAPIs.Algorithms.csproj" />
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Data.Cosmos\Codebreaker.GameAPIs.Data.Cosmos.csproj" />
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Models\Codebreaker.GameAPIs.Models.csproj" />
   </ItemGroup>
 
 </Project>

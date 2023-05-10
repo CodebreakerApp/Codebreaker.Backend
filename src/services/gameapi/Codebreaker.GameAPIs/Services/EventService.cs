@@ -4,12 +4,13 @@ using System.Text.Json;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
 
+using CodeBreaker.Shared.Exceptions;
 using CodeBreaker.Shared.Models.Live;
 using CodeBreaker.Shared.Models.Live.EventPayloads;
 
 using static CodeBreaker.Shared.Models.Live.LiveEventNames;
 
-namespace CodeBreaker.APIs.Services;
+namespace Codebreaker.GameAPIs.Services;
 
 public sealed class EventService : IPublishEventService, IAsyncDisposable
 {

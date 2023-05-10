@@ -1,4 +1,4 @@
-﻿namespace CodeBreaker.APIs;
+﻿namespace Codebreaker.GameAPIs;
 
 public static partial class Log
 {
@@ -53,8 +53,8 @@ public static partial class Log
     [LoggerMessage(
         EventId = 4002,
         Level = LogLevel.Information,
-        Message = "Received a move with {move}, returing {result}")]
-    public static partial void SetMove(this ILogger logger, string move, string result);
+        Message = "Received a move for game {game} with {move}, returing {result}")]
+    public static partial void SetMove(this ILogger logger, string game, string move, string result);
 
     [LoggerMessage(
         EventId = 4003,
@@ -79,4 +79,10 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "Requesting detailed game report for {id}")]
     public static partial void DetailedGameReport(this ILogger logger, Guid id);
+
+    [LoggerMessage(
+        EventId = 4008,
+        Level = LogLevel.Information,
+        Message = "{uri} called using HTTP method {method}")]
+    public static partial void ApiRequest(this ILogger logger, string uri, string method);
 }

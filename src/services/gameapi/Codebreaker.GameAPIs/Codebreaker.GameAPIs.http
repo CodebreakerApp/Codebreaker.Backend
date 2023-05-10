@@ -1,0 +1,12 @@
+﻿@Codebreaker.GameAPIs_HostAddress = http://localhost:9400
+@ContentType = application/json
+
+Post {{Codebreaker.GameAPIs_HostAddress}}/games/
+Content-Type: {{ContentType}}
+
+{
+  "gameType": "Game6x4",
+  "playerName": "test"
+}
+
+###

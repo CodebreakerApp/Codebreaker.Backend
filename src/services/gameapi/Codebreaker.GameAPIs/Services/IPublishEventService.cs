@@ -1,7 +1,7 @@
 ﻿using CodeBreaker.Shared.Models.Data;
 using CodeBreaker.Shared.Models.Live.EventPayloads;
 
-namespace CodeBreaker.APIs.Services;
+namespace Codebreaker.GameAPIs.Services;
 
 public interface IPublishEventService
 {

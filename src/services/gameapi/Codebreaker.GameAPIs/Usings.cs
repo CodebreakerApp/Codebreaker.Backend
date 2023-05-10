@@ -1,13 +1,7 @@
-﻿global using CodeBreaker.Data;
-global using CodeBreaker.Shared.Exceptions;
-global using CodeBreaker.Shared.Models.Extensions;
-global using CodeBreaker.APIs.Options;
-global using CodeBreaker.APIs.Services;
-global using CodeBreaker.APIs.Utilities;
-global using CodeBreaker.APIs.Endpoints;
-global using CodeBreaker.APIs.Extensions;
-global using CodeBreaker.APIs.Factories.GameTypeFactories;
-global using CodeBreaker.APIs.Grpc;
+﻿global using Codebreaker.GameAPIs.Models;
+global using Codebreaker.GameAPIs.Services;
+global using Codebreaker.GameAPIs.Endpoints;
+global using Codebreaker.GameAPIs.Extensions;
 
 global using Microsoft.ApplicationInsights.Channel;
 global using Microsoft.ApplicationInsights.Extensibility;
@@ -15,3 +9,11 @@ global using Microsoft.ApplicationInsights.Extensibility;
 global using Microsoft.EntityFrameworkCore;
 
 global using System.Diagnostics;
+
+global using SimpleGame = Codebreaker.GameAPIs.Models.Game<Codebreaker.GameAPIs.Models.ColorField, Codebreaker.GameAPIs.Models.SimpleColorResult>;
+global using ColorGame = Codebreaker.GameAPIs.Models.Game<Codebreaker.GameAPIs.Models.ColorField, Codebreaker.GameAPIs.Models.ColorResult>;
+global using ShapeGame = Codebreaker.GameAPIs.Models.Game<Codebreaker.GameAPIs.Models.ShapeAndColorField, Codebreaker.GameAPIs.Models.ShapeAndColorResult>;
+
+global using SimpleMove = Codebreaker.GameAPIs.Models.Move<Codebreaker.GameAPIs.Models.ColorField, Codebreaker.GameAPIs.Models.SimpleColorResult>;
+global using ColorMove = Codebreaker.GameAPIs.Models.Move<Codebreaker.GameAPIs.Models.ColorField, Codebreaker.GameAPIs.Models.ColorResult>;
+global using ShapeMove = Codebreaker.GameAPIs.Models.Move<Codebreaker.GameAPIs.Models.ShapeAndColorField, Codebreaker.GameAPIs.Models.ShapeAndColorResult>;

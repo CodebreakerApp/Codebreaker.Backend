@@ -1,11 +1,9 @@
-﻿using CodeBreaker.APIs.Endpoints;
-
+﻿using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Logs;
 
-namespace CodeBreaker.APIs.Extensions;
+namespace Codebreaker.APIs.Extensions;
 
 public static class OpenTelemetryExtensions
 {
