@@ -3,13 +3,13 @@
     <Product>Codebreaker</Product>
     <Authors>CN innovation</Authors>
     <Company>CN innovation</Company>
-    <RepositoryUrl>https://github.com/CNinnovation/codebreaker</RepositoryUrl>
+    <RepositoryUrl>https://github.com/CodebreakerApp/codebreaker</RepositoryUrl>
     <Copyright>(c) CN innovation</Copyright>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup>
-    <VersionPrefix>2.0.1</VersionPrefix>
+    <VersionPrefix>3.0.1</VersionPrefix>
   </PropertyGroup>
 </Project>
