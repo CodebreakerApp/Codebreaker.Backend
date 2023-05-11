@@ -68,7 +68,7 @@ public class CodebreakerCosmosContext : DbContext, ICodebreakerRepository
     public DbSet<ShapeGame> GamesShapes => Set<ShapeGame>();
     public DbSet<SimpleGame> GamesSimple => Set<SimpleGame>();
 
-    public async Task CreateGameAsync(Game game, CancellationToken cancellationToken = default)
+    public async Task AddGameAsync(Game game, CancellationToken cancellationToken = default)
     {
         Add(game);
 //        Games.Add(game);

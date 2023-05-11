@@ -60,7 +60,7 @@ public class GamesService : IGamesService
         Game game = GamesFactory.CreateGame(gameType, playerName);
 
         _gameCache.Set(game.GameId, game, _gameCacheEntryOptions);
-        await _dataRepository.CreateGameAsync(game, cancellationToken);
+        await _dataRepository.AddGameAsync(game, cancellationToken);
         _logger.GameStarted(game.ToString());
         // TODO: payload
        //  await _eventService.FireGameCreatedEventAsync(new(game), cancellationToken);
