@@ -17,28 +17,50 @@ public static class GamesFactory
             new (Guid.NewGuid(), gameType, playerName, DateTime.Now, 4, 12)
             {
                 Fields = s_colors6.Select(c => new ColorField(c)).ToArray(),
+#if NET8_0_OR_GREATER
+                Codes = Random.Shared.GetItems(s_colors6, 4).Select(c => new ColorField(c)).ToArray()
+#else
                 Codes = Enumerable.Range(0, 4).Select(i => new ColorField(GetRandomValue(s_colors6))).ToArray()
+#endif
             };
 
         static ColorGame Create6x4Game(GameType gameType, string playerName) =>
             new(Guid.NewGuid(), gameType, playerName, DateTime.Now, 4, 12)
             {
                 Fields = s_colors6.Select(c => new ColorField(c)).ToArray(),
+#if NET8_0_OR_GREATER
+                Codes = Random.Shared.GetItems(s_colors6, 4).Select(c => new ColorField(c)).ToArray()
+#else
                 Codes = Enumerable.Range(0, 4).Select(i => new ColorField(GetRandomValue(s_colors6))).ToArray()
+#endif
             };
 
         static ColorGame Create8x5Game(GameType gameType, string playerName) =>
             new(Guid.NewGuid(), gameType, playerName, DateTime.Now, 5, 12)
             {
                 Fields = s_colors8.Select(c => new ColorField(c)).ToArray(),
-                Codes = Enumerable.Range(0, 5).Select(i => new ColorField(GetRandomValue(s_colors8))).ToArray()
+#if NET8_0_OR_GREATER
+                Codes = Random.Shared.GetItems(s_colors8, 5).Select(c => new ColorField(c)).ToArray()
+#else
+                Codes = Enumerable.Range(0, 5).Select(
+                    i => new ColorField(
+                        GetRandomValue(s_colors8))).ToArray()
+#endif
             };
 
         static ShapeGame Create5x5x4Game(GameType gameType, string playerName) =>
             new(Guid.NewGuid(), gameType, playerName, DateTime.Now, 4, 14)
             {
                 Fields = Enumerable.Range(0, 5).Select(i => new ShapeAndColorField(s_shapes5[i], s_colors5[i])).ToArray(),
-                Codes = Enumerable.Range(0, 4).Select(i => new ShapeAndColorField(GetRandomValue(s_shapes5), GetRandomValue(s_colors5))).ToArray()
+#if NET8_0_OR_GREATER
+                Codes = Random.Shared.GetItems(s_shapes5, 4)
+                    .Zip(Random.Shared.GetItems(s_colors5, 4), (s, c) => new ShapeAndColorField(s, c)).ToArray()    
+#else
+                Codes = Enumerable.Range(0, 4).Select(
+                    i => new ShapeAndColorField(
+                        GetRandomValue(s_shapes5),
+                        GetRandomValue(s_colors5))).ToArray()
+#endif
             };
 
         return gameType switch
