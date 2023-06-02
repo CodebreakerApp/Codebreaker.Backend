@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.OData.Results;
 
 namespace CodeBreaker.ReportService.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class GamesController : ControllerBase
 {
