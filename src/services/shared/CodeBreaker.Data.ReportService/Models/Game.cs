@@ -14,5 +14,5 @@ public class Game : IIdentifyable<Guid>
 
     public required DateTime? End { get; init; }
 
-    public required IReadOnlyCollection<Move> Moves { get; init; }
+    public required IReadOnlyList<Move> Moves { get; init; }
 }

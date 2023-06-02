@@ -2,7 +2,7 @@
 
 public class Move
 {
-    public required IList<string> GuessPegs { get; init; }
+    public required IReadOnlyList<string> GuessPegs { get; init; }
 
     public required KeyPegs KeyPegs { get; init; }
 }
