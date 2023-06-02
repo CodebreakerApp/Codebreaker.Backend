@@ -42,7 +42,7 @@ await Host.CreateDefaultBuilder()
         });
 
         // ApplicationInsights
-        services.AddApplicationInsightsTelemetry();
+        services.AddApplicationInsightsTelemetryWorkerService();
         services.AddSingleton<ITelemetryInitializer, ApplicationInsightsTelemetryInitializer>();
 
         // EF Core
