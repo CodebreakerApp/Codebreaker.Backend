@@ -1,11 +1,16 @@
 ﻿namespace CodeBreaker.Shared.ReportService.Api;
 
-public record class GameDto(
-    Guid Id,
-    DateTime Start,
-    DateTime? End
-);
+public class GameDto
+{
+    public required Guid Id { get; init; }
 
-public record class GetGamesResponse(IAsyncEnumerable<GameDto> Games);
+    public required string Type { get; init; }
 
-public record class GetGameResponse(GameDto game);
+    public required string Username { get; init; }
+
+    public required DateTime Start { get; init; }
+
+    public required DateTime? End { get; init; }
+
+    public required IReadOnlyList<MoveDto> Moves { get; init; }
+}

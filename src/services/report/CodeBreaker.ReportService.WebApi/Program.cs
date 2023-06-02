@@ -3,8 +3,6 @@ using Azure.Identity;
 using CodeBreaker.Data.ReportService.DbContexts;
 using CodeBreaker.Data.ReportService.Repositories;
 using CodeBreaker.ReportService.Services;
-using FastExpressionCompiler;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData;
 using CodeBreaker.ReportService.OData;
@@ -68,9 +66,6 @@ builder.Services
 // OpenAPI & Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Mapster
-TypeAdapterConfig.GlobalSettings.Compiler = e => e.CompileFast();
 
 // RateLimiting
 builder.Services.AddRateLimiter(options =>
