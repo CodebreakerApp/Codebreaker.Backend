@@ -7,13 +7,12 @@ using CodeBreaker.Queuing.ReportService.Services;
 using CodeBreaker.Queuing.ReportService.Transfer;
 using CodeBreaker.ReportService.QueueWorker.Mapping;
 using CodeBreaker.ReportService.QueueWorker.Options;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CodeBreaker.ReportService.QueueWorker.Services;
 
-public class QueueService : IHostedService
+public class QueueService
 {
     private CancellationTokenSource? _cancellationTokenSource;
 

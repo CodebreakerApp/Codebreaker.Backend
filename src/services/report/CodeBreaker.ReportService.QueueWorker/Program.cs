@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 DefaultAzureCredential azureCredential = new();
-Host.CreateDefaultBuilder()
+await Host.CreateDefaultBuilder()
     .ConfigureHostConfiguration(configuration =>
     {
         configuration.AddJsonFile("appsettings.json", false, true);
@@ -27,8 +27,8 @@ Host.CreateDefaultBuilder()
             options.Connect(new Uri(endpoint), azureCredential)
                 .Select("ReportService*", LabelFilter.Null)
                 .Select("ReportService*", context.HostingEnvironment.EnvironmentName);
-                // no refresh needed here, because this application is short lived
-                // no keyvault needed
+            // no refresh needed here, because this application is short lived
+            // no keyvault needed
         });
     })
     .ConfigureServices((context, services) =>
@@ -60,7 +60,9 @@ Host.CreateDefaultBuilder()
         services.Configure<GameQueueOptions>(context.Configuration.GetRequiredSection("ReportService:Storage:Queue:GamesQueue"));
         services.AddSingleton<IGameQueueReceiverService, GameQueueService>();
         services.Configure<QueueServiceOptions>(context.Configuration.GetRequiredSection("ReportService:QueueWorker"));
-        services.AddHostedService<QueueService>();
+        services.AddSingleton<QueueService>();
     })
     .Build()
-    .Start();
+    .Services.GetRequiredService<QueueService>()
+    .StartAsync();
+
