@@ -1,6 +1,6 @@
 using System.Collections;
 
-using Codebreaker.GameAPIs.Extensions;
+using Codebreaker.GameAPIs.Analyzers;
 using Codebreaker.GameAPIs.Models;
 
 using static Codebreaker.GameAPIs.Models.Colors;
@@ -68,6 +68,7 @@ public class ColorGame6x4AlgorithmTests
     {
         MockColorGame game = new()
         {
+            GameType = GameTypes.Game6x4,
             Holes = 4,
             MaxMoves = 12,
             Won = false,
@@ -75,16 +76,11 @@ public class ColorGame6x4AlgorithmTests
             Codes = new List<ColorField>(codes.Select(c => new ColorField(c)))
         };
 
-        MockColorMove move = new()
-        {
-            MoveNumber = 1,
-            GuessPegs = new List<ColorField>(guesses.Select(g => new ColorField(g)))
-        };
-        
-        game.ApplyColorMove(move);
+        var guessPegs = guesses.Select(g => new ColorField(g)).ToList();
+        ColorGameMoveAnalyzer analyzer = new(game, guessPegs, 1);
+        string result = analyzer.ApplyMove();
 
-        var keypegs = game.Moves.First().KeyPegs;
-        return keypegs is not null ? keypegs.Value : throw new InvalidOperationException();
+        return ColorResult.Parse(result);
     }
 }
 

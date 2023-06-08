@@ -11,10 +11,10 @@ public readonly partial struct SimpleColorResult : IEquatable<SimpleColorResult>
     }
 
     public bool Equals(SimpleColorResult other) =>
-        _results.SequenceEqual(other._results);
+        Results.SequenceEqual(other.Results);
 
     public override int GetHashCode() =>
-        _results.GetHashCode();
+        Results.GetHashCode();
 
     public static bool operator==(SimpleColorResult left, SimpleColorResult right) => left.Equals(right);
 

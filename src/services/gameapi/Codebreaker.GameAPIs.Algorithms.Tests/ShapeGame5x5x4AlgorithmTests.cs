@@ -1,6 +1,6 @@
 using System.Collections;
 
-using Codebreaker.GameAPIs.Extensions;
+using Codebreaker.GameAPIs.Analyzers;
 using Codebreaker.GameAPIs.Models;
 
 using static Codebreaker.GameAPIs.Models.Colors;
@@ -70,6 +70,7 @@ public class ShapeGame5x5x4AlgorithmTests
     {
         MockShapeGame game = new()
         {
+            GameType = GameTypes.Game5x5x4,
             Holes = 4,
             MaxMoves = 14,
             Won = false,
@@ -83,9 +84,9 @@ public class ShapeGame5x5x4AlgorithmTests
             GuessPegs = new List<ShapeAndColorField>(guesses)
         };
 
-        game.ApplyShapeMove(move);
-
-        return game.Moves.First().KeyPegs ?? throw new InvalidOperationException();
+        ShapeGameMoveAnalyzer analyzer = new(game, guesses.ToList(), 1);
+        string result = analyzer.ApplyMove();
+        return ShapeAndColorResult.Parse(result);
     }
 }
 

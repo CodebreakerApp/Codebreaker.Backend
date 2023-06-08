@@ -7,10 +7,14 @@ public enum ResultValue : byte
     CorrectPositionAndColor = 2
 }
 
+// don't use record here because we want to implement equality be comparing the values of the array instead of the reference
 public readonly partial struct SimpleColorResult
 {
     private const char Separator = ':';
-    private readonly ResultValue[] _results;
-    public SimpleColorResult(ResultValue[] results) =>
-        _results = results;
+    public SimpleColorResult(ResultValue[] results)
+    {
+        Results = results;
+    }
+
+    public readonly ResultValue[] Results { get; }
 }
