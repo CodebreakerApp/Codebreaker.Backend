@@ -28,12 +28,12 @@ public abstract class GameMoveAnalyzer<TField, TResult> : IGameMoveAnalyzer
 
         ValidateGuessPegs();
 
-        _game.LastMoveNumber++;
-
-        if (_game.LastMoveNumber != _moveNumber)
+        if ((_game.LastMoveNumber + 1) != _moveNumber)
         {
             throw new ArgumentException($"Incorrect move number received {_moveNumber}") { HResult = 4300 };
         }
+
+        _game.LastMoveNumber++;
     }
 
     public abstract void SetEndInformation();
