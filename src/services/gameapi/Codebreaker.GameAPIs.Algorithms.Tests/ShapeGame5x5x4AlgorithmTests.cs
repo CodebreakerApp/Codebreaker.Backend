@@ -75,7 +75,7 @@ public class ShapeGame5x5x4AlgorithmTests
             MaxMoves = 14,
             Won = false,
             Fields = new List<ShapeAndColorField>() { (Shapes.Rectangle, Red), (Circle, Blue), (Star, Yellow), (Triangle, Green), (Square, Purple) },
-            Codes = new List<ShapeAndColorField>(codes)
+            Codes = codes.ToList()
         };
 
         MockShapeMove move = new()

@@ -10,6 +10,45 @@ namespace Codebreaker.GameAPIs.Algorithms.Tests;
 public class ColorGame6x4AlgorithmTests
 {
     [Fact]
+    public void ShouldThrowOnIncorrectMoveNumber()
+    {
+        Assert.Throws<ArgumentException>(() =>
+        {
+            TestSkeleton(
+                new[] { "Black", "Black", "Black", "Black" },
+                new[] { "Black" },
+                0
+            );
+        });
+    }
+
+    [Fact]
+    public void ShouldNotIncrementMoveNumber()
+    {
+        MockColorGame game = new()
+        {
+            GameType = GameTypes.Game6x4,
+            Holes = 4,
+            MaxMoves = 12,
+            Won = false,
+            Fields = new List<ColorField>() { Red, Blue, Green, Yellow, Black, White },
+            Codes = new List<ColorField>() { Red, Red, Red, Red }
+        };
+        try
+        {
+            TestSkeletonWithGame(
+                game, 
+                new[] { "Black", "Black", "Black", "Black" },
+                0
+            );
+        }
+        catch (ArgumentException)
+        {
+            Assert.Equal(0, game.LastMoveNumber);
+        }
+    }
+
+    [Fact]
     public void SetMoveWithThreeWhite()
     {
         ColorResult expectedKeyPegs = new(0, 3);
@@ -64,7 +103,16 @@ public class ColorGame6x4AlgorithmTests
         });
     }
 
-    private static ColorResult TestSkeleton(string[] codes, string[] guesses)
+    private static ColorResult TestSkeletonWithGame(MockColorGame game, string[] guesses, int moveNumber = 1)
+    {
+        var guessPegs = guesses.Select(g => new ColorField(g)).ToList();
+        ColorGameMoveAnalyzer analyzer = new(game, guessPegs, moveNumber);
+        string result = analyzer.ApplyMove();
+
+        return ColorResult.Parse(result);
+    }
+
+    private static ColorResult TestSkeleton(string[] codes, string[] guesses, int moveNumber = 1)
     {
         MockColorGame game = new()
         {
@@ -73,11 +121,11 @@ public class ColorGame6x4AlgorithmTests
             MaxMoves = 12,
             Won = false,
             Fields = new List<ColorField>() { Red, Blue, Green, Yellow, Black, White },
-            Codes = new List<ColorField>(codes.Select(c => new ColorField(c)))
+            Codes = codes.Select(c => new ColorField(c)).ToList()
         };
 
         var guessPegs = guesses.Select(g => new ColorField(g)).ToList();
-        ColorGameMoveAnalyzer analyzer = new(game, guessPegs, 1);
+        ColorGameMoveAnalyzer analyzer = new(game, guessPegs, moveNumber);
         string result = analyzer.ApplyMove();
 
         return ColorResult.Parse(result);

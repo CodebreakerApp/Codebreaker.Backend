@@ -73,7 +73,7 @@ public class ColorGame8x5AlgorithmTests
             MaxMoves = 14,
             Won = false,
             Fields = new List<ColorField>() { Red, Blue, Green, Yellow, Black, White, Purple, Orange },
-            Codes = new List<ColorField>(codes.Select(c => new ColorField(c)))
+            Codes = codes.Select(c => new ColorField(c)).ToList()
         };
 
         var guessPegs = guesses.Select(g => new ColorField(g)).ToList();
