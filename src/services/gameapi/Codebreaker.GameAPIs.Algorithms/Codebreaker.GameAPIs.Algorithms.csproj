@@ -2,28 +2,13 @@
 
   <PropertyGroup>
     <PackageId>Codebreaker.GameAPIs.Algorithms</PackageId>
+    <Version>3.2.0</Version>
     <Authors>CN innovation</Authors>
     <Company>CN innvoation</Company>
-    <Product>Codebreaker</Product>
     <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Copyright>Copyright (c) CN innovation 2023</Copyright>
-    <PackageProjectUrl>https://www.codebreaker.app</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/codebreakerapp/codebreaker</RepositoryUrl>
-    <PackageTags>Codebreaker;Packt;Learn</PackageTags>
-    <PackageIcon>codebreaker.jpeg</PackageIcon>
-    <PackageReadmeFile>Readme.md</PackageReadmeFile>
-    <Description>This library contains algorithms for the Codebreaker app. Reference this library when creating a Codebreaker service.
-    See https://github.com/codebreakerapp for more information on the complete solution.
-    To creating games that are supported by the analyzers, implement the interfaces IGame and IMove. Analyzers available in this package: ColorGameMoveAnalyzer, ShapeGameMoveAnalyzer, and SimpleGameMoveAnalyzer using the field types ColorField and ShapeAndColorField, and the result types ColorResult, ShapeAndColorResult, and SimpleColorResult.
-    To create your own analyzers, derive from the base class GameMovenalyzer and implement the abstract methods.
-    </Description>
+    <Description></Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Readme.md" Pack="true" PackagePath="\" />
-    <None Include="Images\codebreaker.jpeg" Pack="true" PackagePath="\" />    
-  </ItemGroup>
 
 </Project>
