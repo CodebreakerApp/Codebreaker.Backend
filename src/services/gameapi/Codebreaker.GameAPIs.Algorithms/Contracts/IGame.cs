@@ -58,5 +58,5 @@ public interface IGame<TField, TResult>
     /// <summary>
     /// This is the code that the user needs to guess
     /// </summary>
-    TField[] Codes { get; }
+    IEnumerable<TField> Codes { get; }
 }
