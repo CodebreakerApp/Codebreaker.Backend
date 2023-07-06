@@ -30,7 +30,7 @@ public class ShapeGameGuessAnalyzer : GameGuessAnalyzer<ShapeAndColorField, Shap
     protected override ShapeAndColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<ShapeAndColorField> codesToCheck = new(_game.Codes.ToFields<ShapeAndColorField>());
+        List<ShapeAndColorField> codesToCheck = new(_game.Codes.ToPegs<ShapeAndColorField>());
         List<ShapeAndColorField> guessPegsToCheck = new(Guesses);
         List<ShapeAndColorField> remainingCodesToCheck = new();
         List<ShapeAndColorField> remainingGuessPegsToCheck = new();
@@ -91,7 +91,7 @@ public class ShapeGameGuessAnalyzer : GameGuessAnalyzer<ShapeAndColorField, Shap
         ShapeAndColorResult resultPegs = new(black, blue, white);
 
         if ((resultPegs.Correct + resultPegs.WrongPosition + resultPegs.ColorOrShape) > _game.NumberCodes)
-            throw new InvalidOperationException("There are more keyPegs than holes"); // Should not be the case
+            throw new InvalidOperationException("There are more keyPegs than codes"); // Should not be the case
 
         return resultPegs;
     }

@@ -21,7 +21,7 @@ public class SimpleGameGuessAnalyzer : GameGuessAnalyzer<ColorField, SimpleColor
     protected override SimpleColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<ColorField> codesToCheck = new(_game.Codes.ToFields<ColorField>());
+        List<ColorField> codesToCheck = new(_game.Codes.ToPegs<ColorField>());
         List<ColorField> guessPegsToCheck = new(Guesses);
 
         var results = Enumerable.Repeat(ResultValue.Incorrect, 4).ToArray();

@@ -81,7 +81,7 @@ public class ColorGame8x5AlgorithmTests
             Codes = codes
         };
 
-        ColorGameGuessAnalyzer analyzer = new(game, guesses.ToFields<ColorField>().ToArray(), 1);
+        ColorGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), 1);
         return analyzer.GetResult();
     }
 }

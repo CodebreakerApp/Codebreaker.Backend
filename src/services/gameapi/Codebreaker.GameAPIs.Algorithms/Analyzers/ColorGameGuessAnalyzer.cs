@@ -25,7 +25,7 @@ public class ColorGameGuessAnalyzer : GameGuessAnalyzer<ColorField, ColorResult>
     protected override ColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<ColorField> codesToCheck = new(_game.Codes.ToFields<ColorField>());
+        List<ColorField> codesToCheck = new(_game.Codes.ToPegs<ColorField>());
         List<ColorField> guessPegsToCheck = new(Guesses);
         int black = 0;
         List<string> whitePegs = new();
@@ -60,7 +60,7 @@ public class ColorGameGuessAnalyzer : GameGuessAnalyzer<ColorField, ColorResult>
         ColorResult resultPegs = new(black, whitePegs.Count);
         if (resultPegs.Correct + resultPegs.WrongPosition > _game.NumberCodes)
         {
-            throw new InvalidOperationException("More key pegs than holes");
+            throw new InvalidOperationException("More key pegs than codes");
         }
 
         return resultPegs;

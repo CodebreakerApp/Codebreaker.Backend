@@ -84,7 +84,7 @@ public class ShapeGame5x5x4AlgorithmTests
             Codes = codes
         };
 
-        ShapeGameGuessAnalyzer analyzer = new(game, guesses.ToFields<ShapeAndColorField>().ToArray(), 1);
+        ShapeGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ShapeAndColorField>().ToArray(), 1);
         return analyzer.GetResult();
     }
 }

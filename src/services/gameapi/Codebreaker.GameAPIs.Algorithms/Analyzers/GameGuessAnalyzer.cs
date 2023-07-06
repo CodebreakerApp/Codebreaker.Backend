@@ -2,6 +2,11 @@
 
 namespace Codebreaker.GameAPIs.Analyzers;
 
+/// <summary>
+/// Abstract base class for game guess analyzers.
+/// </summary>
+/// <typeparam name="TField">The type for guesses.</typeparam>
+/// <typeparam name="TResult">The type returned from the analysis.</typeparam>
 public abstract class GameGuessAnalyzer<TField, TResult> : IGameGuessAnalyzer<TResult>
     where TResult : struct
 {
@@ -18,7 +23,7 @@ public abstract class GameGuessAnalyzer<TField, TResult> : IGameGuessAnalyzer<TR
     }
 
     /// <summary>
-    /// Gets the results using Guesses
+    /// Override this method to return the result of the guess analysis.
     /// </summary>
     /// <returns></returns>
     protected abstract TResult GetCoreResult();
@@ -34,7 +39,7 @@ public abstract class GameGuessAnalyzer<TField, TResult> : IGameGuessAnalyzer<TR
     /// <exception cref="ArgumentException">Thrown with an invalid number of guesses (HRESULT=4200), an unexpected move number (4300), or invalid values (44xx)</exception>
     private void ValidateGuess()
     {
-        /// The number of holes in the game does not match the number of pegs in the move.
+        /// The number of codes in the game does not match the number of pegs in the move.
         if (_game.NumberCodes != Guesses.Length)
             throw new ArgumentException($"Invalid guess number {Guesses.Length} for {_game.NumberCodes} code numbers") { HResult = 4200 };
 
@@ -55,6 +60,11 @@ public abstract class GameGuessAnalyzer<TField, TResult> : IGameGuessAnalyzer<TR
     /// <param name="result">The result of the guess analysis</param>
     protected abstract void SetGameEndInformation(TResult result);
 
+    /// <summary>
+    /// Gets the result of the guess analysis by calling ValidateGuess to check the guess values and GetCoreResult to calculate the result.
+    /// Also sets the game end information by calling SetGameEndInformation.
+    /// </summary>
+    /// <returns>The result of the guess analysis.</returns>
     public TResult GetResult()
     {
         ValidateGuess();
