@@ -18,13 +18,13 @@ public class GamesController : ControllerBase
         _gameService = gameService;
     }
 
-    // GET: api/<GamesController>
+    // GET: /<GamesController>
     [HttpGet]
     [EnableQuery]
     public IQueryable<GameDto> Get() =>
         _gameService.Games.ProjectToDto();
 
-    // GET api/<GamesController>/f030d8d4-d9f5-4a4d-ad5f-d7b8fd2f2849
+    // GET /<GamesController>/f030d8d4-d9f5-4a4d-ad5f-d7b8fd2f2849
     [HttpGet("{id}")]
     [EnableQuery]
     public SingleResult<GameDto> Get(Guid id) =>

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Playwright;
 
 namespace CodeBreaker.ReportService.IntegrationTests;
@@ -68,5 +69,41 @@ public class IntegrationTests : PlaywrightTest
 
         if (gameLength != 0 && everyMoveEmpty)
             Assert.Warn("No game returned by the API did contain any moves.");
+    }
+
+    [Test]
+    public async Task ShouldGetOdataGames()
+    {
+
+        if (_request is null)
+        {
+            Assert.Fail();
+            return;
+        }
+
+        var response = await _request.GetAsync("/games?$select=id");
+        Assert.True(response.Ok, "The response code returned by the api does not indicate a successful operation.");
+
+        var json = await response.JsonAsync();
+
+        int gameLength = 0;
+        Assert.DoesNotThrow(() => gameLength = json.Value.GetArrayLength());
+
+        if (gameLength == 0)
+            Assert.Warn("The returned array length is 0. This is no error, but the test cannot continue.");
+
+        foreach (var game in json.Value.EnumerateArray())
+        {
+            JsonElement idProperty;
+
+            if (!game.TryGetProperty("id", out idProperty) && !game.TryGetProperty("Id", out idProperty))
+                Assert.Fail("The result item does not contain an id.");
+
+            if (idProperty.GetGuid() == default)
+                Assert.Fail("The id of the game must not be a default GUID.");
+
+            if (game.TryGetProperty("type", out _) || game.TryGetProperty("Type", out _))
+                Assert.Fail("The response contains data, not requested by the OData query");
+        }
     }
 }
