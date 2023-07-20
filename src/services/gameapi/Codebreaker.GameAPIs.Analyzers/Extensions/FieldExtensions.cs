@@ -1,4 +1,4 @@
-﻿namespace Codebreaker.GameAPIs.Algorithms.Extensions;
+﻿namespace Codebreaker.GameAPIs.Extensions;
 public static class FieldExtensions
 {
     public static IEnumerable<T> ToFields<T>(this string[] fieldStrings)
