@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "MM.APIs": {
+    "Codebreaker.GameAPIs": {
       "commandName": "Project",
       "launchUrl": "swagger",
       "environmentVariables": {

@@ -1,25 +1,24 @@
-﻿using Codebreaker.GameAPIs.Extensions;
+﻿namespace Codebreaker.GameAPIs.Models;
 
-namespace Codebreaker.GameAPIs.Models;
-
-public abstract class Move(Guid gameId, Guid moveId, int moveNumber)
+public class Move(Guid moveId, int moveNumber)
 {
-    public Guid GameId { get; private set; } = gameId;
     public Guid MoveId { get; private set; } = moveId;
-    public int MoveNumber { get; set; } = moveNumber;
 
-    public override string ToString() => $"{GameId}: {MoveNumber}";
-}
+    /// <summary>
+    /// The move number for this move within the associated game.
+    /// </summary>
+    public int MoveNumber { get; private set; } = moveNumber;
 
-public class Move<TField, TResult>(Guid GameId, Guid MoveId, int MoveNumber)
-    : Move(GameId, MoveId, MoveNumber), IFormattable, ICalculatableMove<TField, TResult>
-    where TResult: struct
-{
-    public required ICollection<TField> GuessPegs { get; init; }
-    public TResult? KeyPegs { get; set; }
+    /// <summary>
+    /// The guess pegs from the user for this move.
+    /// </summary>
+    public required string[] GuessPegs { get; init; }
+    /// <summary>
+    /// The result from the analyer for this move based on the associated game that contains the move.
+    /// </summary>
+    public required string[] KeyPegs { get; init; }
 
-    public string ToString(string? format = default, IFormatProvider? formatProvider = default) =>
-        $"{MoveNumber}, {string.Join(".", GuessPegs)}";
-
-    public override string ToString() => ToString(null, null);
+    public override string ToString() => $"{MoveNumber}. " +
+        $"{string.Join('#',GuessPegs)} : " +
+        $"{string.Join('#', KeyPegs)}";
 }

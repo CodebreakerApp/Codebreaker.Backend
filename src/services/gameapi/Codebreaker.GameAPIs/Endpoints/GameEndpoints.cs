@@ -1,138 +1,115 @@
-﻿using System.Diagnostics.Metrics;
-
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Codebreaker.GameAPIs;
+﻿using Codebreaker.GameAPIs.Data;
+using Codebreaker.GameAPIs.Errors;
 using Codebreaker.GameAPIs.Exceptions;
+
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Codebreaker.GameAPIs.Endpoints;
 
 public static class GameEndpoints
 {
-    public static readonly Meter Meter;
-    private static readonly Counter<int> s_gamesStarted;
-    private static readonly Counter<int> s_movesDone;
-
-    static GameEndpoints()
-    {
-        Meter = new("CodeBreaker.GameAPI", "3.0.1");
-        s_gamesStarted = Meter.CreateCounter<int>("games-started", "games", "the number of games started");
-        s_movesDone = Meter.CreateCounter<int>("moves-done", "moves", "the number of moves done");
-    }
-
-    public static void MapGameEndpoints(this IEndpointRouteBuilder routes, ILogger logger, ActivitySource activitySource)
+    public static void MapGameEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/games")
-            .RequireRateLimiting("standardLimiter")
-            .AddEndpointFilter<LoggingFilter>()
-            .WithTags("Codebreaker");
+            .WithTags("Games API");
 
-        // Create game
-        group.MapPost("/", async Task<Results<Created<CreateGameResponse>, BadRequest<string>>> (
-            [FromBody] CreateGameRequest request,
-            [FromServices] IGamesService gameService,
+        group.MapPost("/", async Task<Results<Created<CreateGameResponse>, BadRequest<GameError>>> (
+            CreateGameRequest request,
+            IGamesService gameService,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
             Game game;
             try
             {
-                game = await gameService.StartGameAsync(request.GameType, request.PlayerName, cancellationToken);
+                game = await gameService.StartGameAsync(request.GameType.ToString(), request.PlayerName, cancellationToken);
             }
-            catch (GameTypeNotFoundException)
+            catch (CodebreakerException ex) when (ex.Code == CodebreakerExceptionCodes.InvalidGameType)
             {
-                logger.GameTypeNotFound(request.GameType.ToString());
-                return TypedResults.BadRequest("Gametype does not exist");
+                GameError error = new(ErrorCodes.InvalidGameType, $"Game type {request.GameType} does not exist", context.Request.GetDisplayUrl(), Enum.GetNames<GameType>());
+                return TypedResults.BadRequest(error);
             }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                throw;
-            }
-
-            using var activity = activitySource.StartGame(game.GameId, game.PlayerName);
-
-            // TODO: create a meter class
-            s_gamesStarted.Add(1);
-
-            return TypedResults.Created($"/games/{game.GameId}", game.ToCreateGameResponse());
+            return TypedResults.Created($"/games/{game.GameId}", game.AsCreateGameResponse());
         })
         .WithName("CreateGame")
         .WithSummary("Creates and starts a game")
         .WithOpenApi(op =>
         {
-            op.RequestBody.Description = "The data of the game to create";
+            op.RequestBody.Description = "The game type and the player name of the game to create";
             return op;
         });
 
         // Update the game resource with a move
-        group.MapPut("/{gameId:guid}/moves", async Task<Results<Ok<SetMoveResponse>, NotFound, BadRequest<string>>> (
-            [FromRoute] Guid gameId,
-            [FromBody] SetMoveRequest request,
-            [FromServices] IGamesService gameService,
+        group.MapPatch("/{gameId:guid}", async Task<Results<Ok<UpdateGameResponse>, NotFound, BadRequest<GameError>>> (
+            Guid gameId,
+            UpdateGameRequest request,
+            IGamesService gameService,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            using var activity = activitySource.SetMove(gameId, request.PlayerName);
-
+            if (!request.End && request.GuessPegs == null)
+            {
+                return TypedResults.BadRequest(new GameError(ErrorCodes.InvalidMove, "End the game or set guesses", context.Request.GetDisplayUrl()));
+            }
             try
             {
-                var move = request.ToMove();
-                
-                Game game = await gameService.SetMoveAsync(gameId, move, cancellationToken);
-                string guesses = request switch
+                if (request.End)
                 {
-                    { ColorGuessPegs: not null } => string.Join(':', request.ColorGuessPegs),
-                    { ShapeGuessPegs: not null } => string.Join(':', request.ShapeGuessPegs),
-                    _ => throw new InvalidOperationException()
-                };
-                logger.SetMove(game.GameId.ToString(), move.MoveNumber.ToString(), guesses);
-
-                // TODO: metrics class
-                s_movesDone.Add(1);
-                return TypedResults.Ok(game.ToSetMoveResponse());
+                    Game? game = await gameService.EndGameAsync(gameId, cancellationToken);
+                    if (game is null)
+                        return TypedResults.NotFound();
+                    return TypedResults.Ok(game.AsUpdateGameResponse());
+                }
+                else
+                {
+                    (Game game, Move move) = await gameService.SetMoveAsync(gameId, request.GuessPegs!, request.MoveNumber, cancellationToken);
+                    return TypedResults.Ok(game.AsUpdateGameResponse(move.KeyPegs));
+                }
             }
-            catch (GameNotFoundException)
+            catch (ArgumentException ex) when (ex.HResult is <= 4200 and >= 400)
+            {
+                string url = context.Request.GetDisplayUrl();
+                return ex.HResult switch
+                {
+                    4200 => TypedResults.BadRequest(new GameError(ErrorCodes.InvalidGuessNumber, "Invalid number of guesses received", url)),
+                    4300 => TypedResults.BadRequest(new GameError(ErrorCodes.UnexpectedMoveNumber, "Unexpected move number received", url)),
+                    4400 => TypedResults.BadRequest(new GameError(ErrorCodes.InvalidGuess, "Invalid guess values received!", url)),
+                    _ => TypedResults.BadRequest(new GameError(ErrorCodes.InvalidMove, "Invalid move received!", url))
+                };
+            }
+            catch (CodebreakerException ex) when (ex.Code == CodebreakerExceptionCodes.GameNotFound)
             {
                 return TypedResults.NotFound();
             }
+            catch (CodebreakerException ex) when (ex.Code == CodebreakerExceptionCodes.GameNotActive)
+            {
+                string url = context.Request.GetDisplayUrl();
+                return TypedResults.BadRequest(new GameError(ErrorCodes.GameNotActive, "The game already ended", url));
+            }
         })
         .WithName("SetMove")
-        .WithSummary("Sets a move for the game with the given id")
+        .WithSummary("End the game or set a move")
         .WithOpenApi(op =>
         {
-            op.Parameters[0].Description = "The id of the game to create a move for";
+            op.Parameters[0].Description = "The id of the game to set a move";
             op.RequestBody.Description = "The data for creating the move";
-            return op;
-        });
-
-        group.MapGet("/rank/{date}", async (
-            [FromRoute] DateOnly date,
-            [FromQuery] GameType gameType,
-            [FromServices] IGamesService gameService,
-            CancellationToken cancellationToken
-        ) =>
-        {
-            IEnumerable<Game> games = await gameService.GetGamesRankByDateAsync(gameType, date, cancellationToken);
-
-            return TypedResults.Ok(games.ToGamesRankResponse(date, gameType));
-        })
-        .WithName("GetGames")
-        .WithSummary("Get games by the given date and type")
-        .WithOpenApi(op =>
-        {
-            op.Parameters[0].Description = "The of date to get the games from. (e.g. 2023-01-01)";
             return op;
         });
 
         // Get game by id
         group.MapGet("/{gameId:guid}", async Task<Results<Ok<Game>, NotFound>> (
-            [FromRoute] Guid gameId,
-            [FromServices] IGamesService gameService
+            Guid gameId,
+            IGamesService gameService,
+            CancellationToken cancellationToken
         ) =>
         {
-            Game? game = await gameService.GetGameAsync(gameId);
+            Game? game = await gameService.GetGameAsync(gameId, cancellationToken);
 
             if (game is null)
+            {
                 return TypedResults.NotFound();
+            }
 
             return TypedResults.Ok(game);
         })
@@ -144,12 +121,36 @@ public static class GameEndpoints
             return op;
         });
 
+        group.MapGet("/", async (
+            IGamesService gameService,
+            string? gameType = default,
+            string? playerName = default,
+            DateOnly? date = default,
+            bool ended = false,
+            CancellationToken cancellationToken = default) => 
+        {
+            GamesQuery query = new(gameType, playerName, date, Ended: ended);
+            var games = await gameService.GetGamesAsync(query, cancellationToken);
+            return TypedResults.Ok(games);
+        })
+        .WithName("GetGames")
+        .WithSummary("Get games based on query parameters")
+        .WithOpenApi(op =>
+        {
+            op.Parameters[0].Description = "The game type to filter by";
+            op.Parameters[1].Description = "The player name to filter by";
+            op.Parameters[2].Description = "The date to filter by";
+            op.Parameters[3].Description = "Whether to filter by ended games";
+            return op;
+        });
+
         group.MapDelete("/{gameId:guid}", async (
-            [FromRoute] Guid gameId,
-            [FromServices] IGamesService gameService
+            Guid gameId,
+            IGamesService gameService, 
+            CancellationToken cancellationToken
         ) =>
         {
-            await gameService.DeleteGameAsync(gameId);
+            await gameService.DeleteGameAsync(gameId, cancellationToken);
 
             return TypedResults.NoContent();
         })

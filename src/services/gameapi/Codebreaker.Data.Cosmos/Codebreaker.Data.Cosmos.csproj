@@ -4,11 +4,14 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Codebreaker.GameAPIs.Algorithms" Version="3.4.0-beta.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.0-preview.6.23329.4" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Models\Codebreaker.GameAPIs.Models.csproj" />
   </ItemGroup>
 
 </Project>
