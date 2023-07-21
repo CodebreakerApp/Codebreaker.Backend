@@ -11,18 +11,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
-
+#if DEBUG
+AzureCliCredential azureCredential = new();
+#else
 DefaultAzureCredential azureCredential = new();
-
+#endif
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // AppConfiguration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
-    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"] ?? throw new InvalidOperationException("AzureAppConfigurationEndpoint not found in configuration");
+    string endpoint = builder.Configuration["AzureAppConfigurationEndpoint"]
+        ?? throw new ConfigurationNotFoundException("AzureAppConfigurationEndpoint not found in configuration");
     options.Connect(new Uri(endpoint), azureCredential)
-        .Select("LiveService*", LabelFilter.Null)
-        .Select("LiveService*", builder.Environment.EnvironmentName)
+        .Select(KeyFilter.Any, LabelFilter.Null)
+        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
         .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
 });
 builder.Services.AddAzureAppConfiguration();
