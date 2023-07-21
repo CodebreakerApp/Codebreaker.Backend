@@ -1,0 +1,26 @@
+name: Analyzers lib
+
+on:
+
+  # Allow manually trigger 
+  workflow_dispatch:    
+
+jobs:
+  build:
+    uses:  CodebreakerApp/Codebreaker.Backend/.github/workflows/createnuget-withbuildnumber.yml@main
+    with:
+      version-suffix: beta.
+      version-number: ${{ github.run_number }}
+      version-offset: 38
+      solutionfile-path: src/Codebreaker.Analyzers.sln
+      projectfile-path: src/services/gameapi/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
+      dotnet-version: '8.0.x'
+      artifact-name: codebreaker-analyzers
+      branch-name: main
+
+  publish:
+    uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-azuredevops.yml@main
+    needs: build
+    with:
+      artifact-name: codebreaker-analyzers
+    secrets: inherit
