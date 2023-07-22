@@ -25,8 +25,8 @@ jobs:
           path: packages
     
       - name: Publish to the NuGet server
-        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}}
+        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}
                 
       - name: Publish Symbols package to the NuGet server
-        run: dotnet nuget push "packages/*.snupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}} 
+        run: dotnet nuget push "packages/*.snupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}
   
