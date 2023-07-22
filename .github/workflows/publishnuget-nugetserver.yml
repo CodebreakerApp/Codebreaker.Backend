@@ -1,0 +1,32 @@
+name: shared workflow to publish nuget package
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        required: true
+        type: string
+    secrets:
+      NUGETAPIKEY:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: NugetServer
+    env:
+      ARTIFACTS_URL: "https://api.nuget.org/v3/index.json"
+    
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: packages
+    
+      - name: Publish to the NuGet server
+        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}}
+                
+      - name: Publish Symbols package to the NuGet server
+        run: dotnet nuget push "packages/*.snupkg" --api-key ${{ secrets.NUGETAPIKEY }} --source ${{ env.ARTIFACTS_URL }}} 
+  
