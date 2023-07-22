@@ -2,6 +2,18 @@ name: Analyzers lib
 
 on:
 
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - 'src/services/gameapi/Codebreaker.GameAPIs.Analyzers/**'
+    - 'src/services/gameapi/Codebreaker.GameAPIs.Analyzers.Tests/**'
+    - 'src/Codebreaker.Analyzers.sln'
+    - '.github/workflows/codebreaker-lib-analyzers.yml'
+    - '.github/workflows/createnuget-withbuildnumber.yml'
+    - '.github/workflows/publishnuget-azuredevops.yml'
+
   # Allow manually trigger 
   workflow_dispatch:    
 

@@ -86,5 +86,5 @@ jobs:
         with:
           name: ${{ inputs.artifact-name }}
           path: packages/*.nupkg
-          retention-days: 1
+          retention-days: 3
   
