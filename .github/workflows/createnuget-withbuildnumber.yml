@@ -85,6 +85,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact-name }}
-          path: packages/*.nupkg
+          path: packages/*
           retention-days: 3
   

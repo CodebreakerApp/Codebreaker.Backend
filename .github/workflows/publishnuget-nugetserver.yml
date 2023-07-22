@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: NugetServer
     env:
-      ARTIFACTS_URL: "https://api.nuget.org/v3/index.json"
+      ARTIFACTS_URL: https://api.nuget.org/v3/index.json
     
     steps:
       - name: Download artifact
