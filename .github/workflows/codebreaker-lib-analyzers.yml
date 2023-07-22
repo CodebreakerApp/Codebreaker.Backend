@@ -13,13 +13,14 @@ on:
     - '.github/workflows/codebreaker-lib-analyzers.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
     - '.github/workflows/publishnuget-azuredevops.yml'
+    - '.github/workflows/publishnuget-nugetserver.yml'
 
   # Allow manually trigger 
   workflow_dispatch:    
 
 jobs:
   build:
-    uses:  CodebreakerApp/Codebreaker.Backend/.github/workflows/createnuget-withbuildnumber.yml@main
+    uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/createnuget-withbuildnumber.yml@main
     with:
       version-suffix: beta.
       version-number: ${{ github.run_number }}
@@ -30,9 +31,16 @@ jobs:
       artifact-name: codebreaker-analyzers
       branch-name: main
 
-  publish:
+  publishdevops:
     uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-azuredevops.yml@main
     needs: build
+    with:
+      artifact-name: codebreaker-analyzers
+    secrets: inherit
+
+  publishnuget:
+    uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-nugetserver.yml@main
+    needs: publishdevops
     with:
       artifact-name: codebreaker-analyzers
     secrets: inherit
