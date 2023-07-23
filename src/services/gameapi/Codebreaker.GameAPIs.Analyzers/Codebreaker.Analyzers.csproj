@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageTags>
-      Codebreaker;CN innovation;Analyzers;
+      Codebreaker;CNinnovation;GameAnalyzers;
     </PackageTags>
     <Description>
       This library contains game analyzers for the Codebreaker app. Reference this library when creating a Codebreaker service.
