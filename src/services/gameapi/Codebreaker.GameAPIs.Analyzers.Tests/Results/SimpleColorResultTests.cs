@@ -1,11 +1,11 @@
-using CodeBreaker.GameAPIs.Models;
+using Codebreaker.GameAPIs.Models;
 
-namespace Codebreaker.GameAPIs.Models.Tests;
+namespace Codebreaker.GameAPIs.Algorithms.Tests;
 
 public class SimpleColorResultTests
 {
     [Fact]
-    public void TestToString()
+    public void ToStringShouldReturnFormat()
     {
         ResultValue[] values = { ResultValue.CorrectColor, ResultValue.CorrectPositionAndColor, ResultValue.Incorrect, ResultValue.Incorrect };
         SimpleColorResult result = new(values);
@@ -14,7 +14,7 @@ public class SimpleColorResultTests
     }
 
     [Fact]
-    public void TestParse()
+    public void ParseShouldReturnColorResult()
     {
         ResultValue[] values = { ResultValue.CorrectColor, ResultValue.CorrectPositionAndColor, ResultValue.Incorrect, ResultValue.Incorrect };
         SimpleColorResult expected = new(values);

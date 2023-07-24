@@ -1,10 +1,11 @@
+using Codebreaker.GameAPIs.Models;
 
-namespace Codebreaker.GameAPIs.Models.Tests;
+namespace Codebreaker.GameAPIs.Algorithms.Tests;
 
 public class ShapeAndColorResultTests
 { 
     [Fact]
-    public void TestStringFormattable()
+    public void ToStringShouldReturnFormat()
     {
         string expected = "0:1:1";
         ShapeAndColorResult colorResult = new(Correct: 0, WrongPosition: 1, ColorOrShape: 1);
@@ -13,7 +14,7 @@ public class ShapeAndColorResultTests
     }
 
     [Fact]
-    public void TestStringParsable()
+    public void ParseShouldReturnShapeAndColorResult()
     {
         ShapeAndColorResult expected = new(Correct: 0, WrongPosition: 1, ColorOrShape: 1);
         var actual = ShapeAndColorResult.Parse("0:1:1");

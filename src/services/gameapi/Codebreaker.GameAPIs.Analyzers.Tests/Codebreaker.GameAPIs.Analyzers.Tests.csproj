@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Codebreaker.GameAPIs.Analyzers\Codebreaker.Analyzers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Fields\" />
+  </ItemGroup>
+
 </Project>
