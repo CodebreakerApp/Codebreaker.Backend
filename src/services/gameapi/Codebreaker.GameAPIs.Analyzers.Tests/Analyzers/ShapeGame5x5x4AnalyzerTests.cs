@@ -14,7 +14,7 @@ namespace Codebreaker.GameAPIs.Algorithms.Tests;
 public class ShapeGame5x5x4AnalyzerTests
 {
     [Fact]
-    public void SetMoveWithThreeBlue()
+    public void SetMoveShouldReturnThreeBlue()
     {
         ShapeAndColorResult expectedKeyPegs = new(0, 3, 0);
         ShapeAndColorResult? resultKeyPegs = TestSkeleton(

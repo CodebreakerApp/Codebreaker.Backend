@@ -1,41 +1,41 @@
 using System.Collections;
 
-using Codebreaker.GameAPIs.Algorithms.Extensions;
 using Codebreaker.GameAPIs.Algorithms.Fields;
 using Codebreaker.GameAPIs.Analyzers;
+using Codebreaker.GameAPIs.Algorithms.Extensions;
 using Codebreaker.GameAPIs.Models;
 
 using static Codebreaker.GameAPIs.Models.Colors;
 
 namespace Codebreaker.GameAPIs.Algorithms.Tests;
 
-public class ColorGame8x5AnalyzerTests
+public class ColorGame6x4AnalyzerTests
 {
     [Fact]
-    public void SetMoveWithThreeWhite()
+    public void SetMoveShouldReturnThreeWhite()
     {
         ColorResult expectedKeyPegs = new(0, 3);
         ColorResult? resultKeyPegs = TestSkeleton(
-            new[] { Green, Yellow, Green, Black, Orange },
-            new[] { Yellow, Green, Black, Blue, Blue }
+            new[] { Green, Yellow, Green, Black },
+            new[] { Yellow, Green, Black, Blue }
         );
 
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
-    [InlineData(1, 2, Red, Yellow, Red, Blue, Orange)]
-    [InlineData(2, 0, White, White, Blue, Red, White)]
+    [InlineData(1, 2, Red, Yellow, Red, Blue)]
+    [InlineData(2, 0, White, White, Blue, Red)]
     [Theory]
     public void SetMoveUsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
     {
-        string[] code = new[] { Red, Green, Blue, Red, Brown };
+        string[] code = new[] { Red, Green, Blue, Red };
         ColorResult expectedKeyPegs = new (expectedBlack, expectedWhite);
         ColorResult resultKeyPegs = TestSkeleton(code, guessValues);
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
     [Theory]
-    [ClassData(typeof(TestData8x5))]
+    [ClassData(typeof(TestData6x4))]
     public void SetMoveUsingVariousDataUsingDataClass(string[] code, string[] guess, ColorResult expectedKeyPegs)
     {
         ColorResult actualKeyPegs = TestSkeleton(code, guess);
@@ -48,7 +48,7 @@ public class ColorGame8x5AnalyzerTests
         Assert.Throws<ArgumentException>(() =>
         {
             TestSkeleton(
-                new[] { "Black", "Black", "Black", "Black", "Black" },
+                new[] { "Black", "Black", "Black", "Black" },
                 new[] { "Black" }
             );
         });
@@ -60,66 +60,77 @@ public class ColorGame8x5AnalyzerTests
         Assert.Throws<ArgumentException>(() =>
         {
             TestSkeleton(
-                new[] { "Black", "Black", "Black", "Black", "Black" },
-                new[] { "Black", "Der", "Blue", "Yellow", "Black" }      // "Der" is the wrong value
+                new[] { "Black", "Black", "Black", "Black" },
+                new[] { "Black", "Der", "Blue", "Yellow" }      // "Der" is the wrong value
             );
         });
     }
 
-    private static ColorResult TestSkeleton(string[] codes, string[] guesses)
+    [Fact]
+    public void ShouldThrowOnInvalidMoveNumber()
+    {
+        Assert.Throws<ArgumentException>(() =>
+        {
+            TestSkeleton(
+                new[] { Green, Yellow, Green, Black },
+                new[] { Yellow, Green, Black, Blue }, moveNumber: 2);
+        });
+    }
+
+    private static ColorResult TestSkeleton(string[] codes, string[] guesses, int moveNumber = 1)
     {
         MockColorGame game = new()
         {
-            GameType = GameTypes.Game8x5,
-            NumberCodes = 5,
-            MaxMoves = 14,
+            GameType = GameTypes.Game6x4,
+            NumberCodes = 4,
+            MaxMoves = 12,
             IsVictory = false,
             FieldValues = new Dictionary<string, IEnumerable<string>>()
             {
-                [FieldCategories.Colors] = TestData8x5.Colors8.ToList()
+                [FieldCategories.Colors ] = TestData6x4.Colors6.ToList()
             },
             Codes = codes
         };
 
-        ColorGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), 1);
+        ColorGameGuessAnalyzer analyzer = new(game,guesses.ToPegs<ColorField>().ToArray(), moveNumber);
         return analyzer.GetResult();
     }
 }
 
-public class TestData8x5 : IEnumerable<object[]>
+public class TestData6x4 : IEnumerable<object[]>
 {
-    public static readonly string[] Colors8 = new string[] { Red, Blue, Green, Yellow, Black, White, Purple, Orange };
+    public static readonly string[] Colors6 = { Red, Green, Blue, Yellow, Black, White };
 
     public IEnumerator<object[]> GetEnumerator()
     {
         yield return new object[]
         {
-            new string[] { Green, Blue,  Green, Yellow, Orange }, // code
-            new string[] { Green, Green, Black, White, Black },  // inputdata
+            new string[] { Green, Blue,  Green, Yellow }, // code
+            new string[] { Green, Green, Black, White },  // inputdata
             new ColorResult(1, 1) // expected
         };
         yield return new object[]
         {
-            new string[] { Red, Blue, Black, White, Orange },
-            new string[] { Black, Black, Red, Yellow, Yellow },
+            new string[] { Red,   Blue,  Black, White },
+            new string[] { Black, Black, Red,   Yellow },
             new ColorResult(0, 2)
         };
         yield return new object[]
         {
-            new string[] { Yellow, Black, Yellow, Green, Orange },
-            new string[] { Black,  Black, Black,  Black, Black },
+            new string[] { Yellow, Black, Yellow, Green },
+            new string[] { Black,  Black, Black,  Black },
             new ColorResult(1, 0)
         };
         yield return new object[]
         {
-            new string[] { Yellow, Yellow, White, Red, Orange },
-            new string[] { Green,  Yellow, White, Red, Green },
+            new string[] { Yellow, Yellow, White, Red },
+            new string[] { Green,  Yellow, White, Red },
             new ColorResult(3, 0)
         };
         yield return new object[]
         {
-            new string[] { White, Black, Yellow, Black, Orange },
-            new string[] { Black, Blue,  Black,  White, White },
+            new string[] { White, Black, Yellow, Black },
+            new string[] { Black, Blue,  Black,  White },
             new ColorResult(0, 3)
         };
     }
