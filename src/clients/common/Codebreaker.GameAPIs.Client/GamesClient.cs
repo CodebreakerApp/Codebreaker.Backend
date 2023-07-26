@@ -31,6 +31,7 @@ public class GamesClient
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early</param>
     /// <returns>A tuple with the unique game id, the number of codes that need to be filled, the maximum available moves, and possible field values for guesses</returns>
     /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="HttpRequestException"></exception>"
     public async Task<(Guid GameId, int numberCodes, int maxMoves, IDictionary<string, string[]> FieldValues)> 
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
@@ -42,7 +43,7 @@ public class GamesClient
     }
 
     /// <summary>
-    /// Set a 
+    /// Set a game move by supplying guess pegs. This method returns the results of the move (the key pegs), and whether the game ended, and whether the game was won.
     /// </summary>
     /// <param name="gameId">The game id received from StartGameAsync</param>
     /// <param name="playerName">The player name (needs to be the same as received). This must match with the game started.</param>
@@ -51,6 +52,7 @@ public class GamesClient
     /// <param name="guessPegs">The guess pegs for this move. The number of guess pegs must conform to the number codes returned when creating the game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
     /// <returns></returns>
+    /// <exception cref="HttpRequestException"></exception>"
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid gameId, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
@@ -72,6 +74,7 @@ public class GamesClient
     /// <param name="gameId">The unique identifier of a game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
     /// <returns>The <see cref="Game"/> if it exists, otherwise null.</returns>
+    /// <exception cref="HttpRequestException"></exception>
     public async Task<Game?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
         Game? game = default;
@@ -92,6 +95,7 @@ public class GamesClient
     /// <param name="query">The games query object containing parameters to filter games.</param>
     /// <param name="cancellationToken">Cancellation token to cancel the request early.</param>
     /// <returns>An IEnumerable collection of Game objects that match the specified query.</returns>
+    /// <exception cref="HttpRequestException"></exception>
     public async Task<IEnumerable<Game>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
         IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", _jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
