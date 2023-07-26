@@ -5,6 +5,10 @@ using System.Text.Json;
 using Codebreaker.GameAPIs.Client.Models;
 
 namespace Codebreaker.GameAPIs.Client;
+
+/// <summary>
+/// Client to interact with the Codebreaker Game API.
+/// </summary>
 public class GamesClient
 {
     private readonly HttpClient _httpClient;
@@ -18,7 +22,15 @@ public class GamesClient
             PropertyNameCaseInsensitive = true
         };
     }
-   
+
+    /// <summary>
+    /// Starts a new game
+    /// </summary>
+    /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values</param>
+    /// <param name="playerName">The name of the player</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the request early</param>
+    /// <returns>A tuple with the unique game id, the number of codes that need to be filled, the maximum available moves, and possible field values for guesses</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<(Guid GameId, int numberCodes, int maxMoves, IDictionary<string, string[]> FieldValues)> 
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
@@ -29,6 +41,17 @@ public class GamesClient
         return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues); 
     }
 
+    /// <summary>
+    /// Set a 
+    /// </summary>
+    /// <param name="gameId">The game id received from StartGameAsync</param>
+    /// <param name="playerName">The player name (needs to be the same as received). This must match with the game started.</param>
+    /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values. This must match with the game started.</param>
+    /// <param name="moveNumber">The incremented move number. The game analyzer returns an error if this does not match the state of the game.</param>
+    /// <param name="guessPegs">The guess pegs for this move. The number of guess pegs must conform to the number codes returned when creating the game.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid gameId, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
         UpdateGameRequest updateGameRequest = new(gameId, gameType, playerName, moveNumber)
@@ -43,6 +66,12 @@ public class GamesClient
         return (results, ended, isVictory);
     }
 
+    /// <summary>
+    /// Retrieves a game by ID.
+    /// </summary>
+    /// <param name="gameId">The unique identifier of a game.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
+    /// <returns>The <see cref="Game"/> if it exists, otherwise null.</returns>
     public async Task<Game?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
         Game? game = default;
@@ -57,6 +86,12 @@ public class GamesClient
         return game;
     }
 
+    /// <summary>
+    /// Retrieves a list of games matching a specified query.
+    /// </summary>
+    /// <param name="query">The games query object containing parameters to filter games.</param>
+    /// <param name="cancellationToken">Cancellation token to cancel the request early.</param>
+    /// <returns>An IEnumerable collection of Game objects that match the specified query.</returns>
     public async Task<IEnumerable<Game>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
         IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", _jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
