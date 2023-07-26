@@ -8,7 +8,7 @@
 /// <param name="PlayerName">The name of the player</param>
 /// <param name="NumberCodes">The number of the codes the player needs to fill</param>
 /// <param name="MaxMoves">The maximum number of moves the game ends when its not solved</param>
-public record class CreateGameResponse(
+internal record class CreateGameResponse(
     Guid GameId,
     GameType GameType,
     string PlayerName,

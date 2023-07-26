@@ -8,7 +8,7 @@
 /// <param name="PlayerName"></param>
 /// <param name="MoveNumber"></param>
 /// <param name="End"></param>
-public record class UpdateGameRequest(
+internal record class UpdateGameRequest(
     Guid GameId,
     GameType GameType,
     string PlayerName,

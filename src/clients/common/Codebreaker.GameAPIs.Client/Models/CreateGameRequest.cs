@@ -23,6 +23,6 @@ public enum GameType
 /// </summary>
 /// <param name="GameType">The game type with one of the <see cref="GameType"/>enum values</param>
 /// <param name="PlayerName">The name of the player</param>
-public record class CreateGameRequest(
+internal record class CreateGameRequest(
     GameType GameType,
     string PlayerName);

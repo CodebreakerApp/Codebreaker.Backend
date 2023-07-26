@@ -9,7 +9,7 @@
 /// <param name="Ended">Did the game end?</param>
 /// <param name="IsVictory">Did you win?</param>
 /// <param name="Results">A string array containing the resulting key peg values</param>
-public record class UpdateGameResponse(
+internal record class UpdateGameResponse(
     Guid GameId,
     GameType GameType,
     int MoveNumber,
