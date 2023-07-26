@@ -1,30 +1,46 @@
-# Codebreaker
+# Codebreaker Backends
+
+This is the GitHub repo for the backend services of the **Codebreaker** solution.
+
+See these repositories for clients:
+
+* [WinUI, .NET MAUI, WPF](https://github.com/codebreakerapp/Codebreaker.Xaml)
+* [Blazor](https://github.com/codebreakerapp/Codebreaker.Blazor)
+
+See this repository for the book about the backend:
+
+[Pragmatic Microservices with C# and Azure](https://github.com/CodebreakerApp/Pragmatic-Microservices-With-C-Sharp-and-Azure)
+
+## Version 3
+
+This repository is just in progress to update all the backend services to version 3 (along with the book repo). What can be used yet?
+
+### Games API
+
+The new Games API service with access to SQL Server and Azure Cosmos DB. Currently, you need to run this locally. A hosted version will be available with a later itation (see the progress in the book repo).
+
+### Analyzers Library
+
+A NuGet package for the library **CNinnovation.Codebreaker.Analyzers** (preview version) is published to the NuGet server. This library is used by the games API, and you need it creating your own custom games. The source code is available here.
+
+### Client Library
+
+A NugGet package for the library **CNinnovation.Codbreaker.Client** (preview version) is published to the NuGet server. This library is used by clients to call the games service.
 
 ## Builds
 
 ### Libraries
 
-|Branch|Shared|Client Services|MVVM|Data|
-|:--:|:--:|:--:|:--:|:--:|
-**main**|[![Shared](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-shared.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-shared.yml)|[![Client Services](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-services.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-services.yml)|[![MVVM NuGet](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-viewmodels.yml)|[![Data](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml/badge.svg)](https://github.com/CNinnovation/codebreaker/actions/workflows/codebreaker-lib-data.yml)
+|Branch|Analyzers|Client Library|
+|:--:|:--:|:--:|
+**main**|[![Analyzers](https://github.com/CodebreakerApp/Codebreaker.Backend/actions/workflows/codebreaker-lib-analyzers.yml/badge.svg)](https://github.com/CodebreakerApp/Codebreaker.Backend/actions/workflows/codebreaker-lib-analyzers.yml)|[![Client Library](https://github.com/CodebreakerApp/Codebreaker.Backend/actions/workflows/codebreaker-lib-client.yml/badge.svg)](https://github.com/CodebreakerApp/Codebreaker.Backend/actions/workflows/codebreaker-lib-client.yml)
 
 ### APIs
 
-|Banch|Game API|Bot|Live|User|
+|Banch|Games API|Bot|Live|User|
 |:--:|:--:|:--:|:--:|:--:|
 **main**|[![API](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreakerapi-AutoDeployTrigger-ee54dca3-868c-4c78-9b6c-72e2c6719e10.yml)|[![Bot](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-bot.yml)|[![Live](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-live.yml)|[![User](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-user.yml)
 
-### Blazor Clients
-
-|Banch|Pure|Mud|Fast|
-|:--:|:--:|:--:|:--:|
-**main**|[![Pure Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-pure.yml)|[![Mud Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-mud.yml)|[![Fast Blazor App](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-blazor-fastui.yml)
-
-### More Clients
-
-|Branch|Android|Win UI|
-|:--:|:--:|:--:
-**main**|[![MAUI Android](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-maui-android.yml)|[![WinUI](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml/badge.svg)](https://github.com/CNILearn/codebreaker/actions/workflows/codebreaker-winui.yml)
 
 ### Integration Tests
 
