@@ -12,15 +12,14 @@ namespace Codebreaker.GameAPIs.Client;
 public class GamesClient
 {
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly static JsonSerializerOptions s_jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public GamesClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _jsonOptions = new()
-        {
-            PropertyNameCaseInsensitive = true
-        };
     }
 
     /// <summary>
@@ -36,9 +35,9 @@ public class GamesClient
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
         CreateGameRequest createGameRequest = new(gameType, playerName);
-        var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, _jsonOptions, cancellationToken);
+        var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
         response.EnsureSuccessStatusCode();
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
         return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues); 
     }
 
@@ -60,9 +59,9 @@ public class GamesClient
         {
             GuessPegs = guessPegs
         };
-        var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, _jsonOptions, cancellationToken);
+        var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, s_jsonOptions, cancellationToken);
         response.EnsureSuccessStatusCode();
-        var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(_jsonOptions, cancellationToken) 
+        var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken) 
             ?? throw new InvalidOperationException();
         (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
         return (results, ended, isVictory);
@@ -80,7 +79,7 @@ public class GamesClient
         Game? game = default;
         try
         {
-            game = await _httpClient.GetFromJsonAsync<Game>($"/games/{gameId}", _jsonOptions, cancellationToken);
+            game = await _httpClient.GetFromJsonAsync<Game>($"/games/{gameId}", s_jsonOptions, cancellationToken);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
@@ -98,7 +97,7 @@ public class GamesClient
     /// <exception cref="HttpRequestException"></exception>
     public async Task<IEnumerable<Game>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", _jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
+        IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
         return games;
     }
 }
