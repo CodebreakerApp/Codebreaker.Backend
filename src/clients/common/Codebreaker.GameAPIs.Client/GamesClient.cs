@@ -97,9 +97,4 @@ public class GamesClient
         IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", _jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
         return games;
     }
-
-    public async Task DeleteGameAsync(Guid gameId)
-    {
-        var response = await _httpClient.DeleteAsync($"/games/{gameId}");
-    }
 }
