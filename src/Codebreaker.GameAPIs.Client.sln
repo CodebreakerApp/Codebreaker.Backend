@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.33913.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Client", "clients\common\Codebreaker.GameAPIs.Client\Codebreaker.GameAPIs.Client.csproj", "{87B3D527-0BB4-4B7E-9A29-525F86836FBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.GameAPIs.Client.Tests", "Codebreaker.GameAPIs.Client.Tests\Codebreaker.GameAPIs.Client.Tests.csproj", "{C84EA665-9F00-4C4F-BB2F-F88A3949C5CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Client.Tests", "clients\common\Codebreaker.GameAPIs.Client.Tests\Codebreaker.GameAPIs.Client.Tests.csproj", "{D6A22A41-9853-4EDE-8B25-033308390292}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{87B3D527-0BB4-4B7E-9A29-525F86836FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87B3D527-0BB4-4B7E-9A29-525F86836FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87B3D527-0BB4-4B7E-9A29-525F86836FBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C84EA665-9F00-4C4F-BB2F-F88A3949C5CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C84EA665-9F00-4C4F-BB2F-F88A3949C5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C84EA665-9F00-4C4F-BB2F-F88A3949C5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C84EA665-9F00-4C4F-BB2F-F88A3949C5CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A22A41-9853-4EDE-8B25-033308390292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A22A41-9853-4EDE-8B25-033308390292}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A22A41-9853-4EDE-8B25-033308390292}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A22A41-9853-4EDE-8B25-033308390292}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

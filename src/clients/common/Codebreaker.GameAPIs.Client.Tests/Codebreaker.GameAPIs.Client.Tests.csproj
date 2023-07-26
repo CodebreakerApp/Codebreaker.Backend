@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\clients\common\Codebreaker.GameAPIs.Client\Codebreaker.GameAPIs.Client.csproj" />
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Client\Codebreaker.GameAPIs.Client.csproj" />
   </ItemGroup>
 
 </Project>
