@@ -2,8 +2,6 @@ using System.Collections;
 
 using Xunit;
 
-using static CodeBreaker.Shared.Models.Data.Colors;
-
 namespace CodeBreaker.Bot.Tests;
 
 public class CodeBreakerAlgorithmsTests
@@ -104,7 +102,7 @@ public class CodeBreakerAlgorithmsTests
     public void IntToColorsTest()
     {
         int value = 0b_000100_010000_000001_100000;
-        string[] expected = { Red, Blue, Black, Yellow };
+        string[] expected = { "Red", "Blue", "Black", "Yellow" };
         string[] actual = CodeBreakerAlgorithms.IntToColors(value);
         Assert.Equal(expected, actual);
     }
