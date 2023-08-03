@@ -1,22 +1,19 @@
-﻿using CodeBreaker.Shared.Models.Api;
+﻿using Codebreaker.GameAPIs.Client.Models;
 
 namespace CodeBreaker.Bot;
 
-public class CodeBreakerGameRunner
+public class CodeBreakerGameRunner(GamesClient gamesClient, ILogger<CodeBreakerGameRunner> logger)
 {
-    private readonly HttpClient _httpClient;
+    private const string PlayerName = "Bot";
     private Guid? _gameId;
     private int _moveNumber = 0;
     private readonly List<Move> _moves = new();
     private List<int>? _possibleValues;
-    private readonly ILogger _logger;
+    private Dictionary<int, string>? _colorNames;
+    private readonly ILogger _logger = logger;
+    private readonly GamesClient _gamesClient = gamesClient;
 
-    public CodeBreakerGameRunner(HttpClient httpClient, ILogger<CodeBreakerGameRunner> logger)
-    {
-        _httpClient = httpClient;
-        _logger = logger;
-    }
-
+    // initialize a list of all the possible options using numbers for every color
     private List<int> InitializePossibleValues()
     {
         static List<int> Create8Colors(int shift)
@@ -57,14 +54,21 @@ public class CodeBreakerGameRunner
 
     public async Task StartGameAsync()
     {
+        static int NextKey(ref int key)
+        {
+            int next = key;
+            key <<= 1;
+            return next;
+        }
+
         _possibleValues = InitializePossibleValues();
         _moves.Clear();
+        _moveNumber = 0;
 
-        CreateGameRequest request = new("Bot", "6x4Game");
-        HttpResponseMessage responseMessage = await _httpClient.PostAsJsonAsync("/games", request);
-        responseMessage.EnsureSuccessStatusCode();
-        CreateGameResponse response = await responseMessage.Content.ReadFromJsonAsync<CreateGameResponse>();
-        _gameId = response.Game.GameId;
+        (_gameId, _, _, IDictionary<string, string[]> fieldValues) = await _gamesClient.StartGameAsync(GameType.Game6x4, "Bot");
+        int key = 1;
+        _colorNames = fieldValues["colors"]
+            .ToDictionary(keySelector: c => NextKey(ref key), elementSelector: color => color);
     }
 
     /// <summary>
@@ -80,26 +84,23 @@ public class CodeBreakerGameRunner
         if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
         Guid gameId = _gameId ?? throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
 
-        CreateMoveResponse response;
-
+        bool ended = false;
         do
         {
-            (string[] colorNames, int selection) = GetNextMoves();
-            CreateMoveRequest moveRequest = new(colorNames);
-            _logger.SendMove(moveRequest.ToString(), gameId.ToString());
+            _moveNumber++;
+            (string[] guessPegs, int selection) = GetNextMoves();
+            _logger.SendMove(string.Join(':', guessPegs), gameId.ToString());
 
-            var responseMessage = await _httpClient.PostAsJsonAsync($"games/{gameId}/moves", moveRequest);
-            responseMessage.EnsureSuccessStatusCode();
-            response = await responseMessage.Content.ReadFromJsonAsync<CreateMoveResponse>();
+            (string[] results, ended, bool isVictory) = await _gamesClient.SetMoveAsync(gameId, PlayerName, GameType.Game6x4, _moveNumber, guessPegs);
 
-            if (response.Won)
+            if (isVictory)
             {
                 _logger.Matched(_moveNumber, gameId.ToString());
                 break;
             }
 
-            int blackHits = response.KeyPegs.Black;
-            int whiteHits = response.KeyPegs.White;
+            int blackHits = results.Count(c => c == "Black");
+            int whiteHits = results.Count(c => c == "White");
 
             if (blackHits >= 4)
                 throw new InvalidOperationException($"4 or more blacks but won was not set: {blackHits}");
@@ -115,16 +116,16 @@ public class CodeBreakerGameRunner
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, Black, gameId.ToString());
+                _logger.ReducedPossibleValues(_possibleValues.Count, "Black", gameId.ToString());
             }
             if (whiteHits > 0)
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(whiteHits + blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, White, gameId.ToString());
+                _logger.ReducedPossibleValues(_possibleValues.Count, "White", gameId.ToString());
             }
 
             await Task.Delay(TimeSpan.FromSeconds(thinkSeconds));  // thinking delay
-        } while (_moveNumber > 12 || !response.Won);
+        } while (!ended);
 
         _logger.FinishedRun(_moveNumber, gameId.ToString());
     }
@@ -141,8 +142,16 @@ public class CodeBreakerGameRunner
         int random = Random.Shared.Next(_possibleValues.Count);
         var value = _possibleValues[random];
 
-        return (value.IntToColors(), value);
+        return (IntToColors(value), value);
     }
+
+    private string[] IntToColors(int value) => new[]
+    {
+        _colorNames?[value & 0b111111] ?? string.Empty,
+        _colorNames?[(value >> 6) & 0b111111] ?? string.Empty,
+        _colorNames?[(value >> 12) & 0b111111] ?? string.Empty,
+        _colorNames?[(value >> 18) & 0b111111] ?? string.Empty
+    };
 }
 
 public enum CodeColors
@@ -163,12 +172,12 @@ public enum KeyColors
 
 public record struct CodePeg(string Color)
 {
-    public override string ToString() => Color;
+    public override readonly string ToString() => Color;
 }
 
 public record struct KeyPeg(string Color)
 {
-    public override string ToString() => Color;
+    public override readonly string ToString() => Color;
 }
 
 public record struct Move(string GameId, int MoveNumber, IList<CodePeg> Codes, IList<KeyPeg> Keys);
