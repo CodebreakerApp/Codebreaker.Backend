@@ -6,9 +6,9 @@ See https://github.com/codebreakerapp for more information on the complete solut
 
 See [Codebreakerlight](https://github.com/codebreakerapp/codebreakerlight) for a simple version of the Codebreaker solution with a Wiki to create your own Codebreaker service.
 
-## The GamesClient class
+## The GamesClient class and IGamesClient interface
 
-The `GamesClient` class is the main class to use for communication. It contains the following methods:
+The `IGamesClient` class is the main contract to be used for communication to play the game. It contains the following methods:
 
 | Method     | Description        |
 |------------|--------------------|
@@ -17,7 +17,8 @@ The `GamesClient` class is the main class to use for communication. It contains 
 | GetGameAsync | Get a game by id with all details and moves |
 | GetGamesAsync | Get a list of games with all details and moves (use the `GamesQuery` class to define the filter) |
 
-In the constructor, inject the `HttpClient` class. You can use `Microsoft.Extensions.Http` to configure the `HttpClient` class.
+
+The `GamesClient` class implements the `IGamesClient` interface. In the constructor, inject the `HttpClient` class. You can use `Microsoft.Extensions.Http` to configure the `HttpClient` class.
 
 ## Model types
 

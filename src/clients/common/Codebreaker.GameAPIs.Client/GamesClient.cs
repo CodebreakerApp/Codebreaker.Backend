@@ -9,7 +9,7 @@ namespace Codebreaker.GameAPIs.Client;
 /// <summary>
 /// Client to interact with the Codebreaker Game API.
 /// </summary>
-public class GamesClient
+public class GamesClient : IGamesClient
 {
     private readonly HttpClient _httpClient;
     private readonly static JsonSerializerOptions s_jsonOptions = new()
@@ -31,14 +31,14 @@ public class GamesClient
     /// <returns>A tuple with the unique game id, the number of codes that need to be filled, the maximum available moves, and possible field values for guesses</returns>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="HttpRequestException"></exception>"
-    public async Task<(Guid GameId, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)> 
+    public async Task<(Guid GameId, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)>
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
         CreateGameRequest createGameRequest = new(gameType, playerName);
         var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
         response.EnsureSuccessStatusCode();
         var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
-        return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues); 
+        return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class GamesClient
         };
         var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, s_jsonOptions, cancellationToken);
         response.EnsureSuccessStatusCode();
-        var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken) 
+        var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
             ?? throw new InvalidOperationException();
         (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
         return (results, ended, isVictory);
