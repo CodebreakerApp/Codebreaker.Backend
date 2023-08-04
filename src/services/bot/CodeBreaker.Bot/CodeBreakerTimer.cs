@@ -39,8 +39,8 @@ public class CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerT
                     if (await _timer.WaitForNextTickAsync(_cancellationTokenSource.Token)) // simulate some waiting time
                     {
                         _logger.TimerTickFired(_loop);
-                        await _gameRunner.StartGameAsync();
-                        await _gameRunner.RunAsync(thinkSeconds);
+                        await _gameRunner.StartGameAsync(_cancellationTokenSource.Token);  // start the game
+                        await _gameRunner.RunAsync(thinkSeconds, _cancellationTokenSource.Token); // play the game until finished
                         _loop++;
                     }
 
