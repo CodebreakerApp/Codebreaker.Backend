@@ -12,10 +12,10 @@ The `IGamesClient` class is the main contract to be used for communication to pl
 
 | Method     | Description        |
 |------------|--------------------|
-| StartGameAsync | Start a new game |
-| SetMoveAsync | Set guesses for a game move |
-| GetGameAsync | Get a game by id with all details and moves |
-| GetGamesAsync | Get a list of games with all details and moves (use the `GamesQuery` class to define the filter) |
+| `StartGameAsync` | Start a new game |
+| `SetMoveAsync` | Set guesses for a game move |
+| `GetGameAsync` | Get a game by id with all details and moves |
+| `GetGamesAsync` | Get a list of games with all details and moves (use the `GamesQuery` class to define the filter) |
 
 
 The `GamesClient` class implements the `IGamesClient` interface. In the constructor, inject the `HttpClient` class. You can use `Microsoft.Extensions.Http` to configure the `HttpClient` class.
@@ -26,5 +26,7 @@ The following model types are used to return information about the game.
 
 | Model type | Description |
 |------------|-------------|
-| Game | Contains the game id, the game status, the game moves and the game result |
-| Move | Contains the move number, the guess and the result of the guess |
+| `GameType` | Enum value to list different game types |
+| `GamesQuery` | Use this class to query for game info lists using `GetGamesAsync` |
+| `GameInfo` | Contains the game id, the game status, the game moves and the game result |
+| `MoveInfo` | Contains the move number, the guess and the result of the guess. Contained within a `GameInfo` |

@@ -1,7 +1,7 @@
 ﻿namespace Codebreaker.GameAPIs.Client.Models;
 
 /// <summary>
-/// 
+/// Complete information about a single game - including the soltuion and the moves the player made.
 /// </summary>
 /// <param name="gameId">The unique identifier of the game</param>
 /// <param name="gameType"></param>
@@ -9,7 +9,7 @@
 /// <param name="startTime"></param>
 /// <param name="numberCodes"></param>
 /// <param name="maxMoves"></param>
-public class Game(
+public class GameInfo(
     Guid gameId,
     string gameType,
     string playerName,
@@ -85,7 +85,7 @@ public class Game(
     /// <summary>
     /// A list of moves the player made
     /// </summary>
-    public ICollection<Move> Moves { get; init; } = new List<Move>();
+    public ICollection<MoveInfo> Moves { get; init; } = new List<MoveInfo>();
 
     public override string ToString() => $"{GameId}:{GameType} - {StartTime}";
 }
