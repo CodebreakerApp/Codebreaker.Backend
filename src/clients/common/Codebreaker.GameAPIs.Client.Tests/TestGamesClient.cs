@@ -1,12 +1,3 @@
-using System.Net;
-
-using Microsoft.Extensions.Configuration;
-
-using Moq;
-using Moq.Protected;
-
-using Xunit.Abstractions;
-
 namespace Codebreaker.GameAPIs.Client.Tests;
 
 public class TestGamesClient

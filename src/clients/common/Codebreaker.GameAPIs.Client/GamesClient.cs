@@ -72,14 +72,14 @@ public class GamesClient : IGamesClient
     /// </summary>
     /// <param name="gameId">The unique identifier of a game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
-    /// <returns>The <see cref="Game"/> if it exists, otherwise null.</returns>
+    /// <returns>The <see cref="GameInfo"/> if it exists, otherwise null.</returns>
     /// <exception cref="HttpRequestException"></exception>
-    public async Task<Game?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
+    public async Task<GameInfo?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
-        Game? game = default;
+        GameInfo? game = default;
         try
         {
-            game = await _httpClient.GetFromJsonAsync<Game>($"/games/{gameId}", s_jsonOptions, cancellationToken);
+            game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{gameId}", s_jsonOptions, cancellationToken);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
@@ -95,9 +95,9 @@ public class GamesClient : IGamesClient
     /// <param name="cancellationToken">Cancellation token to cancel the request early.</param>
     /// <returns>An IEnumerable collection of Game objects that match the specified query.</returns>
     /// <exception cref="HttpRequestException"></exception>
-    public async Task<IEnumerable<Game>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<GameInfo>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<Game> games = (await _httpClient.GetFromJsonAsync<IEnumerable<Game>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<Game>();
+        IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
         return games;
     }
 }
