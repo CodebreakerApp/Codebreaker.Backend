@@ -12,7 +12,6 @@ See [Codebreakerlight](https://github.com/codebreakerapp/codebreakerlight) for a
 | Type     | Description        |
 |----------|--------------------|
 | IGame    | Implement this interface with your game model. This is required by the analyzer |
-| IMove    | Implement this interface with your move model. This is required by the analyzer |
 | IGameGuessAnalyzer | If you want to create your own game type, create an analyzer implementing this interface. Instead, you can derive your analyzer type from the base class `GameGuessAnalyzer` |
 
 ### Analyzers, namespace Codebreaker.GameAPIs.Analyzers
