@@ -67,7 +67,7 @@ public static class GameEndpoints
                     return TypedResults.Ok(game.AsUpdateGameResponse(move.KeyPegs));
                 }
             }
-            catch (ArgumentException ex) when (ex.HResult is <= 4200 and >= 400)
+            catch (ArgumentException ex) when (ex.HResult is <= 4300 and >= 4000)
             {
                 string url = context.Request.GetDisplayUrl();
                 return ex.HResult switch
