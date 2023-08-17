@@ -7,23 +7,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{0F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gameapi", "gameapi", "{58E2F579-8F0B-424D-B965-68FDBDB30F47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.Data.Cosmos", "services\gameapi\Codebreaker.Data.Cosmos\Codebreaker.Data.Cosmos.csproj", "{E437B6EA-C5D9-4978-A82C-6F46FEC2A783}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.Data.Cosmos", "services\gameapi\Codebreaker.Data.Cosmos\Codebreaker.Data.Cosmos.csproj", "{E437B6EA-C5D9-4978-A82C-6F46FEC2A783}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.Data.SqlServer", "services\gameapi\Codebreaker.Data.SqlServer\Codebreaker.Data.SqlServer.csproj", "{E6EEB9B3-E223-4C2B-B69F-504F4038FA77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.Data.SqlServer", "services\gameapi\Codebreaker.Data.SqlServer\Codebreaker.Data.SqlServer.csproj", "{E6EEB9B3-E223-4C2B-B69F-504F4038FA77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.Data.SqlServer.Tests", "services\gameapi\Codebreaker.Data.SqlServer.Tests\Codebreaker.Data.SqlServer.Tests.csproj", "{9A381BB0-88AE-40B3-8703-7CDBDC4D7C22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.Data.SqlServer.Tests", "services\gameapi\Codebreaker.Data.SqlServer.Tests\Codebreaker.Data.SqlServer.Tests.csproj", "{9A381BB0-88AE-40B3-8703-7CDBDC4D7C22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.GameAPIs", "services\gameapi\Codebreaker.GameAPIs\Codebreaker.GameAPIs.csproj", "{FE97466C-C996-4652-88E5-98B6EAA261C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs", "services\gameapi\Codebreaker.GameAPIs\Codebreaker.GameAPIs.csproj", "{FE97466C-C996-4652-88E5-98B6EAA261C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.GameAPIs.Models", "services\gameapi\Codebreaker.GameAPIs.Models\Codebreaker.GameAPIs.Models.csproj", "{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Models", "services\gameapi\Codebreaker.GameAPIs.Models\Codebreaker.GameAPIs.Models.csproj", "{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.GameAPIs.Tests", "services\gameapi\Codebreaker.GameAPIs.Tests\Codebreaker.GameAPIs.Tests.csproj", "{2A6EDB3B-B79E-49D3-A92B-C8A81E48F65F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E437B6EA-C5D9-4978-A82C-6F46FEC2A783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -46,6 +45,13 @@ Global
 		{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A6EDB3B-B79E-49D3-A92B-C8A81E48F65F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A6EDB3B-B79E-49D3-A92B-C8A81E48F65F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A6EDB3B-B79E-49D3-A92B-C8A81E48F65F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A6EDB3B-B79E-49D3-A92B-C8A81E48F65F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{58E2F579-8F0B-424D-B965-68FDBDB30F47} = {0FB1B986-E087-4C76-8FF8-B68B703F39B0}
@@ -54,5 +60,8 @@ Global
 		{9A381BB0-88AE-40B3-8703-7CDBDC4D7C22} = {58E2F579-8F0B-424D-B965-68FDBDB30F47}
 		{FE97466C-C996-4652-88E5-98B6EAA261C3} = {58E2F579-8F0B-424D-B965-68FDBDB30F47}
 		{D53C9ACA-6AF5-4404-AA85-7C03FB3ABA01} = {58E2F579-8F0B-424D-B965-68FDBDB30F47}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18EADE0D-2496-4DD6-B225-A2BC1D4EDB68}
 	EndGlobalSection
 EndGlobal
