@@ -89,7 +89,9 @@ public static class GamesFactory
         static TField[] GetGuesses<TField>(IEnumerable<string> guesses)
             where TField: IParsable<TField>
         {
-            return guesses.Select(g => TField.Parse(g, default)).ToArray();
+            return guesses
+                .Select(g => TField.Parse(g, default))
+                .ToArray();
         }
 
         Move GetColorGameGuessAnalyzerResult()
