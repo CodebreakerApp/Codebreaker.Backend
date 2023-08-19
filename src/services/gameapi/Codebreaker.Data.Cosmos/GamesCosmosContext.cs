@@ -9,8 +9,8 @@ public class GamesCosmosContext : DbContext, IGamesRepository
 {
     private const string PartitionKey = nameof(PartitionKey);
     private const string ContainerName = "GamesV3";
-    private FieldValueValueConverter _fieldValueConverter = new();
-    private FieldValueComparer _fieldValueComparer = new();
+    private readonly FieldValueValueConverter _fieldValueConverter = new();
+    private readonly FieldValueComparer _fieldValueComparer = new();
 
     public GamesCosmosContext(DbContextOptions<GamesCosmosContext> options)
         : base(options)
