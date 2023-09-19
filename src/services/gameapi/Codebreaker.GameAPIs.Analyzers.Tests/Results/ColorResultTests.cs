@@ -26,7 +26,7 @@ public class ColorResultTests
     public void TryFormatShouldReturnFalseWithSmallSpan()
     {
         bool expected = false;
-        var chars = new char[2];
+        char[] chars = new char[2];
         bool actual = ColorResult.TryParse(chars.AsSpan(), null, out _);
         Assert.Equal(expected, actual);
     }

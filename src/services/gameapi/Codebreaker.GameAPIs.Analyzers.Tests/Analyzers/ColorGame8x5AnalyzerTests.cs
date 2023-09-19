@@ -42,25 +42,21 @@ public class ColorGame8x5AnalyzerTests
     [Fact]
     public void ShouldThrowOnInvalidGuessCount()
     {
-        Assert.Throws<ArgumentException>(() =>
-        {
+        Assert.Throws<ArgumentException>(() => 
             TestSkeleton(
                 new[] { "Black", "Black", "Black", "Black", "Black" },
                 new[] { "Black" }
-            );
-        });
+            ));
     }
 
     [Fact]
     public void ShouldThrowOnInvalidGuessValues()
     {
-        Assert.Throws<ArgumentException>(() =>
-        {
+        Assert.Throws<ArgumentException>(() => 
             TestSkeleton(
                 new[] { "Black", "Black", "Black", "Black", "Black" },
                 new[] { "Black", "Der", "Blue", "Yellow", "Black" }      // "Der" is the wrong value
-            );
-        });
+            ));
     }
 
     private static ColorResult TestSkeleton(string[] codes, string[] guesses)

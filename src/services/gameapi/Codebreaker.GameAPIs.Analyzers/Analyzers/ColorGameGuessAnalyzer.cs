@@ -18,7 +18,7 @@ public class ColorGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveNu
         List<ColorField> codesToCheck = new(_game.Codes.ToPegs<ColorField>());
         List<ColorField> guessPegsToCheck = new(Guesses);
         int black = 0;
-        List<string> whitePegs = new();
+        List<string> whitePegs = [];
 
         // check black
         for (int i = 0; i < guessPegsToCheck.Count; i++)
