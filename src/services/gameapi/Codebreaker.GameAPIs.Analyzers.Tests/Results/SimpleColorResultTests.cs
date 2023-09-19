@@ -1,5 +1,3 @@
-using Codebreaker.GameAPIs.Models;
-
 namespace Codebreaker.GameAPIs.Algorithms.Tests;
 
 public class SimpleColorResultTests
