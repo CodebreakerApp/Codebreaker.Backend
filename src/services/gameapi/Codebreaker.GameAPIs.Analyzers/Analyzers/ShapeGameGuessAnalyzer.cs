@@ -1,12 +1,7 @@
 ﻿namespace Codebreaker.GameAPIs.Analyzers;
 
-public class ShapeGameGuessAnalyzer : GameGuessAnalyzer<ShapeAndColorField, ShapeAndColorResult>
+public class ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, int moveNumber) : GameGuessAnalyzer<ShapeAndColorField, ShapeAndColorResult>(game, guesses, moveNumber)
 {
-    public ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, int moveNumber)
-        : base(game, guesses, moveNumber)
-    {
-    }
-
     protected override void ValidateGuessValues()
     {
         // check for valid colors
