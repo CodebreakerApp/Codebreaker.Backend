@@ -1,6 +1,6 @@
-# CNinnovation.Codebreaker.SqlServer
+# CNinnovation.Codebreaker.Cosmos
 
-This library contains the data backend for Codebreaker for SQL Server using EF Core.
+This library contains the data backend for Codebreaker for Azure Cosmos DB using EF Core.
 
 See https://github.com/codebreakerapp for more information on the complete solution.
 
