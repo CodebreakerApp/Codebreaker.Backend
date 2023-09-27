@@ -1,4 +1,4 @@
-# CNinnovation.Codebreaker.BackendModels
+# CNinnovation.Codebreaker.SqlServer
 
 This library contains the data backend for Codebreaker for SQL Server using EF Core.
 
