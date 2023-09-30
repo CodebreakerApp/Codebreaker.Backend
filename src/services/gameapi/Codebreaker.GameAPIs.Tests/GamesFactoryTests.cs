@@ -48,7 +48,7 @@ public class GamesFactoryTests
     {
         Game game = GamesFactory.CreateGame("Game6x4", "Test");
         var values = game.FieldValues["colors"];
-        var guesses = Enumerable.Repeat(values.First(), 4).ToArray();
+        string[] guesses = Enumerable.Repeat(values.First(), 4).ToArray();
         Move move = game.ApplyMove(guesses, 1);
 
         Assert.Equal(1, game.Moves.Count);
@@ -59,7 +59,7 @@ public class GamesFactoryTests
     {
         Game game = GamesFactory.CreateGame("Game8x5", "Test");
         var values = game.FieldValues["colors"];
-        var guesses = Enumerable.Repeat(values.First(), 5).ToArray();
+        string[] guesses = Enumerable.Repeat(values.First(), 5).ToArray();
         Move move = game.ApplyMove(guesses, 1);
 
         Assert.Equal(1, game.Moves.Count);
@@ -73,7 +73,7 @@ public class GamesFactoryTests
         var shapes = game.FieldValues["shapes"];
         string color = colors.First();
         string shape = shapes.First();
-        var guesses = Enumerable.Repeat($"{shape};{color}", 4).ToArray();
+        string[] guesses = Enumerable.Repeat($"{shape};{color}", 4).ToArray();
         Move move = game.ApplyMove(guesses, 1);
 
         Assert.Equal(1, game.Moves.Count);
