@@ -3,13 +3,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace Codebreaker.GameAPIs.Tests;
 
-internal class GamesApiApplication : WebApplicationFactory<Program>
+internal class GamesApiApplication(string envrionment = "Development") : WebApplicationFactory<Program>
 {
-    private readonly string _environment;
-    public GamesApiApplication(string envrionment = "Development")
-    {
-        _environment = envrionment;
-    }
+    private readonly string _environment = envrionment;
 
     protected override IHost CreateHost(IHostBuilder builder)
     {

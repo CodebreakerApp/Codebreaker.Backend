@@ -18,7 +18,7 @@ public class GameEndpointsTests
 
         UpdateGameRequest updateGameRequest = new(gameResponse.GameId, gameResponse.GameType, gameResponse.PlayerName, moveNumber)
         {
-            GuessPegs = new string[] { "Red", "Red", "Red", "Red" }
+            GuessPegs = ["Red", "Red", "Red", "Red"]
         };
 
         string uri = $"/games/{updateGameRequest.GameId}";
@@ -38,7 +38,7 @@ public class GameEndpointsTests
 
         UpdateGameRequest updateGameRequest = new(gameResponse.GameId, gameResponse.GameType, gameResponse.PlayerName, moveNumber)
         {
-            GuessPegs = new string[] { "Red", "Red", "Red", }
+            GuessPegs = ["Red", "Red", "Red",]
         };
 
         string uri = $"/games/{updateGameRequest.GameId}";
@@ -58,7 +58,7 @@ public class GameEndpointsTests
 
         UpdateGameRequest updateGameRequest = new(gameResponse.GameId, gameResponse.GameType, gameResponse.PlayerName, moveNumber)
         {
-            GuessPegs = new string[] { "Red", "Red", "Red", "Schwarz" }
+            GuessPegs = ["Red", "Red", "Red", "Schwarz"]
         };
 
         string uri = $"/games/{updateGameRequest.GameId}";
