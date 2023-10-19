@@ -1,13 +1,10 @@
+using Microsoft.Extensions.Logging.Abstractions;
+
 namespace Codebreaker.GameAPIs.Client.Tests;
 
-public class TestGamesClient
+public class TestGamesClient(ITestOutputHelper outputHelper)
 {
-    private readonly ITestOutputHelper _outputHelper;
-
-    public TestGamesClient(ITestOutputHelper outputHelper)
-    {
-        _outputHelper = outputHelper;
-    }
+    private readonly ITestOutputHelper _outputHelper = outputHelper;
 
     [Fact]
     public async Task TestStartGame6x4Async()
@@ -51,8 +48,8 @@ public class TestGamesClient
         {
             BaseAddress = new System.Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
         };
-
-        var gamesClient = new GamesClient(httpClient);
+       
+        var gamesClient = new GamesClient(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
         var response = await gamesClient.StartGameAsync(Models.GameType.Game6x4, "test");

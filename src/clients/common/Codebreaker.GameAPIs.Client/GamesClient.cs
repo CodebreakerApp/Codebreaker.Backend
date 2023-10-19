@@ -4,23 +4,21 @@ using System.Text.Json;
 
 using Codebreaker.GameAPIs.Client.Models;
 
+using Microsoft.Extensions.Logging;
+
 namespace Codebreaker.GameAPIs.Client;
 
 /// <summary>
 /// Client to interact with the Codebreaker Game API.
 /// </summary>
-public class GamesClient : IGamesClient
+public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : IGamesClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly ILogger _logger = logger;
     private readonly static JsonSerializerOptions s_jsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
-
-    public GamesClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
 
     /// <summary>
     /// Starts a new game
@@ -34,11 +32,19 @@ public class GamesClient : IGamesClient
     public async Task<(Guid GameId, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)>
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
-        CreateGameRequest createGameRequest = new(gameType, playerName);
-        var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
-        return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
+        try
+        {
+            CreateGameRequest createGameRequest = new(gameType, playerName);
+            var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
+            return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "StartGameAsync error {error}", ex.Message);
+            throw;
+        }
     }
 
     /// <summary>
@@ -55,16 +61,24 @@ public class GamesClient : IGamesClient
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid gameId, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
-        UpdateGameRequest updateGameRequest = new(gameId, gameType, playerName, moveNumber)
+        try
         {
-            GuessPegs = guessPegs
-        };
-        var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, s_jsonOptions, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
-            ?? throw new InvalidOperationException();
-        (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
-        return (results, ended, isVictory);
+            UpdateGameRequest updateGameRequest = new(gameId, gameType, playerName, moveNumber)
+            {
+                GuessPegs = guessPegs
+            };
+            var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, s_jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
+                ?? throw new InvalidOperationException();
+            (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
+            return (results, ended, isVictory);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "SetMoveAsync error {error}", ex.Message);
+            throw;
+        }
     }
 
     /// <summary>
@@ -76,14 +90,20 @@ public class GamesClient : IGamesClient
     /// <exception cref="HttpRequestException"></exception>
     public async Task<GameInfo?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
     {
-        GameInfo? game = default;
+        GameInfo? game;
         try
         {
             game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{gameId}", s_jsonOptions, cancellationToken);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
+            _logger.LogInformation(ex, "GetGameAsync game not found - {error}", ex.Message);
             return default;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "GetGameAsync error {error}", ex.Message);
+            throw;
         }
         return game;
     }
@@ -97,7 +117,15 @@ public class GamesClient : IGamesClient
     /// <exception cref="HttpRequestException"></exception>
     public async Task<IEnumerable<GameInfo>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
-        IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
-        return games;
+        try
+        {
+            IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
+            return games;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "GetGamesAsync error {error}", ex.Message);
+            throw;
+        }
     }
 }
