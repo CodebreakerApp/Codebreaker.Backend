@@ -2,10 +2,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Codebreaker.GameAPIs.Client.Tests;
 
-public class TestGamesClient(ITestOutputHelper outputHelper)
+public class TestGamesClient
 {
-    private readonly ITestOutputHelper _outputHelper = outputHelper;
-
     [Fact]
     public async Task TestStartGame6x4Async()
     {
@@ -46,20 +44,20 @@ public class TestGamesClient(ITestOutputHelper outputHelper)
 
         HttpClient httpClient = new(handlerMock.Object)
         {
-            BaseAddress = new System.Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
+            BaseAddress = new Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
         };
        
         var gamesClient = new GamesClient(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
-        var response = await gamesClient.StartGameAsync(Models.GameType.Game6x4, "test");
+        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(Models.GameType.Game6x4, "test");
 
         // Assert
-        Assert.Equal(4, response.NumberCodes);
-        Assert.Equal(12, response.MaxMoves);
-        Assert.Single(response.FieldValues.Keys);
-        Assert.Equal("colors", response.FieldValues.Keys.First());
-        Assert.Equal(6, response.FieldValues["colors"].Length);
+        Assert.Equal(4, NumberCodes);
+        Assert.Equal(12, MaxMoves);
+        Assert.Single(FieldValues.Keys);
+        Assert.Equal("colors", FieldValues.Keys.First());
+        Assert.Equal(6, FieldValues["colors"].Length);
 
         handlerMock.Protected().Verify(
         "SendAsync",
