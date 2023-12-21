@@ -66,6 +66,16 @@ public class ColorGame6x4AnalyzerTests
                 [Yellow, Green, Black, Blue], moveNumber: 2));
     }
 
+    [Fact]
+    public void ShouldNotIncrementMoveNumberOnInvalidMove()
+    {
+        IGame game = TestSkeletonWithGame(
+            [Green, Yellow, Green, Black],
+            [Yellow, Green, Black, Blue], moveNumber: 2);
+
+        Assert.Equal(0, game?.LastMoveNumber);
+    }
+
     private static ColorResult TestSkeleton(string[] codes, string[] guesses, int moveNumber = 1)
     {
         MockColorGame game = new()
@@ -83,6 +93,33 @@ public class ColorGame6x4AnalyzerTests
 
         ColorGameGuessAnalyzer analyzer = new(game,guesses.ToPegs<ColorField>().ToArray(), moveNumber);
         return analyzer.GetResult();
+    }
+
+    private static IGame TestSkeletonWithGame(string[] codes, string[] guesses, int moveNumber = 1)
+    {
+        MockColorGame game = new()
+        {
+            GameType = GameTypes.Game6x4,
+            NumberCodes = 4,
+            MaxMoves = 12,
+            IsVictory = false,
+            FieldValues = new Dictionary<string, IEnumerable<string>>()
+            {
+                [FieldCategories.Colors] = TestData6x4.Colors6.ToList()
+            },
+            Codes = codes
+        };
+
+        ColorGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), moveNumber);
+        try
+        {
+            analyzer.GetResult();
+        }
+        catch (ArgumentException)
+        {
+
+        }
+        return game;
     }
 }
 
