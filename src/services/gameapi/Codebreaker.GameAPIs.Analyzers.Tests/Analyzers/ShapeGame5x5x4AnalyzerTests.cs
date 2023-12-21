@@ -1,11 +1,9 @@
 using System.Collections;
 
-using Codebreaker.GameAPIs.Analyzers;
-
 using static Codebreaker.GameAPIs.Models.Colors;
 using static Codebreaker.GameAPIs.Models.Shapes;
 
-namespace Codebreaker.GameAPIs.Algorithms.Tests;
+namespace Codebreaker.GameAPIs.Analyzer.Tests;
 
 // TODO: add more unit tests
 public class ShapeGame5x5x4AnalyzerTests

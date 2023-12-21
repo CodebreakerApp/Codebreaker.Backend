@@ -1,8 +1,9 @@
 using System.Collections;
+using System.Reflection.Emit;
 
 using static Codebreaker.GameAPIs.Models.Colors;
 
-namespace Codebreaker.GameAPIs.Algorithms.Tests;
+namespace Codebreaker.GameAPIs.Analyzer.Tests;
 
 public class ColorGame6x4AnalyzerTests
 {
