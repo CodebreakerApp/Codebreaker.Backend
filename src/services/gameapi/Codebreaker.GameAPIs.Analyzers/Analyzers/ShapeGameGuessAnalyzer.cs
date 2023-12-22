@@ -72,7 +72,13 @@ public class ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, in
             string[] colorCodes = codesToCheck.Select(c => c.Color).ToArray();
             string[] shapeCodes = codesToCheck.Select(c => c.Shape).ToArray();
 
-            if (colorCodes.Contains(guessPegsToCheck[i].Color) || shapeCodes.Contains(guessPegsToCheck[i].Shape))
+            // check needs to be done separately for color and shape, one guess can be counted two times if both the shape and the color are correct from different codes
+            if (colorCodes.Contains(guessPegsToCheck[i].Color))
+            {
+                white++;
+            }
+
+            if (shapeCodes.Contains(guessPegsToCheck[i].Shape))
             {
                 white++;
             }
