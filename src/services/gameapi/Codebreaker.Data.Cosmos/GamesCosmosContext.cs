@@ -1,16 +1,12 @@
-﻿using Codebreaker.Data.Cosmos.Utilities;
-using Codebreaker.GameAPIs.Data;
-
-using Microsoft.EntityFrameworkCore;
-
-namespace Codebreaker.Data.Cosmos;
+﻿namespace Codebreaker.Data.Cosmos;
 
 public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : DbContext(options), IGamesRepository
 {
+    private static readonly FieldValueValueConverter s_fieldValueConverter = new();
+    private static readonly FieldValueComparer s_fieldValueComparer = new();
+
     private const string PartitionKey = nameof(PartitionKey);
     private const string ContainerName = "GamesV3";
-    private readonly FieldValueValueConverter _fieldValueConverter = new();
-    private readonly FieldValueComparer _fieldValueComparer = new();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,15 +15,18 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
 
         gameModel.Property<string>(PartitionKey);
         gameModel.HasPartitionKey(PartitionKey);
-        gameModel.HasKey(nameof(Game.GameId), PartitionKey);
+        gameModel.HasKey(nameof(Game.Id), PartitionKey);
+
+        gameModel.HasDiscriminator<string>("Discriminator")
+            .HasValue<Game>("Gamev2");
 
         gameModel.Property(g => g.FieldValues)
-            .HasConversion(_fieldValueConverter, _fieldValueComparer);
+            .HasConversion(s_fieldValueConverter, s_fieldValueComparer);
     }
 
     public DbSet<Game> Games => Set<Game>();
 
-    public static string ComputePartitionKey(Game game) => game.GameId.ToString();
+    public static string ComputePartitionKey(Game game) => game.Id.ToString();
 
     public void SetPartitionKey(Game game) =>
         Entry(game).Property(PartitionKey).CurrentValue =
@@ -47,9 +46,12 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
         await SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> DeleteGameAsync(Guid gameId, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var game = await Games.FindAsync(new object[] { gameId, gameId.ToString() }, cancellationToken);
+        var game = await Games
+            .WithPartitionKey(id.ToString())
+            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
+
         if (game is null)
             return false;
         Games.Remove(game);
@@ -57,11 +59,11 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
         return true;
     }
 
-    public async Task<Game?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
+    public async Task<Game?> GetGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var game = await Games
-            .WithPartitionKey(gameId.ToString())
-            .SingleOrDefaultAsync(g => g.GameId == gameId, cancellationToken);
+            .WithPartitionKey(id.ToString())
+            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
         return game;
     }
 
@@ -85,7 +87,7 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
         if (gamesQuery.RunningOnly)
             query = query.Where(g => g.EndTime == null);
 
-        if (gamesQuery.Ended)
+        if (gamesQuery.Ended == true)
         {
             query = query.Where(g => g.EndTime != null)
                 .OrderBy(g => g.Duration);
@@ -103,7 +105,7 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
     public async Task<Game> UpdateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
         SetPartitionKey(game);
-        Games.Update(game);
+        Games.Add(game);
         await SaveChangesAsync(cancellationToken);
         return game;
     }
