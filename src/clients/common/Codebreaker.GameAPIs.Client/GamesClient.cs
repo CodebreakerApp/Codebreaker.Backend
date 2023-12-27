@@ -29,7 +29,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <returns>A tuple with the unique game id, the number of codes that need to be filled, the maximum available moves, and possible field values for guesses</returns>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="HttpRequestException"></exception>"
-    public async Task<(Guid GameId, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)>
+    public async Task<(Guid Id, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)>
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
         try
@@ -38,7 +38,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
-            return (gameResponse.GameId, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
+            return (gameResponse.Id, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
         }
         catch (HttpRequestException ex)
         {
@@ -50,7 +50,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <summary>
     /// Set a game move by supplying guess pegs. This method returns the results of the move (the key pegs), and whether the game ended, and whether the game was won.
     /// </summary>
-    /// <param name="gameId">The game id received from StartGameAsync</param>
+    /// <param name="id">The game id received from StartGameAsync</param>
     /// <param name="playerName">The player name (needs to be the same as received). This must match with the game started.</param>
     /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values. This must match with the game started.</param>
     /// <param name="moveNumber">The incremented move number. The game analyzer returns an error if this does not match the state of the game.</param>
@@ -59,15 +59,15 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <returns></returns>
     /// <exception cref="HttpRequestException"></exception>"
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid gameId, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
+    public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid id, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
         try
         {
-            UpdateGameRequest updateGameRequest = new(gameId, gameType, playerName, moveNumber)
+            UpdateGameRequest updateGameRequest = new(id, gameType, playerName, moveNumber)
             {
                 GuessPegs = guessPegs
             };
-            var response = await _httpClient.PatchAsJsonAsync($"/games/{gameId}", updateGameRequest, s_jsonOptions, cancellationToken);
+            var response = await _httpClient.PatchAsJsonAsync($"/games/{id}", updateGameRequest, s_jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
                 ?? throw new InvalidOperationException();
@@ -84,16 +84,16 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <summary>
     /// Retrieves a game by ID.
     /// </summary>
-    /// <param name="gameId">The unique identifier of a game.</param>
+    /// <param name="id">The unique identifier of a game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
     /// <returns>The <see cref="GameInfo"/> if it exists, otherwise null.</returns>
     /// <exception cref="HttpRequestException"></exception>
-    public async Task<GameInfo?> GetGameAsync(Guid gameId, CancellationToken cancellationToken = default)
+    public async Task<GameInfo?> GetGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
         GameInfo? game;
         try
         {
-            game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{gameId}", s_jsonOptions, cancellationToken);
+            game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {

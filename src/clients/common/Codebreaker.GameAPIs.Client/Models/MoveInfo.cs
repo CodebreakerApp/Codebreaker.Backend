@@ -3,11 +3,11 @@
 /// <summary>
 /// Represents the move within a game <see cref="GameInfo"/ >with the guess pegs and key pegs.
 /// </summary>
-/// <param name="moveId"/>The unique identifier of the move. This is needed to reference the move.
+/// <param name="id"/>The unique identifier of the move. This is needed to reference the move.
 /// <param name="moveNumber"/>The move number for this move within the associated game.
-public class MoveInfo(Guid moveId, int moveNumber)
+public class MoveInfo(Guid id, int moveNumber)
 {
-    public Guid MoveId { get; private set; } = moveId;
+    public Guid Id { get; private set; } = id;
 
     /// <summary>
     /// The move number for this move within the associated game.
