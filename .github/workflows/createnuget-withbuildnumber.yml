@@ -82,7 +82,7 @@ jobs:
         run: dotnet pack --version-suffix ${{ steps.version-suffix.outputs.version-suffix-string }} -c Release ${{ inputs.projectfile-path }} -o packages
         
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.artifact-name }}
           path: packages/*
