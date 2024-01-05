@@ -5,7 +5,7 @@ namespace Codebreaker.GameAPIs.Client.Tests;
 public class TestGamesClient
 {
     [Fact]
-    public async Task TestStartGame6x4Async()
+    public async Task StartGameAsync_Should_ReturnResults()
     {
         // Arrange
         var configMock = new Mock<IConfiguration>();
@@ -60,7 +60,7 @@ public class TestGamesClient
         Assert.Equal(6, FieldValues["colors"].Length);
 
         handlerMock.Protected().Verify(
-        "SendAsync",
+            "SendAsync",
             Times.Once(),
             ItExpr.IsAny<HttpRequestMessage>(),
             ItExpr.IsAny<CancellationToken>());
