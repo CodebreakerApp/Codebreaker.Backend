@@ -1,20 +1,15 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json;
-
-using Codebreaker.GameAPIs.Client.Models;
-
-using Microsoft.Extensions.Logging;
-
-namespace Codebreaker.GameAPIs.Client;
+﻿namespace Codebreaker.GameAPIs.Client;
 
 /// <summary>
 /// Client to interact with the Codebreaker Game API.
 /// </summary>
 public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : IGamesClient
 {
+    internal const string ActivitySourceName = "Codebreaker.GameAPIs.Client";
+    internal const string Version = "1.0.0";
+    internal static ActivitySource ActivitySource { get; } = new ActivitySource(ActivitySourceName, Version);
+
     private readonly HttpClient _httpClient = httpClient;
-    private readonly ILogger _logger = logger;
     private readonly static JsonSerializerOptions s_jsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
@@ -32,17 +27,22 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     public async Task<(Guid Id, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)>
         StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default)
     {
+        using Activity? activity = ActivitySource.StartActivity("StartGameAsync", ActivityKind.Client);
         try
         {
             CreateGameRequest createGameRequest = new(gameType, playerName);
             var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
             response.EnsureSuccessStatusCode();
             var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
+
+            logger.GameCreated(gameResponse.Id.ToString());
+            activity?.GameCreatedEvent(gameResponse.Id.ToString(), gameResponse.GameType.ToString());
             return (gameResponse.Id, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "StartGameAsync error {error}", ex.Message);
+            logger.StartGameError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
             throw;
         }
     }
@@ -61,6 +61,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid id, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
+        using Activity? activity = ActivitySource.StartActivity("SetMoveAsync", ActivityKind.Client);
         try
         {
             UpdateGameRequest updateGameRequest = new(id, gameType, playerName, moveNumber)
@@ -71,12 +72,17 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             response.EnsureSuccessStatusCode();
             var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
                 ?? throw new InvalidOperationException();
+
+            logger.MoveSet(id.ToString(), moveResponse.MoveNumber);
+            activity?.AddEvent(new ActivityEvent("GameCreated"));
+
             (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
             return (results, ended, isVictory);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "SetMoveAsync error {error}", ex.Message);
+            logger.SetMoveError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
             throw;
         }
     }
@@ -90,19 +96,22 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <exception cref="HttpRequestException"></exception>
     public async Task<GameInfo?> GetGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        using Activity? activity = ActivitySource.StartActivity("GetGameAsync", ActivityKind.Client);
         GameInfo? game;
         try
         {
             game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken);
+            logger.GameReceived(id.ToString(), game?.EndTime != null, game?.LastMoveNumber ?? 0);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            _logger.LogInformation(ex, "GetGameAsync game not found - {error}", ex.Message);
+            logger.GetGameNotFound(id, ex.Message);
             return default;
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "GetGameAsync error {error}", ex.Message);
+            logger.GetGameError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
             throw;
         }
         return game;
@@ -117,14 +126,18 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <exception cref="HttpRequestException"></exception>
     public async Task<IEnumerable<GameInfo>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default)
     {
+        using Activity? activity = ActivitySource.StartActivity("GetGamesAsync", ActivityKind.Client);
         try
         {
-            IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{query.AsUrlQuery()}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
+            string urlQuery = query.AsUrlQuery();
+            IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{urlQuery}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
+            logger.GamesReceived(urlQuery, games.Count());
             return games;
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "GetGamesAsync error {error}", ex.Message);
+            logger.GetGamesError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
             throw;
         }
     }
