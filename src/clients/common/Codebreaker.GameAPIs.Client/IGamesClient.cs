@@ -1,6 +1,5 @@
-﻿using Codebreaker.GameAPIs.Client.Models;
+﻿namespace Codebreaker.GameAPIs.Client;
 
-namespace Codebreaker.GameAPIs.Client;
 public interface IGamesClient
 {
     Task<GameInfo?> GetGameAsync(Guid id, CancellationToken cancellationToken = default);
