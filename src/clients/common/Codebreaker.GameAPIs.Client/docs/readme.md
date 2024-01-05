@@ -30,3 +30,28 @@ The following model types are used to return information about the game.
 | `GamesQuery` | Use this class to query for game info lists using `GetGamesAsync` |
 | `GameInfo` | Contains the game id, the game status, the game moves and the game result |
 | `MoveInfo` | Contains the move number, the guess and the result of the guess. Contained within a `GameInfo` |
+
+## How to use
+
+The following code snippet shows how to use the `GamesClient` class to play the game.
+
+Configure the DI container with the GamesClient class (use the NuGet package `Microsoft.Extensions.Http` to configure the `HttpClient` class):
+
+```csharp
+services.AddHttpClient<IGamesClient, GamesClient>(client =>
+{
+	client.BaseAddress = new Uri("https://localhost:5001");
+});
+```
+
+Start a game:
+
+```csharp
+(Guid id, int numberCodes, int maxMoves, IDictionary<string, string[]> fieldValues) = await gamesClient.StartGameAsync("Game6x4", "player1");
+```
+
+Set a move:
+
+```csharp
+(string[] result, bool ended, bool isVictory) = await gameClient.SetMoveAsync(id, "Game6x4", [ "Red", "Green", "Blue", "Yellow" ]);
+```
