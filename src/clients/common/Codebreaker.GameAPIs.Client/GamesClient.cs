@@ -35,7 +35,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             response.EnsureSuccessStatusCode();
             var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
 
-            logger.GameCreated(gameResponse.Id.ToString());
+            logger.GameCreated(gameResponse.Id);
             activity?.GameCreatedEvent(gameResponse.Id.ToString(), gameResponse.GameType.ToString());
             return (gameResponse.Id, gameResponse.NumberCodes, gameResponse.MaxMoves, gameResponse.FieldValues);
         }
@@ -73,7 +73,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
                 ?? throw new InvalidOperationException();
 
-            logger.MoveSet(id.ToString(), moveResponse.MoveNumber);
+            logger.MoveSet(id, moveResponse.MoveNumber);
             activity?.AddEvent(new ActivityEvent("GameCreated"));
 
             (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
@@ -101,7 +101,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken);
-            logger.GameReceived(id.ToString(), game?.EndTime != null, game?.LastMoveNumber ?? 0);
+            logger.GameReceived(id, game?.EndTime != null, game?.LastMoveNumber ?? 0);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
