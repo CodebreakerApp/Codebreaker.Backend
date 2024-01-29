@@ -8,7 +8,6 @@ See [Codebreakerlight](https://github.com/codebreakerapp/codebreakerlight) for a
 
 ## Types available in this package
 
-
 | Type | Description |
 | --- | --- |
 | `GamesCosmosContext` | This class implements `IGamesRepository` |
