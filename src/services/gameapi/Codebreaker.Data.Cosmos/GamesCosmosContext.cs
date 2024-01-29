@@ -51,6 +51,7 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
     {
         var game = await Games
             .WithPartitionKey(id.ToString())
+            .AsTracking()
             .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
 
         if (game is null)
