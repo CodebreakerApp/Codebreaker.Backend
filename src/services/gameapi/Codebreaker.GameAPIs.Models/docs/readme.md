@@ -19,5 +19,5 @@ See [Codebreakerlight](https://github.com/codebreakerapp/codebreakerlight) for a
 | Type | Description |
 | --- | --- |
 | CodebreakerException | Exceptions thrown within the backend. |
-| CodebreakerExceptionCodes | Contants of exception codes. |
+| CodebreakerExceptionCodes | Constants of exception codes. |
 | GameExtensions | Extension methods for the Game type. |
