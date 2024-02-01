@@ -1,4 +1,5 @@
 ﻿using Codebreaker.GameAPIs.Contracts;
+using System.Text.Json.Serialization;
 
 namespace Codebreaker.GameAPIs.Models;
 
@@ -25,7 +26,10 @@ public class Game(
     public required IDictionary<string, IEnumerable<string>> FieldValues { get; init; }
 
     public required string[] Codes { get; init; }
-    public ICollection<Move> Moves { get; } = new List<Move>();
+
+    [JsonInclude]
+    private List<Move> _moves = [];
+    public ICollection<Move> Moves => _moves;
 
     public override string ToString() => $"{Id}:{GameType} - {StartTime}";
 }
