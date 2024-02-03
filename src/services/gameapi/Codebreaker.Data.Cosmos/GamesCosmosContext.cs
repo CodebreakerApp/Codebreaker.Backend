@@ -107,7 +107,7 @@ public class GamesCosmosContext(DbContextOptions<GamesCosmosContext> options) : 
     public async Task<Game> UpdateGameAsync(Game game, CancellationToken cancellationToken = default)
     {
         SetPartitionKey(game);
-        Games.Add(game);
+        Games.Update(game);
         await SaveChangesAsync(cancellationToken);
         return game;
     }
