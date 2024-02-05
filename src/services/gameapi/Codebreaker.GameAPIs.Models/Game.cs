@@ -27,8 +27,10 @@ public class Game(
 
     public required string[] Codes { get; init; }
 
-    [JsonInclude]
+    [JsonInclude()]
+    [JsonPropertyName("moves")]
     private List<Move> _moves = [];
+    [JsonIgnore]
     public ICollection<Move> Moves => _moves;
 
     public override string ToString() => $"{Id}:{GameType} - {StartTime}";
