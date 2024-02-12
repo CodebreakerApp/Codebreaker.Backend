@@ -1,3 +1,4 @@
+using Codebreaker.GameAPIs.Client.Models;
 using System.Diagnostics;
 
 namespace Codebreaker.GameAPIs.Client.Tests;
@@ -8,7 +9,7 @@ public class GamesClientTests
     public async Task StartGameAsync_Should_ReturnResults()
     {
         // Arrange
-        (var httpClient, var handlerMock) = GetHttpClientSkeleton();
+        (var httpClient, var handlerMock) = GetHttpClientReturningACreatedGameSkeleton();
 
         GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
 
@@ -30,10 +31,10 @@ public class GamesClientTests
     }
 
     [Fact]
-    public async Task StartGameAsync_Should_StartGameAndTriggerGameCreatedEven()
+    public async Task StartGameAsync_Should_StartGameAndTriggerGameCreatedEvent()
     {
         // Arrange
-        (var httpClient, var handlerMock) = GetHttpClientSkeleton();
+        (var httpClient, var handlerMock) = GetHttpClientReturningACreatedGameSkeleton();
         bool startActivityReceived = false;
         bool stopActivityReceived = false;
 
@@ -77,15 +78,31 @@ public class GamesClientTests
         Assert.True(stopActivityReceived);
     }
 
-    private static (HttpClient Client, Mock<HttpMessageHandler> Handler) GetHttpClientSkeleton()
+    [Fact]
+    public async Task GetGamesAsync_Should_ReturnResults()
     {
-        var configMock = new Mock<IConfiguration>();
+        // Arrange
+        (var httpClient, var handlerMock) = GetHttpClientReturningGamesSkeleton();
+
+        GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
+
+        // Act
+        GamesQuery query = new(GameType.Game6x4, "test", new DateOnly(2024, 2, 14), Ended: false);
+        var games = await gamesClient.GetGamesAsync(query);
+
+        // Assert
+        Assert.Equal(2, games.Count());
+    }
+
+    private static (HttpClient Client, Mock<HttpMessageHandler> Handler) GetHttpClientReturningACreatedGameSkeleton()
+    {
+        Mock<IConfiguration> configMock = new();
         configMock.Setup(x => x[It.IsAny<string>()]).Returns("http://localhost:5000");
 
         Mock<HttpMessageHandler> handlerMock = new(MockBehavior.Strict);
         string returnMessage = """
         {
-            "gameId": "af8dd39f-6e16-41ef-9155-dcd3cf081e87",
+            "id": "af8dd39f-6e16-41ef-9155-dcd3cf081e87",
             "gameType": "Game6x4",
             "playerName": "test",
             "numberCodes": 4,
@@ -101,6 +118,168 @@ public class GamesClientTests
                 ]
             }
         }
+        """;
+        handlerMock.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(returnMessage)
+            }).Verifiable();
+
+        return (new(handlerMock.Object)
+        {
+            BaseAddress = new Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
+        }, handlerMock);
+    }
+
+    private static (HttpClient Client, Mock<HttpMessageHandler> Handler) GetHttpClientReturningGamesSkeleton()
+    {
+        Mock<IConfiguration> configMock = new();
+        configMock.Setup(x => x[It.IsAny<string>()]).Returns("http://localhost:5000");
+
+        Mock<HttpMessageHandler> handlerMock = new(MockBehavior.Strict);
+        string returnMessage = """
+        [
+          {
+            "id": "91f3c729-5e6e-459a-b656-2d77f3f45dd9",
+            "gameType": "Game6x4",
+            "playerName": "test",
+            "playerIsAuthenticated": false,
+            "startTime": "2024-02-14T18:14:49.4420411Z",
+            "endTime": null,
+            "duration": null,
+            "lastMoveNumber": 1,
+            "numberCodes": 4,
+            "maxMoves": 12,
+            "isVictory": false,
+            "fieldValues": {
+              "colors": [
+                "Red",
+                "Green",
+                "Blue",
+                "Yellow",
+                "Purple",
+                "Orange"
+              ]
+            },
+            "codes": [
+              "Yellow",
+              "Yellow",
+              "Green",
+              "Green"
+            ],
+            "moves": [
+              {
+                "id": "963baba8-44b8-45e5-81f3-193959ae5bf6",
+                "moveNumber": 1,
+                "guessPegs": [
+                  "Red",
+                  "Green",
+                  "Blue",
+                  "Yellow"
+                ],
+                "keyPegs": [
+                  "White",
+                  "White"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "bbab5508-945b-4122-958b-576b6a5088af",
+            "gameType": "Game6x4",
+            "playerName": "test",
+            "playerIsAuthenticated": false,
+            "startTime": "2024-02-14T17:57:18.8385818Z",
+            "endTime": "2024-02-14T17:59:28.1685725Z",
+            "duration": "00:02:09.3299907",
+            "lastMoveNumber": 4,
+            "numberCodes": 4,
+            "maxMoves": 12,
+            "isVictory": true,
+            "fieldValues": {
+              "colors": [
+                "Red",
+                "Green",
+                "Blue",
+                "Yellow",
+                "Purple",
+                "Orange"
+              ]
+            },
+            "codes": [
+              "Red",
+              "Yellow",
+              "Red",
+              "Green"
+            ],
+            "moves": [
+              {
+                "id": "a51f3ff2-dac6-47e9-8593-a069706bd095",
+                "moveNumber": 1,
+                "guessPegs": [
+                  "Red",
+                  "Green",
+                  "Blue",
+                  "Yellow"
+                ],
+                "keyPegs": [
+                  "Black",
+                  "White",
+                  "White"
+                ]
+              },
+              {
+                "id": "cc6bfe41-37ce-4bf0-ab81-1b1f2169e87d",
+                "moveNumber": 2,
+                "guessPegs": [
+                  "Red",
+                  "Blue",
+                  "Green",
+                  "Purple"
+                ],
+                "keyPegs": [
+                  "Black",
+                  "White"
+                ]
+              },
+              {
+                "id": "bcfe6f5c-7222-4716-b410-f445daecbee3",
+                "moveNumber": 3,
+                "guessPegs": [
+                  "Red",
+                  "Yellow",
+                  "Orange",
+                  "Blue"
+                ],
+                "keyPegs": [
+                  "Black",
+                  "Black"
+                ]
+              },
+              {
+                "id": "6e245df6-47a5-42ef-a459-3393ba2dd50a",
+                "moveNumber": 4,
+                "guessPegs": [
+                  "Red",
+                  "Yellow",
+                  "Red",
+                  "Green"
+                ],
+                "keyPegs": [
+                  "Black",
+                  "Black",
+                  "Black",
+                  "Black"
+                ]
+              }
+            ]
+          }
+        ]
         """;
         handlerMock.Protected()
             .Setup<Task<HttpResponseMessage>>(
