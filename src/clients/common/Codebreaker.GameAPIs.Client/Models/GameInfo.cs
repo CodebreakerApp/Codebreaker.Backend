@@ -20,7 +20,7 @@ public class GameInfo(
     /// <summary>
     /// Gets the unique identifier of the game.
     /// </summary>
-    public Guid GameId { get; private set; } = id;
+    public Guid Id { get; private set; } = id;
 
     /// <summary>
     /// Gets the type of the game. <see cref="GameType"/>
@@ -53,7 +53,7 @@ public class GameInfo(
     public TimeSpan? Duration { get; set; }
 
     /// <summary>
-    /// Gets the last move number. This number is set from an game move analyer after the move was set.
+    /// Gets the last move number. This number is set from an game move analyzer after the move was set.
     /// </summary>  
     public int LastMoveNumber { get; set; } = 0;
 
@@ -87,5 +87,5 @@ public class GameInfo(
     /// </summary>
     public ICollection<MoveInfo> Moves { get; init; } = [];
 
-    public override string ToString() => $"{GameId}:{GameType} - {StartTime}";
+    public override string ToString() => $"{Id}:{GameType} - {StartTime}";
 }
