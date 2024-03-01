@@ -29,7 +29,7 @@ public class GameTests
         Assert.Equivalent(game, actualGame);
     }
 
-    private Game CreateGameSkeleton()
+    private static Game CreateGameSkeleton()
     {
         Game game = new(Guid.NewGuid(), "Game6x4", "test", DateTime.Now, 4, 12)
         {
@@ -42,7 +42,7 @@ public class GameTests
         return game;
     }
 
-    private Game CreateGameWithMoveSkeleton()
+    private static Game CreateGameWithMoveSkeleton()
     {
         Game game = CreateGameSkeleton();
 
