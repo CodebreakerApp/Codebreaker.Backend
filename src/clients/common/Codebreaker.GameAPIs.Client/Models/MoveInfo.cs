@@ -29,7 +29,7 @@ public class MoveInfo(Guid id, int moveNumber, string[] guessPegs, string[] keyP
     /// </summary>
     public string[] KeyPegs { get; private set; } = keyPegs;
 
-    public override string ToString() => $"{MoveNumber}. " +
-        $"{string.Join('#', GuessPegs)} : " +
-        $"{string.Join('#', KeyPegs)}";
+    public override string ToString() => @$"{MoveNumber}.
+        {string.Join('#', GuessPegs)} :
+        {string.Join('#', KeyPegs)}";
 }
