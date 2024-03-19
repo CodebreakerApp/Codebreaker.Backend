@@ -21,4 +21,10 @@ internal static class ActivityExtensions
                     new KeyValuePair<string, object?>("gameType", gameType) 
                 }));
     }
+
+    public static void GameCanceledEvent(this Activity? activity, string gameId)
+    {
+        activity?.SetBaggage("gameId", gameId);
+        activity?.AddEvent(new ActivityEvent("GameCanceled"));
+    }
 }
