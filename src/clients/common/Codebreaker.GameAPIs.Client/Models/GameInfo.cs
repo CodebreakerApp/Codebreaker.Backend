@@ -1,21 +1,26 @@
 ﻿namespace Codebreaker.GameAPIs.Client.Models;
 
 /// <summary>
-/// Complete information about a single game - including the soltuion and the moves the player made.
+/// Complete information about a single game - including the solution and the moves the player made.
 /// </summary>
 /// <param name="id">The unique identifier of the game</param>
-/// <param name="gameType"></param>
-/// <param name="playerName"></param>
-/// <param name="startTime"></param>
-/// <param name="numberCodes"></param>
-/// <param name="maxMoves"></param>
+/// <param name="gameType">The type of the game</param>
+/// <param name="playerName">The name of the player</param>
+/// <param name="startTime">The start time of the game</param>
+/// <param name="numberCodes">The number of codes the player needs to fill</param>
+/// <param name="maxMoves">The maximum number of moves the game ends when it's not solved</param>
+/// <param name="fieldValues">A list of possible field values the user has to choose from</param>
+/// <param name="codes">The solution of the game with string representations of the codes</param>
 public class GameInfo(
     Guid id,
     string gameType,
     string playerName,
     DateTime startTime,
     int numberCodes,
-    int maxMoves)
+    int maxMoves,
+    IDictionary<string, IEnumerable<string>> fieldValues,
+    string[] codes
+)
 {
     /// <summary>
     /// Gets the unique identifier of the game.
@@ -43,7 +48,7 @@ public class GameInfo(
     public DateTime StartTime { get; private set; } = startTime;
 
     /// <summary>
-    /// Gets the end time of the game or null if it did not end yet. This value is set from a game guess anylzer after the game was ended.
+    /// Gets the end time of the game or null if it did not end yet. This value is set from a game guess analyzer after the game was ended.
     /// </summary>
     public DateTime? EndTime { get; set; }
 
@@ -53,7 +58,7 @@ public class GameInfo(
     public TimeSpan? Duration { get; set; }
 
     /// <summary>
-    /// Gets the last move number. This number is set from an game move analyzer after the move was set.
+    /// Gets the last move number. This number is set from a game move analyzer after the move was set.
     /// </summary>  
     public int LastMoveNumber { get; set; } = 0;
 
@@ -63,7 +68,7 @@ public class GameInfo(
     public int NumberCodes { get; private set; } = numberCodes;
 
     /// <summary>
-    /// Gets the maximum number of moves the game ends when its not solved.
+    /// Gets the maximum number of moves the game ends when it's not solved.
     /// </summary>
     public int MaxMoves { get; private set; } = maxMoves;
 
@@ -73,14 +78,14 @@ public class GameInfo(
     public bool IsVictory { get; set; } = false;
 
     /// <summary>
-    /// A list of possible field values the user has to chose from
+    /// A list of possible field values the user has to choose from
     /// </summary>
-    public required IDictionary<string, IEnumerable<string>> FieldValues { get; init; }
+    public IDictionary<string, IEnumerable<string>> FieldValues { get; private set; } = fieldValues;
 
     /// <summary>
     /// This is the solution of the game with string representations of the codes
     /// </summary>
-    public required string[] Codes { get; init; }
+    public string[] Codes { get; private set; } = codes;
 
     /// <summary>
     /// A list of moves the player made
