@@ -8,15 +8,11 @@
 /// <param name="PlayerName">The name of the player</param>
 /// <param name="NumberCodes">The number of the codes the player needs to fill</param>
 /// <param name="MaxMoves">The maximum number of moves the game ends when its not solved</param>
+/// <param name="FieldValues">A list of possible field values the user has to choose from</param>
 internal record class CreateGameResponse(
     Guid Id,
     GameType GameType,
     string PlayerName,
     int NumberCodes,
-    int MaxMoves)
-{
-    /// <summary>
-    /// The possible field values for a game move
-    /// </summary>
-    public required IDictionary<string, string[]> FieldValues { get; init; }
-}
+    int MaxMoves,
+    IDictionary<string, string[]> FieldValues);
