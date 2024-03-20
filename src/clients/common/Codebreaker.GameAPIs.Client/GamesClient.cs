@@ -58,7 +58,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             var request = new UpdateGameRequest(id, gameType, playerName, 0, true);
-            var response = await _httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", request, GamesClientJsonSerializerContext.Default.UpdateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
             logger.GameCanceled(id);
             activity?.GameCanceledEvent(id.ToString());
