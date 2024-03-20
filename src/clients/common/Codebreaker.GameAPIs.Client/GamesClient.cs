@@ -1,4 +1,6 @@
-﻿namespace Codebreaker.GameAPIs.Client;
+﻿using Codebreaker.GameAPIs.Client.Serialization;
+
+namespace Codebreaker.GameAPIs.Client;
 
 /// <summary>
 /// Client to interact with the Codebreaker Game API.
@@ -8,12 +10,6 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     internal const string ActivitySourceName = "Codebreaker.GameAPIs.Client";
     internal const string Version = "1.0.0";
     internal static ActivitySource ActivitySource { get; } = new ActivitySource(ActivitySourceName, Version);
-
-    private readonly HttpClient _httpClient = httpClient;
-    private readonly static JsonSerializerOptions s_jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     /// <summary>
     /// Starts a new game
@@ -31,9 +27,9 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             CreateGameRequest createGameRequest = new(gameType, playerName);
-            var response = await _httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PostAsJsonAsync("/games", createGameRequest, GamesClientJsonSerializerContext.Default.CreateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
+            var gameResponse = await response.Content.ReadFromJsonAsync(GamesClientJsonSerializerContext.Default.CreateGameResponse, cancellationToken) ?? throw new InvalidOperationException();
 
             logger.GameCreated(gameResponse.Id);
             activity?.GameCreatedEvent(gameResponse.Id.ToString(), gameResponse.GameType.ToString());
@@ -68,10 +64,9 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             {
                 GuessPegs = guessPegs
             };
-            var response = await _httpClient.PatchAsJsonAsync($"/games/{id}", updateGameRequest, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", updateGameRequest, GamesClientJsonSerializerContext.Default.UpdateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
-                ?? throw new InvalidOperationException();
+            var moveResponse = await response.Content.ReadFromJsonAsync(GamesClientJsonSerializerContext.Default.UpdateGameResponse, cancellationToken) ?? throw new InvalidOperationException();
 
             logger.MoveSet(id, moveResponse.MoveNumber);
             activity?.AddEvent(new ActivityEvent("GameCreated"));
@@ -100,7 +95,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         GameInfo? game;
         try
         {
-            game = await _httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken);
+            game = await httpClient.GetFromJsonAsync($"/games/{id}", GamesClientJsonSerializerContext.Default.GameInfo, cancellationToken);
             logger.GameReceived(id, game?.EndTime != null, game?.LastMoveNumber ?? 0);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
@@ -130,7 +125,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             string urlQuery = query.AsUrlQuery();
-            IEnumerable<GameInfo> games = (await _httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{urlQuery}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
+            IEnumerable<GameInfo> games = (await httpClient.GetFromJsonAsync($"/games/{urlQuery}", GamesClientJsonSerializerContext.Default.IEnumerableGameInfo, cancellationToken)) ?? [];
             logger.GamesReceived(urlQuery, games.Count());
             return games;
         }
