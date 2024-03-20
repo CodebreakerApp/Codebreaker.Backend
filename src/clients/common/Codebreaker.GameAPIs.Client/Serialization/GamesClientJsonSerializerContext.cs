@@ -1,11 +1,7 @@
 ﻿namespace Codebreaker.GameAPIs.Client.Serialization;
 
-[JsonSourceGenerationOptions(
-    AllowTrailingCommas = true,
-    PropertyNameCaseInsensitive = true,
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    UseStringEnumConverter = true
-)]
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(CreateGameRequest))]
 [JsonSerializable(typeof(CreateGameResponse))]
 [JsonSerializable(typeof(GameInfo))]  // MoveInfo is contained by GameInfo
