@@ -14,7 +14,7 @@ public class GamesClientTests
         GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
-        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(Models.GameType.Game6x4, "test");
+        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test");
 
         // Assert
         Assert.Equal(4, NumberCodes);
@@ -72,7 +72,7 @@ public class GamesClientTests
         GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
-        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(Models.GameType.Game6x4, "test");
+        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test");
 
         Assert.True(startActivityReceived);
         Assert.True(stopActivityReceived);
