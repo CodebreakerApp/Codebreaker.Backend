@@ -90,7 +90,7 @@ public class GameInfo(
     /// <summary>
     /// A list of moves the player made
     /// </summary>
-    public ICollection<MoveInfo> Moves { get; init; } = [];
+    public ICollection<MoveInfo> Moves { get; set; } = [];
 
     public override string ToString() => $"{Id}:{GameType} - {StartTime}";
 }
