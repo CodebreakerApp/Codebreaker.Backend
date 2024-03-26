@@ -10,7 +10,7 @@
       Codebreaker;CNinnovation;GamesClient;
     </PackageTags>
     <Description>
-      This library contains client code to access the Codebreaker Games APIp. Reference this library to create a client application to access the Codebreaker Games API.
+      This library contains client code to access the Codebreaker Games API. Reference this library to create a client application to access the Codebreaker Games API.
       See https://github.com/codebreakerapp for more information on the complete solution.
     </Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>

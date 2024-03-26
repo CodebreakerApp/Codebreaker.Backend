@@ -16,7 +16,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     };
 
     /// <summary>
-    /// Starts a new game
+    /// Starts a new game.
     /// </summary>
     /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values</param>
     /// <param name="playerName">The name of the player</param>
@@ -84,8 +84,8 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <param name="moveNumber">The incremented move number. The game analyzer returns an error if this does not match the state of the game.</param>
     /// <param name="guessPegs">The guess pegs for this move. The number of guess pegs must conform to the number codes returned when creating the game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
-    /// <returns></returns>
-    /// <exception cref="HttpRequestException"></exception>"
+    /// <returns>A tuple with the results of the move (the key pegs), whether the game ended, and whether the game was won.</returns>
+    /// <exception cref="HttpRequestException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid id, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
