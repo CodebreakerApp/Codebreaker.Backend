@@ -47,6 +47,34 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         }
     }
 
+
+    /// <summary>
+    /// Cancels a game.
+    /// </summary>
+    /// <param name="id">The unique identifier of the game</param>
+    /// <param name="playerName">The name of the player</param>
+    /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the request early</param>
+    /// <exception cref="HttpRequestException"></exception>
+    public async Task CancelGameAsync(Guid id, string playerName, GameType gameType, CancellationToken cancellationToken = default)
+    {
+        using Activity? activity = ActivitySource.StartActivity("CancelGameAsync", ActivityKind.Client);
+        try
+        {
+            var request = new UpdateGameRequest(id, gameType, playerName, 0, true);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            logger.GameCanceled(id);
+            activity?.GameCanceledEvent(id.ToString());
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.CancelGameError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
+            throw;
+        }
+    }
+
     /// <summary>
     /// Set a game move by supplying guess pegs. This method returns the results of the move (the key pegs), and whether the game ended, and whether the game was won.
     /// </summary>

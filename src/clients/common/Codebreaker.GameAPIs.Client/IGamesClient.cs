@@ -6,4 +6,5 @@ public interface IGamesClient
     Task<IEnumerable<GameInfo>> GetGamesAsync(GamesQuery query, CancellationToken cancellationToken = default);
     Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid id, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default);
     Task<(Guid Id, int NumberCodes, int MaxMoves, IDictionary<string, string[]> FieldValues)> StartGameAsync(GameType gameType, string playerName, CancellationToken cancellationToken = default);
+    Task CancelGameAsync(Guid id, string playerName, GameType gameType, CancellationToken cancellationToken = default);
 }
