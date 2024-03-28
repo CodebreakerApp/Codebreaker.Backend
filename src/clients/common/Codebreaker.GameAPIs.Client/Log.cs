@@ -17,6 +17,9 @@ internal static partial class Log
     [LoggerMessage(5004, LogLevel.Error, "SetMoveAsync error {ErrorMessage}", EventName = "SetMoveError")]
     public static partial void SetMoveError(this ILogger logger, string errorMessage, Exception ex);
 
+    [LoggerMessage(5005, LogLevel.Error, "CancelGameAsync error {ErrorMessage}", EventName = "CancelGameError")]
+    public static partial void CancelGameError(this ILogger logger, string errorMessage, Exception ex);
+
     [LoggerMessage(8001, LogLevel.Information, "Game {GameId} created", EventName = "GameCreated")]
     public static partial void GameCreated(this ILogger logger,Guid gameId);
 
@@ -28,4 +31,7 @@ internal static partial class Log
 
     [LoggerMessage(8004, LogLevel.Information, "With query {Query}, {NumberGames} games received", EventName = "GamesReceived")]
     public static partial void GamesReceived(this ILogger logger, string query, int numberGames);
+
+    [LoggerMessage(8005, LogLevel.Information, "Game {GameId} canceled", EventName = "GameCanceled")]
+    public static partial void GameCanceled(this ILogger logger, Guid gameId);
 }

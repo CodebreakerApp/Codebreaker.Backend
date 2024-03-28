@@ -16,7 +16,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     };
 
     /// <summary>
-    /// Starts a new game
+    /// Starts a new game.
     /// </summary>
     /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values</param>
     /// <param name="playerName">The name of the player</param>
@@ -47,6 +47,34 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         }
     }
 
+
+    /// <summary>
+    /// Cancels a game.
+    /// </summary>
+    /// <param name="id">The unique identifier of the game</param>
+    /// <param name="playerName">The name of the player</param>
+    /// <param name="gameType">The game type with one of the <see cref="GameType"/>enum values</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the request early</param>
+    /// <exception cref="HttpRequestException"></exception>
+    public async Task CancelGameAsync(Guid id, string playerName, GameType gameType, CancellationToken cancellationToken = default)
+    {
+        using Activity? activity = ActivitySource.StartActivity("CancelGameAsync", ActivityKind.Client);
+        try
+        {
+            var request = new UpdateGameRequest(id, gameType, playerName, 0, true);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            logger.GameCanceled(id);
+            activity?.GameCanceledEvent(id.ToString());
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.CancelGameError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
+            throw;
+        }
+    }
+
     /// <summary>
     /// Set a game move by supplying guess pegs. This method returns the results of the move (the key pegs), and whether the game ended, and whether the game was won.
     /// </summary>
@@ -56,8 +84,8 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     /// <param name="moveNumber">The incremented move number. The game analyzer returns an error if this does not match the state of the game.</param>
     /// <param name="guessPegs">The guess pegs for this move. The number of guess pegs must conform to the number codes returned when creating the game.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the request early.</param>
-    /// <returns></returns>
-    /// <exception cref="HttpRequestException"></exception>"
+    /// <returns>A tuple with the results of the move (the key pegs), whether the game ended, and whether the game was won.</returns>
+    /// <exception cref="HttpRequestException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<(string[] Results, bool Ended, bool IsVictory)> SetMoveAsync(Guid id, string playerName, GameType gameType, int moveNumber, string[] guessPegs, CancellationToken cancellationToken = default)
     {
