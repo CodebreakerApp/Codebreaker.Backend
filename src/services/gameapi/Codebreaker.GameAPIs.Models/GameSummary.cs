@@ -6,6 +6,7 @@ public record class GameSummary(
     string PlayerName,
     bool IsCompleted,
     bool IsVictory,
+    int NumberMoves,
     DateTime StartTime,
     TimeSpan Duration)
 {
