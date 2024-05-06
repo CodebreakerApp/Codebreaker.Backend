@@ -17,14 +17,15 @@ internal class GamerNameService(IOptions<GamerNameCheckOptions> gamerNameCheckOp
         string[] scopes = ["https://graph.microsoft.com/.default"];
         TokenCredentialOptions options = new() { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
         ClientSecretCredential clientSecretCredential = new(gamerNameCheckOptions.Value.TenantId, gamerNameCheckOptions.Value.ClientId, gamerNameCheckOptions.Value.ClientSecret, options);
-        GraphServiceClient client = new(clientSecretCredential, scopes);
-        var request = client.Users.Request()
-            .Top(1)         // Basically unnecessary, because every gamerName should only exist once
-            .Select("id")
-            .Filter($"{gamerNameCheckOptions.Value.GamerNameAttributeKey} eq '{gamerName}'"); // TODO: Check if the extensionKey is constant. Otherwise:  // await client.Applications["4f40c49c-be3d-4fcd-a413-e3a0a9036df6"].ExtensionProperties.Request().GetResponseAsync();
-        var response = await request.GetResponseAsync(cancellationToken);
-        CheckGamerNameResult? result = await response.Content.ReadFromJsonAsync<CheckGamerNameResult>(cancellationToken: cancellationToken);
-        return result?.Value.Length == 0;
+        GraphServiceClient client = new GraphServiceClient(clientSecretCredential, scopes);
+        var response = await client.Users
+            .GetAsync(builder =>
+            {
+                builder.QueryParameters.Top = 1;
+                builder.QueryParameters.Select = ["id"];
+                builder.QueryParameters.Filter = $"{gamerNameCheckOptions.Value.GamerNameAttributeKey} eq '{gamerName}'";
+            }, cancellationToken);
+        return response?.Value?.Count == 0;
     }
 
     public async IAsyncEnumerable<string> SuggestGamerNamesAsync(int count = 10, [EnumeratorCancellation] CancellationToken cancellationToken = default)
