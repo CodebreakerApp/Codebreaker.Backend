@@ -67,16 +67,6 @@ internal class GamerNameService(IOptions<GamerNameCheckOptions> gamerNameCheckOp
             yield return $"{new string(first)}{parts.Second[candidate.Item2]}{candidate.Item3}";
         }
     }
-
-    private class CheckGamerNameResult
-    {
-        public CheckGamerNameResultItem[] Value { get; set; } = [];
-
-        public class CheckGamerNameResultItem
-        {
-            public string Id { get; set; } = string.Empty;
-        }
-    }
 }
 
 file static class ArrayExtensions
