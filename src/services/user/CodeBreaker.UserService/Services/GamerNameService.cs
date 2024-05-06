@@ -10,34 +10,18 @@ using Microsoft.Graph;
 
 namespace CodeBreaker.UserService.Services;
 
-internal class GamerNameService : IGamerNameService
+internal class GamerNameService(IOptions<GamerNameCheckOptions> gamerNameCheckOptions, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, BlobServiceClient blobServiceClient, IDistributedCache cache) : IGamerNameService
 {
-    private readonly GamerNameCheckOptions _gamerNameCheckOptions;
-
-    private readonly GamerNameSuggestionOptions _gamerNameSuggestionOptions;
-
-    private readonly BlobServiceClient _blobServiceClient;
-
-    private readonly IDistributedCache _cache;
-
-    public GamerNameService(IOptions<GamerNameCheckOptions> gamerNameCheckOptions, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, BlobServiceClient blobServiceClient, IDistributedCache cache)
-    {
-        _gamerNameCheckOptions = gamerNameCheckOptions.Value;
-        _gamerNameSuggestionOptions = gamerNameSuggestionOptions.Value;
-        _blobServiceClient = blobServiceClient;
-        _cache = cache;
-    }
-
     public async Task<bool> IsGamerNameTakenAsync(string gamerName, CancellationToken cancellationToken = default)
     {
         string[] scopes = ["https://graph.microsoft.com/.default"];
         TokenCredentialOptions options = new() { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
-        ClientSecretCredential clientSecretCredential = new(_gamerNameCheckOptions.TenantId, _gamerNameCheckOptions.ClientId, _gamerNameCheckOptions.ClientSecret, options);
+        ClientSecretCredential clientSecretCredential = new(gamerNameCheckOptions.Value.TenantId, gamerNameCheckOptions.Value.ClientId, gamerNameCheckOptions.Value.ClientSecret, options);
         GraphServiceClient client = new(clientSecretCredential, scopes);
         var request = client.Users.Request()
             .Top(1)         // Basically unnecessary, because every gamerName should only exist once
             .Select("id")
-            .Filter($"{_gamerNameCheckOptions.GamerNameAttributeKey} eq '{gamerName}'"); // TODO: Check if the extensionKey is constant. Otherwise:  // await client.Applications["4f40c49c-be3d-4fcd-a413-e3a0a9036df6"].ExtensionProperties.Request().GetResponseAsync();
+            .Filter($"{gamerNameCheckOptions.Value.GamerNameAttributeKey} eq '{gamerName}'"); // TODO: Check if the extensionKey is constant. Otherwise:  // await client.Applications["4f40c49c-be3d-4fcd-a413-e3a0a9036df6"].ExtensionProperties.Request().GetResponseAsync();
         var response = await request.GetResponseAsync(cancellationToken);
         CheckGamerNameResult? result = await response.Content.ReadFromJsonAsync<CheckGamerNameResult>(cancellationToken: cancellationToken);
         return result?.Value.Length == 0;
@@ -46,7 +30,7 @@ internal class GamerNameService : IGamerNameService
     public async IAsyncEnumerable<string> SuggestGamerNamesAsync(int count = 10, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         const string CACHEKEY = "gamerNameParts";
-        byte[]? cachedParts = await _cache.GetAsync(CACHEKEY, cancellationToken);
+        byte[]? cachedParts = await cache.GetAsync(CACHEKEY, cancellationToken);
         GamerNameParts? parts = null;
 
         if (cachedParts != null)
@@ -54,10 +38,10 @@ internal class GamerNameService : IGamerNameService
 
         if (parts == null)
         {
-            BlobClient blobClient = _blobServiceClient.GetBlobContainerClient("user-service").GetBlobClient("gamer-name-parts.json");
+            BlobClient blobClient = blobServiceClient.GetBlobContainerClient("user-service").GetBlobClient("gamer-name-parts.json");
             Stream readStream = await blobClient.OpenReadAsync(cancellationToken: cancellationToken);
             parts = await JsonSerializer.DeserializeAsync<GamerNameParts>(readStream, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }, cancellationToken) ?? throw new ArgumentNullException("Error reading parts for the gamerName");
-            await _cache.SetAsync(CACHEKEY, JsonSerializer.SerializeToUtf8Bytes<GamerNameParts>(parts), new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1) });
+            await cache.SetAsync(CACHEKEY, JsonSerializer.SerializeToUtf8Bytes<GamerNameParts>(parts), new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1) });
         }
 
         if (parts.First.Length == 0 || parts.Second.Length == 0)
@@ -67,7 +51,7 @@ internal class GamerNameService : IGamerNameService
 
         for (int i = 0; i < combinations.Length; i++)
         {
-            var candidate = (parts.First.GetRandomIndex(), parts.Second.GetRandomIndex(), Random.Shared.Next(_gamerNameSuggestionOptions.MinimumNumber, _gamerNameSuggestionOptions.MaximumNumber));
+            var candidate = (parts.First.GetRandomIndex(), parts.Second.GetRandomIndex(), Random.Shared.Next(gamerNameSuggestionOptions.Value.MinimumNumber, gamerNameSuggestionOptions.Value.MaximumNumber));
 
             if (combinations.Contains(candidate))
             {
