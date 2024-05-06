@@ -30,7 +30,7 @@ internal class GamerNameService : IGamerNameService
 
     public async Task<bool> IsGamerNameTakenAsync(string gamerName, CancellationToken cancellationToken = default)
     {
-        string[] scopes = new[] { "https://graph.microsoft.com/.default" };
+        string[] scopes = ["https://graph.microsoft.com/.default"];
         TokenCredentialOptions options = new() { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
         ClientSecretCredential clientSecretCredential = new(_gamerNameCheckOptions.TenantId, _gamerNameCheckOptions.ClientId, _gamerNameCheckOptions.ClientSecret, options);
         GraphServiceClient client = new(clientSecretCredential, scopes);
@@ -85,7 +85,7 @@ internal class GamerNameService : IGamerNameService
 
     private class CheckGamerNameResult
     {
-        public CheckGamerNameResultItem[] Value { get; set; } = Array.Empty<CheckGamerNameResultItem>();
+        public CheckGamerNameResultItem[] Value { get; set; } = [];
 
         public class CheckGamerNameResultItem
         {

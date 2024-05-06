@@ -53,10 +53,10 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     CultureInfo german = new("de");
     CultureInfo english = new("en-US");
-    CultureInfo[] supportedCultures = new[] { german, english };
+    CultureInfo[] supportedCultures = [german, english];
     QueryStringRequestCultureProvider queryString = new();
     AcceptLanguageHeaderRequestCultureProvider langHeader = new();
-    options.RequestCultureProviders = new IRequestCultureProvider[2] { queryString, langHeader };
+    options.RequestCultureProviders = [queryString, langHeader];
     options.SupportedUICultures = supportedCultures;
     options.SupportedCultures = supportedCultures;
     options.DefaultRequestCulture = new RequestCulture(english);
