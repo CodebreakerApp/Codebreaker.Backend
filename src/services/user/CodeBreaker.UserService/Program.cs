@@ -71,9 +71,7 @@ builder.Services.AddScoped<IValidator<User>, UserValidator>();
 
 // Mapping
 TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileFast();
-TypeAdapterConfig<BeforeCreatingUserRequest, User>
-    .NewConfig()
-    .Map(dest => dest.GamerName, src => src.Extension_dd21590c971e431494da34e2a8d47cce_GamerName);
+TypeAdapterConfig<BeforeCreatingUserRequest, User>.NewConfig();
 
 var app = builder.Build();
 
@@ -85,6 +83,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
+//
+// Username endpoints
+//
+// POST /validate-before-user-creation
+// Request: BeforeCreatingUserRequest
+// Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
+// Description: Checks whether the specified user can be created
 app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IUserValidationService userValidationService, CancellationToken cancellationToken) =>
 {
     var user = request.Adapt<User>();
@@ -100,13 +105,23 @@ app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest r
 .WithDescription("Checks whether the specified gamerName is valid")
 .WithOpenApi();
 
+// GET /gamer-names/suggestions
+// Query: int count
+// Response: GamerNameSuggestionsResponse
+// Description: Suggests possible and available gamer names
 app.MapGet("/gamer-names/suggestions", (int? count, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
     new GamerNameSuggestionsResponse(gamerNameService.SuggestGamerNamesAsync(count ?? 10, cancellationToken)))
 .WithName("SuggestGamerNames")
 .WithDescription("Suggessts possible and available gamer names")
 .WithOpenApi();
 
-// Usergroup endpoints
+// GET /enrich-token
+// Query: BeforeIncludingApplicationClaimsRequest
+// Response: BeforeIncludingApplicationClaimsResponse
+// Description: Enrich and shape the access-token with claims
+// Note: This endpoint is used as API-Connector by Azure AD B2C
+//       The endpoint is called before the token is issued to the user.
+//       The user-groups assigned to the user are received from the configuration (IConfiguration).
 app.MapPost("/enrich-token", async (
     BeforeIncludingApplicationClaimsRequest req,
     IConfiguration configuration,
