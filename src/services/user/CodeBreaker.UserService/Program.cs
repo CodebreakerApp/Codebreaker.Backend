@@ -106,4 +106,27 @@ app.MapGet("/gamer-names/suggestions", (int? count, IGamerNameService gamerNameS
 .WithDescription("Suggessts possible and available gamer names")
 .WithOpenApi();
 
+// Usergroup endpoints
+app.MapPost("/enrich-token", async (
+    BeforeIncludingApplicationClaimsRequest req,
+    IConfiguration configuration,
+    CancellationToken cancellationToken
+) =>
+{
+    var userGroups = configuration.GetSection($"UserGroupAssignments:{req.ObjectId}").Get<string[]>() ?? [];
+    return new BeforeIncludingApplicationClaimsResponse()
+    {
+        ObjectId = req.ObjectId,
+        Email = req.Email,
+        //DisplayName = req.DisplayName,
+        GivenName = req.GivenName,
+        Surname = req.Surname,
+        GamerName = req.GamerName,
+        UserGroups = userGroups
+    };
+})
+.WithName("EnrichToken")
+.WithDescription("Enrich and shape the access-token with claims.")
+.WithOpenApi();
+
 app.Run();
