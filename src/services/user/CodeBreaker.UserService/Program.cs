@@ -90,27 +90,50 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 // Request: BeforeCreatingUserRequest
 // Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
 // Description: Checks whether the specified user can be created
-app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IUserValidationService userValidationService, CancellationToken cancellationToken) =>
+app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
 {
-    var user = request.Adapt<User>();
-    var result = await userValidationService.ValidateUserAsync(user, cancellationToken);
+    var result = requestValidator.Validate(request);
 
     if (result.IsValid)
         return Results.Ok(new BeforeCreatingUserSuccessResponse());
 
     return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
-    
 })
 .WithName("CheckGamerName")
 .WithDescription("Checks whether the specified gamerName is valid")
 .WithOpenApi();
 
 // GET /gamer-names/suggestions
-// Query: int count
+// Query: int? count
 // Response: GamerNameSuggestionsResponse
 // Description: Suggests possible and available gamer names
-app.MapGet("/gamer-names/suggestions", (int? count, IGamerNameService gamerNameService, CancellationToken cancellationToken) =>
-    new GamerNameSuggestionsResponse(gamerNameService.SuggestGamerNamesAsync(count ?? 10, cancellationToken)))
+app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, CancellationToken cancellationToken) =>
+{
+    if (count == 0 || count > 100)
+        return Results.BadRequest("Count must be between 1 and 100");
+
+    count ??= 10;
+
+    (string[] First, string[] Second) parts = (gamerNameSuggestionOptions.Value.GamerNameParts.First, gamerNameSuggestionOptions.Value.GamerNameParts.Second);
+    (int, int, int)[] combinations = new (int, int, int)[count.Value];
+    string[] suggestions = new string[count.Value];
+
+    for (int i = 0; i < combinations.Length; i++)
+    {
+        (int First, int Second, int Third) candidate = (parts.First.GetRandomIndex(), parts.Second.GetRandomIndex(), Random.Shared.Next(gamerNameSuggestionOptions.Value.MinimumNumber, gamerNameSuggestionOptions.Value.MaximumNumber));
+
+        if (combinations.Contains(candidate))
+        {
+            i--;
+            continue;
+        }
+
+        combinations[i] = candidate;
+        suggestions[i] = $"{parts.First[candidate.First].ToUpperFirstChar()}{parts.Second[candidate.Second]}{candidate.Third}";
+    }
+
+    return Results.Ok(new GamerNameSuggestionsResponse(suggestions));
+})
 .WithName("SuggestGamerNames")
 .WithDescription("Suggessts possible and available gamer names")
 .WithOpenApi();
@@ -133,7 +156,6 @@ app.MapPost("/enrich-token", async (
     {
         ObjectId = req.ObjectId,
         Email = req.Email,
-        //DisplayName = req.DisplayName,
         GivenName = req.GivenName,
         Surname = req.Surname,
         GamerName = req.GamerName,
