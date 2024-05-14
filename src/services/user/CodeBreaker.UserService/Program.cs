@@ -120,6 +120,7 @@ app.MapPost("/enrich-token", async (
         Email = req.Email,
         GivenName = req.GivenName,
         Surname = req.Surname,
+        DisplayName = $"{req.GivenName} {req.Surname}",
         GamerName = req.GamerName,
         UserGroups = userGroups
     };
