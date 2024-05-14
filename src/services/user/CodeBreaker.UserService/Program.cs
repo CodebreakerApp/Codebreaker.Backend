@@ -54,7 +54,7 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 // Description: Checks whether the specified user can be created
 app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
 {
-    var result = requestValidator.Validate(request);
+    var result = await requestValidator.ValidateAsync(request);
 
     if (result.IsValid)
         return Results.Ok(new BeforeCreatingUserSuccessResponse());
