@@ -50,6 +50,15 @@ internal class BeforeCreatingUserRequestValidator : AbstractValidator<BeforeCrea
         _graphServiceClient.Dispose();
     }
 
+    /// <summary>
+    /// Checks whether the specified gamer name exists.
+    /// </summary>
+    /// <param name="gamerName">The gamer name to check.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>True if the gamer name exists, false otherwise.</returns></returns>
+    /// <remarks>
+    /// In AAD this service requires the permission <b>User.Read.All</b> in order to check whether the gamer name exists.
+    /// </remarks>
     private async Task<bool> DoesGamerNameExistAsync(string gamerName, CancellationToken cancellationToken)
     {
         var response = await _graphServiceClient.Users
