@@ -1,47 +1,17 @@
 using System.Globalization;
-using Azure.Core;
-using Azure.Identity;
-using CodeBreaker.Shared.Models.Users;
-using CodeBreaker.Shared.Models.Users.Api;
-using CodeBreaker.Shared.Validators.Users;
+using CodeBreaker.UserService.Extensions;
 using CodeBreaker.UserService.Models.Api;
 using CodeBreaker.UserService.Options;
-using CodeBreaker.UserService.Services;
-using FastExpressionCompiler;
+using CodeBreaker.UserService.Validators;
 using FluentValidation;
-using Mapster;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-TokenCredential azureCredential = builder.Environment.IsDevelopment()
-    ? new AzureCliCredential()
-    : new ManagedIdentityCredential();
-
-// Azure
-string configEndpoint = builder.Configuration.GetRequired("AzureAppConfigurationEndpoint");
-builder.Configuration.AddAzureAppConfiguration(options =>
-{
-    options.Connect(new Uri(configEndpoint), azureCredential)
-        .Select(KeyFilter.Any, LabelFilter.Null)
-        .Select(KeyFilter.Any, builder.Environment.EnvironmentName)
-        .ConfigureKeyVault(vault => vault.SetCredential(azureCredential));
-});
-builder.Services.AddAzureClients(azureServiceBuilder =>
-{
-    azureServiceBuilder.UseCredential(azureCredential);
-    string storageEndpoint = builder.Configuration.GetRequired("AzureBlobStorageEndpoint");
-    azureServiceBuilder.AddBlobServiceClient(new Uri(storageEndpoint));
-});
-
 // Config
-builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));
-
-// Cache
-builder.Services.AddDistributedMemoryCache();
+builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("UserService:AzureActiveDirectory"));  // TODO: Migrate config to appsettings
+builder.Services.Configure<GamerNameSuggestionOptions>(builder.Configuration.GetRequiredSection("GamerNameSuggestion"));
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -62,16 +32,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.DefaultRequestCulture = new RequestCulture(english);
 });
 
-// Custom services
-builder.Services.AddTransient<IUserValidationService, UserValidationService>();
-builder.Services.AddTransient<IGamerNameService, GamerNameService>();
-
 // Validation
-builder.Services.AddScoped<IValidator<User>, UserValidator>();
-
-// Mapping
-TypeAdapterConfig.GlobalSettings.Compiler = exp => exp.CompileFast();
-TypeAdapterConfig<BeforeCreatingUserRequest, User>.NewConfig();
+builder.Services.AddScoped<IValidator<BeforeCreatingUserRequest>, BeforeCreatingUserRequestValidator>();
 
 var app = builder.Build();
 
