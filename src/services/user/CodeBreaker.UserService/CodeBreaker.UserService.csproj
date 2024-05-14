@@ -9,27 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Validators\**" />
-    <Content Remove="Models\Validators\**" />
-    <EmbeddedResource Remove="Models\Validators\**" />
-    <None Remove="Models\Validators\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.11.2" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.7" />
-    <PackageReference Include="FastExpressionCompiler" Version="4.2.0" />
     <PackageReference Include="FluentValidation" Version="11.9.1" />
-    <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
-    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="7.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.3" />
     <PackageReference Include="Microsoft.Graph" Version="5.51.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.60.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Build.Containers" Version="8.0.204" />
   </ItemGroup>
 
