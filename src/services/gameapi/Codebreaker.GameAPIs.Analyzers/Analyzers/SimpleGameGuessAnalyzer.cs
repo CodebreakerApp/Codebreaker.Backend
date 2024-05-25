@@ -44,7 +44,7 @@ public class SimpleGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveN
 
     protected override void SetGameEndInformation(SimpleColorResult result)
     {
-        bool allCorrect = result.Results.All(r => r == ResultValue.CorrectColor);
+        bool allCorrect = result.Results.All(r => r == ResultValue.CorrectPositionAndColor);
 
         if (allCorrect || _game.LastMoveNumber >= _game.MaxMoves)
         {
