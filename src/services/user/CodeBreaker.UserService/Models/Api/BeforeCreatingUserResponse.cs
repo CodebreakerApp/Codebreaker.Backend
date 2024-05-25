@@ -21,13 +21,11 @@ internal class BeforeCreatingUserSuccessResponse : BeforeCreatingUserResponse
     // Is it possible to overwrite claims by specifying them here. e.g. capitalize gamer name
     //public string? Email { get; set; }
 
-    //public string? DisplayName { get; set; }
-
     //public string? GivenName { get; set; }
 
     //public string? Surname { get; set; }
 
-    //public string? Extension_dd21590c971e431494da34e2a8d47cce_GamerName { get; set; }
+    //public string? Extension_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx_GamerName { get; set; }
 }
 
 internal class BeforeCreatingUserBlockingResponse : BeforeCreatingUserResponse
