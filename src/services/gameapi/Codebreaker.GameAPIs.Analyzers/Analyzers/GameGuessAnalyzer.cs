@@ -5,20 +5,13 @@
 /// </summary>
 /// <typeparam name="TField">The type for guesses.</typeparam>
 /// <typeparam name="TResult">The type returned from the analysis.</typeparam>
-public abstract class GameGuessAnalyzer<TField, TResult> : IGameGuessAnalyzer<TResult>
+public abstract class GameGuessAnalyzer<TField, TResult>(IGame game, TField[] guesses, int moveNumber) : IGameGuessAnalyzer<TResult>
     where TResult : struct
 {
-    protected readonly IGame _game;
-    private readonly int _moveNumber;
+    protected readonly IGame _game = game;
+    private readonly int _moveNumber = moveNumber;
 
-    protected TField[] Guesses { get; private set; }
-
-    protected GameGuessAnalyzer(IGame game, TField[] guesses, int moveNumber)
-    {
-        _game = game;
-        Guesses = guesses;
-        _moveNumber = moveNumber;
-    }
+    protected TField[] Guesses { get; private set; } = guesses;
 
     /// <summary>
     /// Override this method to return the result of the guess analysis.
