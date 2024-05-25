@@ -11,39 +11,40 @@ public class SimpleGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveN
     protected override SimpleColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<ColorField> codesToCheck = new(_game.Codes.ToPegs<ColorField>());
-        List<ColorField> guessPegsToCheck = new(Guesses);
+        List<string> codesToCheck = [.. _game.Codes.ToPegs<ColorField>().Select(cf => cf.ToString()) ];
+        List<string> guessPegsToCheck = [.. Guesses.Select(g => g.ToString())];
+        List<int> positionsToIgnore = []; 
 
-        var results = Enumerable.Repeat(ResultValue.Incorrect, 4).ToArray();
-
-        for (int i = 0; i < results.Length; i++)
-        {
-            results[i] = ResultValue.Incorrect;
-        }
+        ResultValue[] results = [.. Enumerable.Repeat(ResultValue.Incorrect, 4)];
 
         // check black
-        for (int i = 0; i < _game.Codes.Length; i++)
+        for (int i = 0; i < guessPegsToCheck.Count; i++)
         {
             // check black
             if (guessPegsToCheck[i] == codesToCheck[i])
             {
                 results[i] = ResultValue.CorrectPositionAndColor;
-            }
-            else // check white
-            {
-                if (codesToCheck.Contains(codesToCheck[i]) && results[i] == ResultValue.Incorrect)
-                {
-                    results[i] = ResultValue.CorrectColor;
-                }
+                positionsToIgnore.Add(i);
+                codesToCheck[i] = string.Empty;
             }
         }
 
+        // check white
+        for (int i = 0; i < guessPegsToCheck.Count; i++)
+        {
+            if (positionsToIgnore.Contains(i)) continue;
+            int ix = codesToCheck.IndexOf(guessPegsToCheck[i]);
+            if (ix == -1) continue;
+            results[i] = ResultValue.CorrectColor;
+            codesToCheck[ix] = string.Empty;
+        }
+ 
         return new SimpleColorResult(results);
     }
 
     protected override void SetGameEndInformation(SimpleColorResult result)
     {
-        bool allCorrect = result.Results.Any(r => r == ResultValue.CorrectColor);
+        bool allCorrect = result.Results.All(r => r == ResultValue.CorrectColor);
 
         if (allCorrect || _game.LastMoveNumber >= _game.MaxMoves)
         {
