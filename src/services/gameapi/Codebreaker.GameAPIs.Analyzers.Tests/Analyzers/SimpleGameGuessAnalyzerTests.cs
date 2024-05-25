@@ -16,7 +16,7 @@ public class SimpleGameGuessAnalyzerTests
             ResultValue.CorrectColor,
             ResultValue.Incorrect
         ]);
-        SimpleColorResult? resultKeyPegs = TestSkeleton(
+        SimpleColorResult resultKeyPegs = TestSkeleton(
             [Green, Yellow, Green, Black],
             [Yellow, Green, Black, Blue]
         );
@@ -33,7 +33,7 @@ public class SimpleGameGuessAnalyzerTests
     }
 
     [Fact]
-    public void ShouldThrowOnInvalidGuessCount()
+    public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
         Assert.Throws<ArgumentException>(() => 
             TestSkeleton(
@@ -43,7 +43,7 @@ public class SimpleGameGuessAnalyzerTests
     }
 
     [Fact]
-    public void ShouldThrowOnInvalidGuessValues()
+    public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
         Assert.Throws<ArgumentException>(() => 
             TestSkeleton(
@@ -53,7 +53,7 @@ public class SimpleGameGuessAnalyzerTests
     }
 
     [Fact]
-    public void ShouldThrowOnInvalidMoveNumber()
+    public void SetMove_ShouldThrowOnInvalidMoveNumber()
     {
         Assert.Throws<ArgumentException>(() => 
             TestSkeleton(
@@ -62,13 +62,70 @@ public class SimpleGameGuessAnalyzerTests
     }
 
     [Fact]
-    public void ShouldNotIncrementMoveNumberOnInvalidMove()
+    public void GetResult_ShouldNotIncrementMoveNumberOnInvalidMove()
     {
         IGame game = TestSkeletonWithGame(
             [Green, Yellow, Green, Black],
             [Yellow, Green, Black, Blue], moveNumber: 2);
 
         Assert.Equal(0, game?.LastMoveNumber);
+    }
+
+    [Fact]
+    public void GetResult_WithGameWon_ShouldSetCorrectGameEndInformation()
+    {
+        // Arrange
+        var game = new MockColorGame
+        {
+            GameType = GameTypes.Game6x4Mini,
+            NumberCodes = 4,
+            MaxMoves = 12,
+            IsVictory = false,
+            FieldValues = new Dictionary<string, IEnumerable<string>>()
+            {
+                [FieldCategories.Colors] = [.. TestData6x4.Colors6]
+            },
+            Codes = ["Red", "Blue", "Green", "Yellow"]
+        };
+
+        var guesses = new string[] { "Red", "Blue", "Green", "Yellow" }.ToPegs<ColorField>().ToArray();
+        var analyzer = new SimpleGameGuessAnalyzer(game, guesses, 1);
+
+        // Act
+        var result = analyzer.GetResult();
+
+        // Assert
+        Assert.NotNull(game.EndTime);
+        Assert.NotNull(game.Duration);
+        Assert.True(game.IsVictory);
+    }
+
+    [Fact]
+    public void GetResult_WithGameNotComplete_ShouldSetCorrectGameEndInformation()
+    {
+        // Arrange
+        var game = new MockColorGame
+        {
+            GameType = GameTypes.Game6x4Mini,
+            NumberCodes = 4,
+            MaxMoves = 12,
+            IsVictory = false,
+            FieldValues = new Dictionary<string, IEnumerable<string>>()
+            {
+                [FieldCategories.Colors] = [.. TestData6x4.Colors6]
+            },
+            Codes = ["Red", "Blue", "Green", "Yellow"]
+        };
+
+        var guesses = new string[] { "Red", "Yellow", "Green", "Yellow" }.ToPegs<ColorField>().ToArray();
+        var analyzer = new SimpleGameGuessAnalyzer(game, guesses, 1);
+
+        // Act
+        var result = analyzer.GetResult();
+
+        // Assert
+        Assert.Null(game.EndTime);
+        Assert.False(game.IsVictory);
     }
 
     private static SimpleColorResult TestSkeleton(string[] codes, string[] guesses, int moveNumber = 1)
@@ -81,7 +138,7 @@ public class SimpleGameGuessAnalyzerTests
             IsVictory = false,
             FieldValues = new Dictionary<string, IEnumerable<string>>()
             {
-                [FieldCategories.Colors ] = TestData6x4.Colors6.ToList()
+                [FieldCategories.Colors] = [.. TestData6x4.Colors6]
             },
             Codes = codes
         };
@@ -100,7 +157,7 @@ public class SimpleGameGuessAnalyzerTests
             IsVictory = false,
             FieldValues = new Dictionary<string, IEnumerable<string>>()
             {
-                [FieldCategories.Colors] = TestData6x4.Colors6.ToList()
+                [FieldCategories.Colors] = [.. TestData6x4.Colors6]
             },
             Codes = codes
         };
