@@ -20,8 +20,8 @@ public class ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, in
     protected override ShapeAndColorResult GetCoreResult()
     {
         // Check black, white and blue keyPegs
-        List<ShapeAndColorField> codesToCheck = new(_game.Codes.ToPegs<ShapeAndColorField>());
-        List<ShapeAndColorField> guessPegsToCheck = new(Guesses);
+        List<ShapeAndColorField> codesToCheck = [.._game.Codes.ToPegs<ShapeAndColorField>() ];
+        List<ShapeAndColorField> guessPegsToCheck = [.. Guesses ];
         List<ShapeAndColorField> remainingCodesToCheck = [];
         List<ShapeAndColorField> remainingGuessPegsToCheck = [];
 
