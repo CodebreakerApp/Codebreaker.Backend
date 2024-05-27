@@ -7,13 +7,11 @@ namespace Codebreaker.GameAPIs.Analyzer.Tests;
 
 public class ShapeGame5x5x4AnalyzerTests
 {
-
-
     [Fact]
-    public void SetMoveShouldReturnTwoBlack()
+    public void SetMove_ShouldReturnTwoBlack()
     {
         ShapeAndColorResult expectedKeyPegs = new(2, 0, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Rectangle;Green", "Circle;Yellow"],
             ["Rectangle;Green", "Circle;Yellow", "Star;Blue", "Star;Blue"]
         );
@@ -22,10 +20,10 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnOneBlackWithMultipleCorrectCodes()
+    public void SetMove_ShouldReturnOneBlackWithMultipleCorrectCodes()
     {
         ShapeAndColorResult expectedKeyPegs = new(1, 0, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Rectangle;Green", "Rectangle;Green", "Rectangle;Green"],
             ["Rectangle;Green", "Star;Blue", "Star;Blue", "Star;Blue"]
         );
@@ -34,10 +32,10 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnOneBlackWithMultipleCorrectPairGuesses()
+    public void SetMove_ShouldReturnOneBlackWithMultipleCorrectPairGuesses()
     {
         ShapeAndColorResult expectedKeyPegs = new(1, 0, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Circle;Yellow", "Circle;Yellow"],
             ["Rectangle;Green", "Rectangle;Green", "Rectangle;Green", "Rectangle;Green"]
         );
@@ -46,10 +44,10 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnThreeWhite()
+    public void SetMove_ShouldReturnThreeWhite()
     {
         ShapeAndColorResult expectedKeyPegs = new(0, 3, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Rectangle;Green", "Star;Blue"],
             ["Circle;Yellow", "Rectangle;Green", "Star;Blue", "Square;Purple"]
         );
@@ -58,10 +56,10 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnOneWhiteWithMultipleCorrectPairIsGuesses()
+    public void SetMove_ShouldReturnOneWhiteWithMultipleCorrectPairIsGuesses()
     {
         ShapeAndColorResult expectedKeyPegs = new(0, 1, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Circle;Yellow", "Circle;Yellow"],
             ["Triangle;Blue", "Rectangle;Green", "Rectangle;Green", "Rectangle;Green"]
         );
@@ -70,12 +68,12 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnTwoBlueForMatchingColors()
+    public void SetMove_ShouldReturnTwoBlueForMatchingColors()
     {
         // the second and third guess have a correct color in the correct position
         // all the shapes are incorrect
         ShapeAndColorResult expectedKeyPegs = new(0, 0, 2);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Rectangle;Green", "Circle;Yellow"],
             ["Star;Blue", "Star;Yellow", "Star;Green", "Star;Blue"]
         );
@@ -84,11 +82,11 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnTwoBlueForMatchingShapesAndColors()
+    public void SetMove_ShouldReturnTwoBlueForMatchingShapesAndColors()
     {
         // the first guess has a correct shape, and the second guess a correct color. All other guesses are wrong.
         ShapeAndColorResult expectedKeyPegs = new(0, 0, 2);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Rectangle;Green", "Circle;Yellow"],
             ["Rectangle;Blue", "Rectangle;Yellow", "Star;Blue", "Star;Blue"]
         );
@@ -97,12 +95,12 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnTwoBlueForMatchingShapes()
+    public void SetMove_ShouldReturnTwoBlueForMatchingShapes()
     {
         // the first and second guess have a correct shape, but a wrong color
         // all the colors are incorrect
         ShapeAndColorResult expectedKeyPegs = new(0, 0, 2);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Green", "Circle;Yellow", "Rectangle;Green", "Circle;Yellow"],
             ["Rectangle;Blue", "Circle;Blue", "Star;Blue", "Star;Blue"]
         );
@@ -111,12 +109,12 @@ public class ShapeGame5x5x4AnalyzerTests
     }
 
     [Fact]
-    public void SetMoveShouldReturnOneBlackAndOneWhite()
+    public void SetMove_ShouldReturnOneBlackAndOneWhite()
     {
         // the first and second guess have a correct shape, but both in the wrong positon
         // all the colors are incorrect
         ShapeAndColorResult expectedKeyPegs = new(1, 1, 0);
-        ShapeAndColorResult? resultKeyPegs = TestSkeleton(
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
             ["Rectangle;Blue", "Circle;Yellow", "Star;Green", "Circle;Yellow"],
             ["Rectangle;Blue", "Star;Green", "Triangle;Red", "Triangle;Red"]
         );
@@ -124,9 +122,8 @@ public class ShapeGame5x5x4AnalyzerTests
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
-    private static ShapeAndColorResult TestSkeleton(string[] codes, string[] guesses)
-    {
-        MockShapeGame game = new()
+    private static MockShapeGame CreateGame(string[] codes) =>
+        new()
         {
             GameType = GameTypes.Game5x5x4,
             NumberCodes = 4,
@@ -137,12 +134,17 @@ public class ShapeGame5x5x4AnalyzerTests
                 [FieldCategories.Colors] = TestData5x5x4.Colors5.ToList(),
                 [FieldCategories.Shapes] = TestData5x5x4.Shapes5.ToList()
             },
-            Codes = codes
+            Codes = codes   
         };
+
+    private static ShapeAndColorResult AnalyzeGame(string[] codes, string[] guesses)
+    {
+        MockShapeGame game = CreateGame(codes);
 
         ShapeGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ShapeAndColorField>().ToArray(), 1);
         return analyzer.GetResult();
     }
+
 }
 
 public class TestData5x5x4 : IEnumerable<object[]>

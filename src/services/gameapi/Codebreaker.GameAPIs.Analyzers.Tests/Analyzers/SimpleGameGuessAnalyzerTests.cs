@@ -7,7 +7,7 @@ namespace Codebreaker.GameAPIs.Analyzer.Tests;
 public class SimpleGameGuessAnalyzerTests
 {
     [Fact]
-    public void SetMoveShouldReturnThreeCorrectColor()
+    public void SetMove_ShouldReturnThreeCorrectColor()
     {
         SimpleColorResult expectedKeyPegs = new(
         [
@@ -16,7 +16,7 @@ public class SimpleGameGuessAnalyzerTests
             ResultValue.CorrectColor,
             ResultValue.Incorrect
         ]);
-        SimpleColorResult resultKeyPegs = TestSkeleton(
+        SimpleColorResult resultKeyPegs = AnalyzeGame(
             [Green, Yellow, Green, Black],
             [Yellow, Green, Black, Blue]
         );
@@ -26,9 +26,9 @@ public class SimpleGameGuessAnalyzerTests
 
     [Theory]
     [ClassData(typeof(TestData6x4Mini))]
-    public void SetMoveUsingVariousDataUsingDataClass(string[] code, string[] guess, SimpleColorResult expectedKeyPegs)
+    public void SetMove_UsingVariousDataUsingDataClass(string[] code, string[] guess, SimpleColorResult expectedKeyPegs)
     {
-        SimpleColorResult actualKeyPegs = TestSkeleton(code, guess);
+        SimpleColorResult actualKeyPegs = AnalyzeGame(code, guess);
         Assert.Equal(expectedKeyPegs, actualKeyPegs);
     }
 
@@ -36,7 +36,7 @@ public class SimpleGameGuessAnalyzerTests
     public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
         Assert.Throws<ArgumentException>(() => 
-            TestSkeleton(
+            AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black"]
             ));
@@ -46,7 +46,7 @@ public class SimpleGameGuessAnalyzerTests
     public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
         Assert.Throws<ArgumentException>(() => 
-            TestSkeleton(
+            AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black", "Der", "Blue", "Yellow"]      // "Der" is the wrong value
             ));
@@ -56,7 +56,7 @@ public class SimpleGameGuessAnalyzerTests
     public void SetMove_ShouldThrowOnInvalidMoveNumber()
     {
         Assert.Throws<ArgumentException>(() => 
-            TestSkeleton(
+            AnalyzeGame(
                 [Green, Yellow, Green, Black],
                 [Yellow, Green, Black, Blue], moveNumber: 2));
     }
@@ -64,7 +64,7 @@ public class SimpleGameGuessAnalyzerTests
     [Fact]
     public void GetResult_ShouldNotIncrementMoveNumberOnInvalidMove()
     {
-        IGame game = TestSkeletonWithGame(
+        IGame game = AnalyzeGameCatchingException(
             [Green, Yellow, Green, Black],
             [Yellow, Green, Black, Blue], moveNumber: 2);
 
@@ -128,9 +128,8 @@ public class SimpleGameGuessAnalyzerTests
         Assert.False(game.IsVictory);
     }
 
-    private static SimpleColorResult TestSkeleton(string[] codes, string[] guesses, int moveNumber = 1)
-    {
-        MockColorGame game = new()
+    private static MockColorGame CreateGame(string[] codes) => 
+        new()
         {
             GameType = GameTypes.Game6x4Mini,
             NumberCodes = 4,
@@ -143,24 +142,17 @@ public class SimpleGameGuessAnalyzerTests
             Codes = codes
         };
 
-        SimpleGameGuessAnalyzer analyzer = new(game,guesses.ToPegs<ColorField>().ToArray(), moveNumber);
+    private static SimpleColorResult AnalyzeGame(string[] codes, string[] guesses, int moveNumber = 1)
+    {
+        MockColorGame game = CreateGame(codes);
+
+        SimpleGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), moveNumber);
         return analyzer.GetResult();
     }
 
-    private static IGame TestSkeletonWithGame(string[] codes, string[] guesses, int moveNumber = 1)
+    private static IGame AnalyzeGameCatchingException(string[] codes, string[] guesses, int moveNumber = 1)
     {
-        MockColorGame game = new()
-        {
-            GameType = GameTypes.Game6x4,
-            NumberCodes = 4,
-            MaxMoves = 12,
-            IsVictory = false,
-            FieldValues = new Dictionary<string, IEnumerable<string>>()
-            {
-                [FieldCategories.Colors] = [.. TestData6x4.Colors6]
-            },
-            Codes = codes
-        };
+        MockColorGame game = CreateGame(codes);
 
         SimpleGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), moveNumber);
         try
