@@ -7,10 +7,10 @@ namespace Codebreaker.GameAPIs.Analyzer.Tests;
 public class ColorGame8x5AnalyzerTests
 {
     [Fact]
-    public void SetMoveShouldReturnThreeWhite()
+    public void SetMove_ShouldReturnThreeWhite()
     {
         ColorResult expectedKeyPegs = new(0, 3);
-        ColorResult? resultKeyPegs = TestSkeleton(
+        ColorResult? resultKeyPegs = AnalyzeGame(
             [Green, Yellow, Green, Black, Orange],
             [Yellow, Green, Black, Blue, Blue]
         );
@@ -21,45 +21,44 @@ public class ColorGame8x5AnalyzerTests
     [InlineData(1, 2, Red, Yellow, Red, Blue, Orange)]
     [InlineData(2, 0, White, White, Blue, Red, White)]
     [Theory]
-    public void SetMoveUsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
+    public void SetMove_UsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
     {
         string[] code = [Red, Green, Blue, Red, Brown];
         ColorResult expectedKeyPegs = new (expectedBlack, expectedWhite);
-        ColorResult resultKeyPegs = TestSkeleton(code, guessValues);
+        ColorResult resultKeyPegs = AnalyzeGame(code, guessValues);
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
 
     [Theory]
     [ClassData(typeof(TestData8x5))]
-    public void SetMoveUsingVariousDataUsingDataClass(string[] code, string[] guess, ColorResult expectedKeyPegs)
+    public void SetMove_UsingVariousDataUsingDataClass(string[] code, string[] guess, ColorResult expectedKeyPegs)
     {
-        ColorResult actualKeyPegs = TestSkeleton(code, guess);
+        ColorResult actualKeyPegs = AnalyzeGame(code, guess);
         Assert.Equal(expectedKeyPegs, actualKeyPegs);
     }
 
     [Fact]
-    public void ShouldThrowOnInvalidGuessCount()
+    public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
         Assert.Throws<ArgumentException>(() => 
-            TestSkeleton(
+            AnalyzeGame(
                 ["Black", "Black", "Black", "Black", "Black"],
                 ["Black"]
             ));
     }
 
     [Fact]
-    public void ShouldThrowOnInvalidGuessValues()
+    public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
         Assert.Throws<ArgumentException>(() => 
-            TestSkeleton(
+            AnalyzeGame(
                 ["Black", "Black", "Black", "Black", "Black"],
                 ["Black", "Der", "Blue", "Yellow", "Black"]      // "Der" is the wrong value
             ));
     }
 
-    private static ColorResult TestSkeleton(string[] codes, string[] guesses)
-    {
-        MockColorGame game = new()
+    private static MockColorGame CreateGame(string[] codes) => 
+        new()
         {
             GameType = GameTypes.Game8x5,
             NumberCodes = 5,
@@ -71,6 +70,10 @@ public class ColorGame8x5AnalyzerTests
             },
             Codes = codes
         };
+
+    private static ColorResult AnalyzeGame(string[] codes, string[] guesses)
+    {
+        MockColorGame game = CreateGame(codes);
 
         ColorGameGuessAnalyzer analyzer = new(game, guesses.ToPegs<ColorField>().ToArray(), 1);
         return analyzer.GetResult();
