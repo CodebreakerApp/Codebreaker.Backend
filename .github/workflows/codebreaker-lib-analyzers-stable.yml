@@ -1,0 +1,55 @@
+name: Analyzers stable lib
+
+on:
+
+  # Allow manually trigger 
+  workflow_dispatch:    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      solutionfile-path: src/Codebreaker.Analyzers.sln
+      projectfile-path: src/services/gameapi/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
+      artifact-name: codebreaker-analyzers-stable   
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with: 
+          dotnet-version: 8.0.x
+
+      - name: Build the library
+        run: dotnet build -c Release ${{ env.solutionfile-path }}
+
+      - name: Run the unit tests
+        run: dotnet test ${{ env.solutionfile-path }}
+        
+      - name: Create a Package
+        run: dotnet pack -c Release ${{ env.projectfile-path }} -o packages
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact-name }}
+          path: packages/*
+          retention-days: 30
+
+# publishdevops:
+#  uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-azuredevops.yml@main
+#  needs: build
+#  with:
+#    artifact-name: codebreaker-analyzers
+#  secrets: inherit
+
+#   publishnuget:
+#     uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-nugetserver.yml@main
+#     needs: publishdevops
+#    with:
+#      artifact-name: codebreaker-analyzers
+#    secrets: inherit
