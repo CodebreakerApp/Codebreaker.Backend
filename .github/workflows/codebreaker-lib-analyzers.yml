@@ -7,8 +7,8 @@ on:
     branches: 
       [ main ]
     paths:
-    - 'src/services/gameapi/Codebreaker.GameAPIs.Analyzers/**'
-    - 'src/services/gameapi/Codebreaker.GameAPIs.Analyzers.Tests/**'
+    - 'src/services/common/Codebreaker.GameAPIs.Analyzers/**'
+    - 'src/services/common/Codebreaker.GameAPIs.Analyzers.Tests/**'
     - 'src/Codebreaker.Analyzers.sln'
     - '.github/workflows/codebreaker-lib-analyzers.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
@@ -26,7 +26,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 38
       solutionfile-path: src/Codebreaker.Analyzers.sln
-      projectfile-path: src/services/gameapi/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
+      projectfile-path: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
       dotnet-version: '8.0.x'
       artifact-name: codebreaker-analyzers
       branch-name: main

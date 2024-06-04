@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       solutionfile-path: src/Codebreaker.Analyzers.sln
-      projectfile-path: src/services/gameapi/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
+      projectfile-path: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
       artifact-name: codebreaker-analyzers-stable   
 
     steps:

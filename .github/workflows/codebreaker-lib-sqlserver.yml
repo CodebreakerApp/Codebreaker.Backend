@@ -7,7 +7,7 @@ on:
     branches: 
       [ main ]
     paths:
-    - 'src/services/gameapi/Codebreaker.Data.SqlServer/**'
+    - 'src/services/common/Codebreaker.Data.SqlServer/**'
     - 'src/Codebreaker.Backend.SqlServer.sln'
     - '.github/workflows/codebreaker-lib-sqlserver.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
@@ -25,7 +25,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 10
       solutionfile-path: src/Codebreaker.Backend.SqlServer.sln
-      projectfile-path: src/services/gameapi/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
+      projectfile-path: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
       dotnet-version: '8.0.x'
       artifact-name: codebreaker-sqlserver
       branch-name: main
