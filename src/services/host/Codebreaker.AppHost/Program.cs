@@ -49,9 +49,9 @@ if (startupMode == "OnPremises")
         .WithReference(kafka)
         .WithEnvironment("StartupMode", startupMode);
 
-    builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
-        .WithExternalHttpEndpoints()
-        .WithReference(gameAPIs);
+    //builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
+    //    .WithExternalHttpEndpoints()
+    //    .WithReference(gameAPIs);
 }
 else
 {
@@ -91,16 +91,22 @@ else
         .WithReference(eventHub)
         .WithReference(signalR);
 
-    builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
+    var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
         .WithExternalHttpEndpoints()
         .WithReference(cosmos)
         .WithReference(insights)
         .WithReference(eventHub)
         .WithReference(blob);
 
-    builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
+    var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
-        .WithReference(gameAPIs);
+        .WithReference(gameAPIs)
+        .WithReference(live)
+        .WithReference(ranking);
+
+    //builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
+    //    .WithExternalHttpEndpoints()
+    //    .WithReference(gameAPIs);
 }
 
 

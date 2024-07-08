@@ -27,12 +27,12 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\CodeBreaker.Blazor\CodeBreaker.Blazor.csproj" />
-    <ProjectReference Include="..\Codebreaker.BotQ\Codebreaker.BotQ.csproj" />
-    <ProjectReference Include="..\CodeBreaker.Bot\CodeBreaker.Bot.csproj" />
-    <ProjectReference Include="..\Codebreaker.GameAPIs\Codebreaker.GameAPIs.csproj" />
-    <ProjectReference Include="..\Codebreaker.Live\Codebreaker.Live.csproj" />
-    <ProjectReference Include="..\Codebreaker.Ranking\Codebreaker.Ranking.csproj" />
+    <ProjectReference Include="..\..\bot\Codebreaker.BotQ\Codebreaker.BotQ.csproj" />
+    <ProjectReference Include="..\..\bot\CodeBreaker.Bot\CodeBreaker.Bot.csproj" />
+    <ProjectReference Include="..\..\gameapis\Codebreaker.GameAPIs\Codebreaker.GameAPIs.csproj" />
+    <ProjectReference Include="..\..\gateway\Codebreaker.ApiGateway\Codebreaker.ApiGateway.csproj" />
+    <ProjectReference Include="..\..\live\Codebreaker.Live\Codebreaker.Live.csproj" />
+    <ProjectReference Include="..\..\ranking\Codebreaker.Ranking\Codebreaker.Ranking.csproj" />
   </ItemGroup>
 
 </Project>

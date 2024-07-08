@@ -25,11 +25,11 @@
   </ItemGroup>
   
   <ItemGroup>
-	<ProjectReference Include="..\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
+	<ProjectReference Include="..\..\common\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-	<Protobuf Include="..\Codebreaker.GameAPIs\Protos\GameService.proto" GrpcServices="Client" />
+	<Protobuf Include="..\..\gameapis\Codebreaker.GameAPIs\Protos\GameService.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
