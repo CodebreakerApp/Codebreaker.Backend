@@ -26,8 +26,6 @@ internal static class ApplicationServices
         //{
         //    var endpoint = builder.Configuration["services:gameapis:https:0"] ?? throw new InvalidOperationException();
         //    client.Address = new Uri(endpoint);
-
-        //    // TODO: change to with a later version:
         //    // client.Address = new Uri("https://gameapis");
         //});
 
