@@ -1,0 +1,3 @@
+[submodule "src/services/Codebreaker.Blazor"]
+	path = src/services/Codebreaker.Blazor
+	url = https://github.com/CodebreakerApp/Codebreaker.Blazor.git
