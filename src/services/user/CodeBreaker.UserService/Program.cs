@@ -67,9 +67,7 @@ app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest r
 
     return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
 })
-.WithName("CheckGamerName")
-.WithDescription("Checks whether the specified gamerName is valid")
-.WithOpenApi();
+.ExcludeFromDescription();
 
 // GET /gamer-names/suggestions
 // Query: int? count
@@ -130,9 +128,7 @@ app.MapPost("/enrich-token", (
         UserGroups = userGroups
     };
 })
-.WithName("EnrichToken")
-.WithDescription("Enrich and shape the access-token with claims.")
-.WithOpenApi();
+.ExcludeFromDescription();
 
 
 app.Run();
