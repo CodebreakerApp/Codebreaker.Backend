@@ -1,5 +1,3 @@
-using Aspire.Hosting;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 string dataStore = builder.Configuration["DataStore"] ?? "InMemory";
@@ -98,11 +96,16 @@ else
         .WithReference(eventHub)
         .WithReference(blob);
 
+    var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
+        .WithExternalHttpEndpoints()
+        .WithReference(insights);
+
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
         .WithReference(gameAPIs)
         .WithReference(live)
-        .WithReference(ranking);
+        .WithReference(ranking)
+        .WithReference(users);
 
     //builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
     //    .WithExternalHttpEndpoints()

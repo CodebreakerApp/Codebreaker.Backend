@@ -9,6 +9,9 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Aspire
+builder.AddServiceDefaults();
+
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("AzureActiveDirectory"));
 builder.Services.Configure<GamerNameSuggestionOptions>(builder.Configuration.GetRequiredSection("GamerNameSuggestion"));
@@ -44,6 +47,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+// Aspire endpoints
+app.MapDefaultEndpoints();
 
 //
 // Username endpoints
@@ -100,33 +106,36 @@ app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestion
 .WithDescription("Suggessts possible and available gamer names")
 .WithOpenApi();
 
-// GET /enrich-token
-// Query: BeforeIncludingApplicationClaimsRequest
-// Response: BeforeIncludingApplicationClaimsResponse
-// Description: Enrich and shape the access-token with claims
-// Note: This endpoint is used as API-Connector by Azure AD B2C
-//       The endpoint is called before the token is issued to the user.
-//       The user-groups assigned to the user are received from the configuration (IConfiguration).
-app.MapPost("/enrich-token", async (
-    BeforeIncludingApplicationClaimsRequest req,
-    IConfiguration configuration,
-    CancellationToken cancellationToken
-) =>
+
+if (builder.Configuration["StartupMode"] == "Azure")
 {
-    var userGroups = configuration.GetSection($"UserGroupAssignments:{req.ObjectId}").Get<string[]>() ?? [];
-    return new BeforeIncludingApplicationClaimsResponse()
+    // GET /enrich-token
+    // Query: BeforeIncludingApplicationClaimsRequest
+    // Response: BeforeIncludingApplicationClaimsResponse
+    // Description: Enrich and shape the access-token with claims
+    // Note: This endpoint is used as API-Connector by Azure AD B2C
+    //       The endpoint is called before the token is issued to the user.
+    //       The user-groups assigned to the user are received from the configuration (IConfiguration).
+    app.MapPost("/enrich-token", (
+        BeforeIncludingApplicationClaimsRequest req,
+        IConfiguration configuration
+    ) =>
     {
-        ObjectId = req.ObjectId,
-        Email = req.Email,
-        GivenName = req.GivenName,
-        Surname = req.Surname,
-        DisplayName = $"{req.GivenName} {req.Surname}",
-        GamerName = req.GamerName,
-        UserGroups = userGroups
-    };
-})
-.WithName("EnrichToken")
-.WithDescription("Enrich and shape the access-token with claims.")
-.WithOpenApi();
+        var userGroups = configuration.GetSection($"UserGroupAssignments:{req.ObjectId}").Get<string[]>() ?? [];
+        return new BeforeIncludingApplicationClaimsResponse()
+        {
+            ObjectId = req.ObjectId,
+            Email = req.Email,
+            GivenName = req.GivenName,
+            Surname = req.Surname,
+            DisplayName = $"{req.GivenName} {req.Surname}",
+            GamerName = req.GamerName,
+            UserGroups = userGroups
+        };
+    })
+    .WithName("EnrichToken")
+    .WithDescription("Enrich and shape the access-token with claims.")
+    .WithOpenApi();
+}
 
 app.Run();
