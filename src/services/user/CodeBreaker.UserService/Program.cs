@@ -9,6 +9,9 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Aspire
+builder.AddServiceDefaults();
+
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("AzureActiveDirectory"));
 builder.Services.Configure<GamerNameSuggestionOptions>(builder.Configuration.GetRequiredSection("GamerNameSuggestion"));
@@ -37,13 +40,13 @@ builder.Services.AddScoped<IValidator<BeforeCreatingUserRequest>, BeforeCreating
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+// Aspire endpoints
+app.MapDefaultEndpoints();
 
 //
 // Username endpoints
@@ -61,9 +64,7 @@ app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest r
 
     return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
 })
-.WithName("CheckGamerName")
-.WithDescription("Checks whether the specified gamerName is valid")
-.WithOpenApi();
+.ExcludeFromDescription();
 
 // GET /gamer-names/suggestions
 // Query: int? count
@@ -107,10 +108,9 @@ app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestion
 // Note: This endpoint is used as API-Connector by Azure AD B2C
 //       The endpoint is called before the token is issued to the user.
 //       The user-groups assigned to the user are received from the configuration (IConfiguration).
-app.MapPost("/enrich-token", async (
+app.MapPost("/enrich-token", (
     BeforeIncludingApplicationClaimsRequest req,
-    IConfiguration configuration,
-    CancellationToken cancellationToken
+    IConfiguration configuration
 ) =>
 {
     var userGroups = configuration.GetSection($"UserGroupAssignments:{req.ObjectId}").Get<string[]>() ?? [];
@@ -125,8 +125,7 @@ app.MapPost("/enrich-token", async (
         UserGroups = userGroups
     };
 })
-.WithName("EnrichToken")
-.WithDescription("Enrich and shape the access-token with claims.")
-.WithOpenApi();
+.ExcludeFromDescription();
+
 
 app.Run();
