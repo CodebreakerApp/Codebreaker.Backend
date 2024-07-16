@@ -38,15 +38,23 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 // Validation
 builder.Services.AddScoped<IValidator<BeforeCreatingUserRequest>, BeforeCreatingUserRequestValidator>();
 
+// CORS
+builder.Services.AddCors(policy => policy.AddPolicy("DefaultFrontendPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+// CORS
+app.UseCors();
 
 // Aspire endpoints
 app.MapDefaultEndpoints();
+
+// Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Request localization
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 //
 // Username endpoints
@@ -99,7 +107,8 @@ app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestion
 })
 .WithName("SuggestGamerNames")
 .WithDescription("Suggessts possible and available gamer names")
-.WithOpenApi();
+.WithOpenApi()
+.RequireCors("DefaultFrontendPolicy");
 
 // GET /enrich-token
 // Query: BeforeIncludingApplicationClaimsRequest
