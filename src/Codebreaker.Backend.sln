@@ -50,6 +50,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "users", "users", "{42B0386F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.UserService", "services\user\CodeBreaker.UserService\CodeBreaker.UserService.csproj", "{48A2B300-2662-4BC8-8570-22D6D183536E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "clients", "clients", "{D88DEDE8-217E-43CE-AB08-BF381441E6C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Blazor", "services\Codebreaker.Blazor\src\CodeBreaker.Blazor\CodeBreaker.Blazor.csproj", "{7CC49E47-99DB-4093-9DBE-51F119E21DC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +124,10 @@ Global
 		{48A2B300-2662-4BC8-8570-22D6D183536E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48A2B300-2662-4BC8-8570-22D6D183536E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48A2B300-2662-4BC8-8570-22D6D183536E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CC49E47-99DB-4093-9DBE-51F119E21DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC49E47-99DB-4093-9DBE-51F119E21DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC49E47-99DB-4093-9DBE-51F119E21DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC49E47-99DB-4093-9DBE-51F119E21DC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +149,7 @@ Global
 		{0F545FA8-BFBA-4BBE-94DF-4AE4CB99509A} = {2AFD0767-0648-4B93-9A5F-883C07F47FB7}
 		{0D086D48-9441-4769-A2C1-E4096A8D0B1F} = {2AFD0767-0648-4B93-9A5F-883C07F47FB7}
 		{48A2B300-2662-4BC8-8570-22D6D183536E} = {42B0386F-1367-4160-BD1C-9DB6C49A2F41}
+		{7CC49E47-99DB-4093-9DBE-51F119E21DC5} = {D88DEDE8-217E-43CE-AB08-BF381441E6C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5DE33962-11C6-4B2F-A356-DDE0B4F5CC56}
