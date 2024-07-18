@@ -25,20 +25,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //    });
 
 builder.Services.AddAuthorizationBuilder()
+    .AddFallbackPolicy("fallbackPolicy", config =>
+    {
+        config.RequireAuthenticatedUser();
+    })
     .AddPolicy("playPolicy", config =>
     {
-        config.RequireScope("Games.Play");
+        // TODO: Define scopes
+        config.RequireAuthenticatedUser();
     })
-   .AddPolicy("queryPolicy", config =>
+   .AddPolicy("rankingPolicy", config =>
    {
-        config.RequireScope("Games.Query");
+       // TODO: Define scopes
         config.RequireAuthenticatedUser();
    })
    .AddPolicy("botPolicy", config =>
    {
-       config.RequireScope("Bot.Play");
-    //   config.RequireClaim("role", [ "Bot" ]);
+       // TODO: Define scopes
        config.RequireAuthenticatedUser();
+   })
+   .AddPolicy("livePolicy", config =>
+   {
+       // TODO: Define scopes
+       config.RequireAuthenticatedUser();
+   })
+   .AddPolicy("usersPublicPolicy", config =>
+   {
+       // Allow anonymous access
+   })
+   .AddPolicy("usersApiConnectorsPolicy", config =>
+   {
+       // Basic authentication only for Azure ActiveDirectory B2C API connectors
+       config
+           .RequireAuthenticatedUser()
+           .RequireRole("AzureActiveDirectoryB2C");
    });
 
 builder.AddServiceDefaults();
