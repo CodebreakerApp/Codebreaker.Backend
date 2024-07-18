@@ -68,6 +68,7 @@ else
         .AddDatabase("codebreaker");
 
     var gatewayKeyvault = builder.AddAzureKeyVault("gateway-keyvault");
+    var userServiceKeyvault = builder.AddAzureKeyVault("users-keyvault");
 
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithReference(cosmos)
@@ -96,7 +97,8 @@ else
         .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
-        .WithReference(insights);
+        .WithReference(insights)
+        .WithReference(userServiceKeyvault);
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
