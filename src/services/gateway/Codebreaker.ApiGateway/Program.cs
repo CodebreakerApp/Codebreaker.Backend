@@ -48,10 +48,6 @@ builder.Services.AddAuthentication()
     });
 
 builder.Services.AddAuthorizationBuilder()
-    .AddFallbackPolicy("fallbackPolicy", config =>
-    {
-        config.RequireAuthenticatedUser();
-    })
     .AddPolicy("playPolicy", config =>
     {
         // TODO: Define scopes
@@ -71,10 +67,6 @@ builder.Services.AddAuthorizationBuilder()
    {
        // TODO: Define scopes
        config.RequireAuthenticatedUser();
-   })
-   .AddPolicy("usersPublicPolicy", config =>
-   {
-       // Allow anonymous access
    })
    .AddPolicy("usersApiConnectorsPolicy", config =>
    {
