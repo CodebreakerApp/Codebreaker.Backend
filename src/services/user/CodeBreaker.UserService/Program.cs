@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Aspire
 builder.AddServiceDefaults();
+builder.Configuration.AddAzureKeyVaultSecrets("users-keyvault");
 
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("AzureActiveDirectory"));
