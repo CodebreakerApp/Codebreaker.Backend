@@ -68,7 +68,6 @@ else
         .AddDatabase("codebreaker");
 
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
-        .WithExternalHttpEndpoints()
         .WithReference(cosmos)
         .WithReference(redis)
         .WithReference(insights)
@@ -84,20 +83,17 @@ else
         .WithEnvironment("Bot__Delay", botDelay);
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
-        .WithExternalHttpEndpoints()
         .WithReference(insights)
         .WithReference(eventHub)
         .WithReference(signalR);
 
     var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
-        .WithExternalHttpEndpoints()
         .WithReference(cosmos)
         .WithReference(insights)
         .WithReference(eventHub)
         .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
-        .WithExternalHttpEndpoints()
         .WithReference(insights);
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
