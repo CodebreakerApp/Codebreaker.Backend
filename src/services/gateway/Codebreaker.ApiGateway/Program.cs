@@ -12,19 +12,6 @@ builder.Services.AddSingleton<TokenService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
-    //.EnableTokenAcquisitionToCallDownstreamApi()
-    //.AddDownstreamApi("", "")
-    //.AddInMemoryTokenCache();
-
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApi(bearerOptions =>
-//    {
-//        builder.Configuration.Bind("AzureAdB2C", bearerOptions);
-//        //        bearerOptions.TokenValidationParameters.NameClaimType = "name";
-//    }, identityOptions =>
-//    {
-//        builder.Configuration.Bind("AzureAdB2C", identityOptions);
-//    });
 
 // Basic authentication only for Azure ActiveDirectory B2C API connectors
 builder.Services.AddAuthentication()
@@ -76,6 +63,8 @@ builder.Services.AddAuthorizationBuilder()
            .RequireRole("AzureActiveDirectoryB2C");
    });
 
+builder.Services.AddCors(setup => setup.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
 builder.AddServiceDefaults();
 
 builder.Services.AddReverseProxy()
@@ -86,6 +75,8 @@ builder.Services.AddReverseProxy()
 // builder.Services.AddRazorPages(); // authentication UI in Views
 
 var app = builder.Build();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
