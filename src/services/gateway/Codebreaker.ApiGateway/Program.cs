@@ -11,11 +11,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddSingleton<TokenService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
-
 // Basic authentication only for Azure ActiveDirectory B2C API connectors
-builder.Services.AddAuthentication()
-    .AddBasic(options =>
+    .AddBasic("BasicScheme", options =>
     {
         options.Events.OnValidateCredentials = context =>
         {
@@ -32,7 +29,8 @@ builder.Services.AddAuthentication()
 
             return Task.CompletedTask;
         };
-    });
+    })
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("playPolicy", config =>
@@ -60,6 +58,7 @@ builder.Services.AddAuthorizationBuilder()
        // Basic authentication only for Azure ActiveDirectory B2C API connectors
        config
            .RequireAuthenticatedUser()
+           .AddAuthenticationSchemes("BasicScheme")
            .RequireRole("AzureActiveDirectoryB2C");
    });
 
