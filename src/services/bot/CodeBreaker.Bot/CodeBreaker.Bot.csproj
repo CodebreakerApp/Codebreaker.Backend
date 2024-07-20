@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Configurations>Debug;Release</Configurations>
+        <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -13,8 +14,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CNinnovation.Codebreaker.GamesClient" Version="3.7.0" />
-		<PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
+		<PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
 
