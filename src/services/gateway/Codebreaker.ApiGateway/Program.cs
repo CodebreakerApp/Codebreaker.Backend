@@ -1,45 +1,72 @@
 using Codebreaker.Proxy;
-
+using idunno.Authentication.Basic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddAzureKeyVaultSecrets("gateway-keyvault");
 
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<TokenService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
-    //.EnableTokenAcquisitionToCallDownstreamApi()
-    //.AddDownstreamApi("", "")
-    //.AddInMemoryTokenCache();
+// Basic authentication only for Azure ActiveDirectory B2C API connectors
+    .AddBasic("BasicScheme", options =>
+    {
+        options.Events = new BasicAuthenticationEvents()
+        {
+            OnValidateCredentials = context =>
+            {
+                var config = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+                if (context.Username == "AADB2C" && context.Password == config["AADB2C-ApiConnector-Password"])
+                {
+                    Claim[] claims = [
+                        new (ClaimTypes.Name, context.Username, ClaimValueTypes.String, context.Options.ClaimsIssuer),
+                        new (ClaimTypes.Role, "AzureActiveDirectoryB2C", ClaimValueTypes.String, context.Options.ClaimsIssuer)
+                    ];
+                    context.Principal = new(new ClaimsIdentity(claims, context.Scheme.Name));
+                    context.Success();
+                }
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApi(bearerOptions =>
-//    {
-//        builder.Configuration.Bind("AzureAdB2C", bearerOptions);
-//        //        bearerOptions.TokenValidationParameters.NameClaimType = "name";
-//    }, identityOptions =>
-//    {
-//        builder.Configuration.Bind("AzureAdB2C", identityOptions);
-//    });
+                return Task.CompletedTask;
+            }
+        };
+    })
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("playPolicy", config =>
     {
-        config.RequireScope("Games.Play");
+        // TODO: Define scopes
+        config.RequireAuthenticatedUser();
     })
-   .AddPolicy("queryPolicy", config =>
+   .AddPolicy("rankingPolicy", config =>
    {
-        config.RequireScope("Games.Query");
+       // TODO: Define scopes
         config.RequireAuthenticatedUser();
    })
    .AddPolicy("botPolicy", config =>
    {
-       config.RequireScope("Bot.Play");
-    //   config.RequireClaim("role", [ "Bot" ]);
+       // TODO: Define scopes
        config.RequireAuthenticatedUser();
+   })
+   .AddPolicy("livePolicy", config =>
+   {
+       // TODO: Define scopes
+       config.RequireAuthenticatedUser();
+   })
+   .AddPolicy("usersApiConnectorsPolicy", config =>
+   {
+       // Basic authentication only for Azure ActiveDirectory B2C API connectors
+       config
+           .RequireAuthenticatedUser()
+           .AddAuthenticationSchemes("BasicScheme")
+           .RequireRole("AzureActiveDirectoryB2C");
    });
+
+builder.Services.AddCors(setup => setup.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 builder.AddServiceDefaults();
 
@@ -51,6 +78,8 @@ builder.Services.AddReverseProxy()
 // builder.Services.AddRazorPages(); // authentication UI in Views
 
 var app = builder.Build();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -67,6 +67,9 @@ else
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
         .AddDatabase("codebreaker");
 
+    var gatewayKeyvault = builder.AddAzureKeyVault("gateway-keyvault");
+    var userServiceKeyvault = builder.AddAzureKeyVault("users-keyvault");
+
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithReference(cosmos)
         .WithReference(redis)
@@ -94,14 +97,16 @@ else
         .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
-        .WithReference(insights);
+        .WithReference(insights)
+        .WithReference(userServiceKeyvault);
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
         .WithReference(gameAPIs)
         .WithReference(live)
         .WithReference(ranking)
-        .WithReference(users);
+        .WithReference(users)
+        .WithReference(gatewayKeyvault);
 
     builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
         .WithExternalHttpEndpoints()

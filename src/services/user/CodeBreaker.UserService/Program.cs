@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Aspire
 builder.AddServiceDefaults();
+builder.Configuration.AddAzureKeyVaultSecrets("users-keyvault");
 
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("AzureActiveDirectory"));
@@ -56,29 +57,14 @@ app.UseSwaggerUI();
 // Request localization
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
-//
-// Username endpoints
-//
-// POST /validate-before-user-creation
-// Request: BeforeCreatingUserRequest
-// Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
-// Description: Checks whether the specified user can be created
-app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
-{
-    var result = await requestValidator.ValidateAsync(request);
+// Aspire endpoints
+app.MapDefaultEndpoints();
 
-    if (result.IsValid)
-        return Results.Ok(new BeforeCreatingUserSuccessResponse());
-
-    return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
-})
-.ExcludeFromDescription();
-
-// GET /gamer-names/suggestions
+// GET /public/gamer-names/suggestions
 // Query: int? count
 // Response: GamerNameSuggestionsResponse
 // Description: Suggests possible and available gamer names
-app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, CancellationToken cancellationToken) =>
+app.MapGet("/public/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, CancellationToken cancellationToken) =>
 {
     if (count == 0 || count > 100)
         return Results.BadRequest("Count must be between 1 and 100");
@@ -110,14 +96,32 @@ app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestion
 .WithOpenApi()
 .RequireCors("DefaultFrontendPolicy");
 
-// GET /enrich-token
+//
+// Username endpoints
+//
+// POST /api-connectors/validate-before-user-creation
+// Request: BeforeCreatingUserRequest
+// Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
+// Description: Checks whether the specified user can be created
+app.MapPost("/api-connectors/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
+{
+    var result = await requestValidator.ValidateAsync(request);
+
+    if (result.IsValid)
+        return Results.Ok(new BeforeCreatingUserSuccessResponse());
+
+    return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
+})
+.ExcludeFromDescription();
+
+// GET /api-connectors/enrich-token
 // Query: BeforeIncludingApplicationClaimsRequest
 // Response: BeforeIncludingApplicationClaimsResponse
 // Description: Enrich and shape the access-token with claims
 // Note: This endpoint is used as API-Connector by Azure AD B2C
 //       The endpoint is called before the token is issued to the user.
 //       The user-groups assigned to the user are received from the configuration (IConfiguration).
-app.MapPost("/enrich-token", (
+app.MapPost("/api-connectors/enrich-token", (
     BeforeIncludingApplicationClaimsRequest req,
     IConfiguration configuration
 ) =>
@@ -135,6 +139,5 @@ app.MapPost("/enrich-token", (
     };
 })
 .ExcludeFromDescription();
-
 
 app.Run();
