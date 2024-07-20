@@ -2,23 +2,22 @@
 
 namespace CodeBreaker.Bot;
 
-public class CodeBreakerGameRunner(GamesClient gamesClient, ILogger<CodeBreakerGameRunner> logger)
+public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreakerGameRunner> logger)
 {
     private const string PlayerName = "Bot";
     private Guid? _gameId;
     private int _moveNumber = 0;
-    private readonly List<Move> _moves = new();
+    private readonly List<Move> _moves = [];
     private List<int>? _possibleValues;
     private Dictionary<int, string>? _colorNames;
-    private readonly ILogger _logger = logger;
-    private readonly GamesClient _gamesClient = gamesClient;
+    private readonly IGamesClient _gamesClient = gamesClient;
 
     // initialize a list of all the possible options using numbers for every color
     private List<int> InitializePossibleValues()
     {
         static List<int> Create8Colors(int shift)
         {
-            List<int> pin = new();
+            List<int> pin = [];
             for (int i = 0; i < 6; i++)
             {
                 int x = 1 << i + shift;
@@ -81,21 +80,23 @@ public class CodeBreakerGameRunner(GamesClient gamesClient, ILogger<CodeBreakerG
     /// <exception cref="InvalidOperationException">throws if initialization was not done, or with invalid game state</exception>
     public async Task RunAsync(int thinkSeconds, CancellationToken cancellationToken = default)
     {
-        if (_possibleValues is null) throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
-        Guid gameId = _gameId ?? throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
+        if (_possibleValues is null) 
+            throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
+        Guid gameId = _gameId ?? 
+            throw new InvalidOperationException($"call {nameof(StartGameAsync)} before");
 
         bool ended = false;
         do
         {
             _moveNumber++;
             (string[] guessPegs, int selection) = GetNextMoves();
-            _logger.SendMove(string.Join(':', guessPegs), gameId.ToString());
+            logger.SendMove(string.Join(':', guessPegs), gameId);
 
             (string[] results, ended, bool isVictory) = await _gamesClient.SetMoveAsync(gameId, PlayerName, GameType.Game6x4, _moveNumber, guessPegs, cancellationToken);
 
             if (isVictory)
             {
-                _logger.Matched(_moveNumber, gameId.ToString());
+                logger.Matched(_moveNumber, gameId);
                 break;
             }
 
@@ -111,23 +112,23 @@ public class CodeBreakerGameRunner(GamesClient gamesClient, ILogger<CodeBreakerG
             if (blackHits == 0 && whiteHits == 0)
             {
                 _possibleValues = _possibleValues.HandleNoMatches(selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "none", gameId.ToString());
+                logger.ReducedPossibleValues(_possibleValues.Count, "none", gameId);
             }
             if (blackHits > 0)
             {
                 _possibleValues = _possibleValues.HandleBlackMatches(blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "Black", gameId.ToString());
+                logger.ReducedPossibleValues(_possibleValues.Count, "Black", gameId);
             }
             if (whiteHits > 0)
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(whiteHits + blackHits, selection);
-                _logger.ReducedPossibleValues(_possibleValues.Count, "White", gameId.ToString());
+                logger.ReducedPossibleValues(_possibleValues.Count, "White", gameId);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(thinkSeconds), cancellationToken);  // thinking delay
         } while (!ended);
 
-        _logger.FinishedRun(_moveNumber, gameId.ToString());
+        logger.FinishedRun(_moveNumber, gameId);
     }
 
     /// <summary>
@@ -137,21 +138,22 @@ public class CodeBreakerGameRunner(GamesClient gamesClient, ILogger<CodeBreakerG
     /// <exception cref="InvalidOperationException">Throws if there are no calculated possible values left to chose from</exception>
     private (string[] Colors, int Selection) GetNextMoves()
     {
-        if (_possibleValues?.Count is null or 0) throw new InvalidOperationException("invalid number of possible values - 0");
+        if (_possibleValues?.Count is null or 0) 
+            throw new InvalidOperationException("invalid number of possible values - 0");
 
         int random = Random.Shared.Next(_possibleValues.Count);
-        var value = _possibleValues[random];
+        int value = _possibleValues[random];
 
         return (IntToColors(value), value);
     }
 
-    private string[] IntToColors(int value) => new[]
-    {
+    private string[] IntToColors(int value) =>
+    [
         _colorNames?[value & 0b111111] ?? string.Empty,
         _colorNames?[(value >> 6) & 0b111111] ?? string.Empty,
         _colorNames?[(value >> 12) & 0b111111] ?? string.Empty,
         _colorNames?[(value >> 18) & 0b111111] ?? string.Empty
-    };
+    ];
 }
 
 public enum CodeColors

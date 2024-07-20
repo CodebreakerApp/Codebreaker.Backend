@@ -7,7 +7,7 @@ on:
     branches: 
       [ main ]
     paths:
-    - 'src/services/gameapi/Codebreaker.Data.Cosmos/**'
+    - 'src/services/common/Codebreaker.Data.Cosmos/**'
     - 'src/Codebreaker.Backend.Cosmos.sln'
     - '.github/workflows/codebreaker-lib-cosmos.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
@@ -25,7 +25,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 10
       solutionfile-path: src/Codebreaker.Backend.Cosmos.sln
-      projectfile-path: src/services/gameapi/Codebreaker.Data.Cosmos/Codebreaker.Data.Cosmos.csproj
+      projectfile-path: src/services/common/Codebreaker.Data.Cosmos/Codebreaker.Data.Cosmos.csproj
       dotnet-version: '8.0.x'
       artifact-name: codebreaker-cosmos
       branch-name: main

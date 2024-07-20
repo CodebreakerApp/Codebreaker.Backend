@@ -7,7 +7,7 @@ on:
     branches: 
       [ main ]
     paths:
-    - 'src/services/gameapi/Codebreaker.GameAPIs.Models/**'
+    - 'src/services/common/Codebreaker.GameAPIs.Models/**'
     - 'src/Codebreaker.Backend.Models.sln'
     - '.github/workflows/codebreaker-lib-backendmodels.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
@@ -25,7 +25,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 10
       solutionfile-path: src/Codebreaker.Backend.Models.sln
-      projectfile-path: src/services/gameapi/Codebreaker.GameAPIs.Models/Codebreaker.GameAPIs.Models.csproj
+      projectfile-path: src/services/common/Codebreaker.GameAPIs.Models/Codebreaker.GameAPIs.Models.csproj
       dotnet-version: '8.0.x'
       artifact-name: codebreaker-backend-models
       branch-name: main

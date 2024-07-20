@@ -9,6 +9,10 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Aspire
+builder.AddServiceDefaults();
+builder.Configuration.AddAzureKeyVaultSecrets("users-keyvault");
+
 // Config
 builder.Services.Configure<GamerNameCheckOptions>(builder.Configuration.GetRequiredSection("AzureActiveDirectory"));
 builder.Services.Configure<GamerNameSuggestionOptions>(builder.Configuration.GetRequiredSection("GamerNameSuggestion"));
@@ -35,41 +39,32 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 // Validation
 builder.Services.AddScoped<IValidator<BeforeCreatingUserRequest>, BeforeCreatingUserRequestValidator>();
 
+// CORS
+builder.Services.AddCors(policy => policy.AddPolicy("DefaultFrontendPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// CORS
+app.UseCors();
 
+// Aspire endpoints
+app.MapDefaultEndpoints();
+
+// Swagger
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// Request localization
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
-//
-// Username endpoints
-//
-// POST /validate-before-user-creation
-// Request: BeforeCreatingUserRequest
-// Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
-// Description: Checks whether the specified user can be created
-app.MapPost("/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
-{
-    var result = await requestValidator.ValidateAsync(request);
+// Aspire endpoints
+app.MapDefaultEndpoints();
 
-    if (result.IsValid)
-        return Results.Ok(new BeforeCreatingUserSuccessResponse());
-
-    return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
-})
-.WithName("CheckGamerName")
-.WithDescription("Checks whether the specified gamerName is valid")
-.WithOpenApi();
-
-// GET /gamer-names/suggestions
+// GET /public/gamer-names/suggestions
 // Query: int? count
 // Response: GamerNameSuggestionsResponse
 // Description: Suggests possible and available gamer names
-app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, CancellationToken cancellationToken) =>
+app.MapGet("/public/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestionOptions> gamerNameSuggestionOptions, CancellationToken cancellationToken) =>
 {
     if (count == 0 || count > 100)
         return Results.BadRequest("Count must be between 1 and 100");
@@ -98,19 +93,37 @@ app.MapGet("/gamer-names/suggestions", (int? count, IOptions<GamerNameSuggestion
 })
 .WithName("SuggestGamerNames")
 .WithDescription("Suggessts possible and available gamer names")
-.WithOpenApi();
+.WithOpenApi()
+.RequireCors("DefaultFrontendPolicy");
 
-// GET /enrich-token
+//
+// Username endpoints
+//
+// POST /api-connectors/validate-before-user-creation
+// Request: BeforeCreatingUserRequest
+// Response: BeforeCreatingUserSuccessResponse | BeforeCreatingUserValidationErrorResponse
+// Description: Checks whether the specified user can be created
+app.MapPost("/api-connectors/validate-before-user-creation", async (BeforeCreatingUserRequest request, IValidator<BeforeCreatingUserRequest> requestValidator, CancellationToken cancellationToken) =>
+{
+    var result = await requestValidator.ValidateAsync(request);
+
+    if (result.IsValid)
+        return Results.Ok(new BeforeCreatingUserSuccessResponse());
+
+    return Results.BadRequest(new BeforeCreatingUserValidationErrorResponse(result.ToString())); // ValidationError needs HTTP 400
+})
+.ExcludeFromDescription();
+
+// GET /api-connectors/enrich-token
 // Query: BeforeIncludingApplicationClaimsRequest
 // Response: BeforeIncludingApplicationClaimsResponse
 // Description: Enrich and shape the access-token with claims
 // Note: This endpoint is used as API-Connector by Azure AD B2C
 //       The endpoint is called before the token is issued to the user.
 //       The user-groups assigned to the user are received from the configuration (IConfiguration).
-app.MapPost("/enrich-token", async (
+app.MapPost("/api-connectors/enrich-token", (
     BeforeIncludingApplicationClaimsRequest req,
-    IConfiguration configuration,
-    CancellationToken cancellationToken
+    IConfiguration configuration
 ) =>
 {
     var userGroups = configuration.GetSection($"UserGroupAssignments:{req.ObjectId}").Get<string[]>() ?? [];
@@ -125,8 +138,6 @@ app.MapPost("/enrich-token", async (
         UserGroups = userGroups
     };
 })
-.WithName("EnrichToken")
-.WithDescription("Enrich and shape the access-token with claims.")
-.WithOpenApi();
+.ExcludeFromDescription();
 
 app.Run();

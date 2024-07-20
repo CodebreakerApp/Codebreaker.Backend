@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       solutionfile-path: src/Codebreaker.Backend.SqlServer.sln
-      projectfile-path: src/services/gameapi/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
+      projectfile-path: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
       artifact-name: codebreaker-sqlserver-stable   
 
     steps:
