@@ -14,7 +14,7 @@
     </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.2" />
+		<PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="8.1.0" />
 		<PackageReference Include="CNinnovation.Codebreaker.Cosmos" Version="3.7.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7">
 			<PrivateAssets>all</PrivateAssets>
