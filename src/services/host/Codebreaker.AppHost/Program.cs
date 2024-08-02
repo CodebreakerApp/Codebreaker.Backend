@@ -76,7 +76,8 @@ else
         .WithReference(insights)
         .WithReference(eventHub)
         .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode);
+        .WithEnvironment("StartupMode", startupMode)
+        .WithExternalHttpEndpoints();
 
     //TODO: ERROR: error executing step command 'deploy --all': failed deploying service 'bot': publishing container: failed to get dotnet target port: empty dotnet configuration output with dotnet publish output '
     //builder.AddProject<Projects.Codebreaker_BotQ>("bot")
@@ -89,17 +90,20 @@ else
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
         .WithReference(eventHub)
-        .WithReference(signalR);
+        .WithReference(signalR)
+        .WithExternalHttpEndpoints();
 
     var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
         .WithReference(cosmos)
         .WithReference(insights)
         .WithReference(eventHub)
-        .WithReference(blob);
+        .WithReference(blob)
+        .WithExternalHttpEndpoints();
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
-        .WithReference(userServiceKeyvault);
+        .WithReference(userServiceKeyvault)
+        .WithExternalHttpEndpoints();
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
