@@ -122,9 +122,9 @@ else
     //    .WithReference(users)
     //    .WithReference(gatewayKeyvault);
 
-    builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
-        .WithExternalHttpEndpoints()
-        .WithReference(gateway);
+    //builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
+    //    .WithExternalHttpEndpoints()
+    //    .WithReference(gateway);
 }
 
 
