@@ -33,6 +33,15 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+# https://github.com/Azure/azure-dev/issues/4157 - update to azd way after issue is resolved          
+      - name: Setup .NET Aspire
+        run: dotnet workload install aspire
+
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
