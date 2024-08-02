@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>CNinnovation.Codebreaker.BackendModels</PackageId>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageTags>
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" Version="3.7.0" />
+    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" Version="3.8.0-preview.1.63" />
   </ItemGroup>
 
   <ItemGroup>
