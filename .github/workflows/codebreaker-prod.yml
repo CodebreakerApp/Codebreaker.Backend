@@ -5,7 +5,6 @@ on:
     # Set this to the mainline branch you are using
     branches:
       - main
-      - master
 
 # GitHub Actions workflow to deploy to Azure using azd
 # To configure required secrets for connecting to Azure, simply run `azd pipeline config`
@@ -28,6 +27,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: 'true'
 
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
