@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.Data.Cosmos", "services\gameapi\Codebreaker.Data.Cosmos\Codebreaker.Data.Cosmos.csproj", "{056B6CB9-D492-45FB-984A-B33A47CE876D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Codebreaker.Data.Cosmos", "services\common\Codebreaker.Data.Cosmos\Codebreaker.Data.Cosmos.csproj", "{A4D910C5-87D3-452E-93F7-8DDDE25C712E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{056B6CB9-D492-45FB-984A-B33A47CE876D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{056B6CB9-D492-45FB-984A-B33A47CE876D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{056B6CB9-D492-45FB-984A-B33A47CE876D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{056B6CB9-D492-45FB-984A-B33A47CE876D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4D910C5-87D3-452E-93F7-8DDDE25C712E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4D910C5-87D3-452E-93F7-8DDDE25C712E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4D910C5-87D3-452E-93F7-8DDDE25C712E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4D910C5-87D3-452E-93F7-8DDDE25C712E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
