@@ -77,8 +77,6 @@ else
         .WithEnvironment("DataStore", dataStore)
         .WithEnvironment("StartupMode", startupMode);
 
-
-
     //var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
     //    .WithReference(cosmos)
     //    .WithReference(redis)
