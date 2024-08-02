@@ -79,12 +79,12 @@ else
         .WithEnvironment("StartupMode", startupMode);
 
     //TODO: ERROR: error executing step command 'deploy --all': failed deploying service 'bot': publishing container: failed to get dotnet target port: empty dotnet configuration output with dotnet publish output '
-    builder.AddProject<Projects.Codebreaker_BotQ>("bot")
-        .WithReference(insights)
-        .WithReference(botQueue)
-        .WithReference(gameAPIs)
-        .WithEnvironment("Bot__Loop", botLoop)
-        .WithEnvironment("Bot__Delay", botDelay);
+    //builder.AddProject<Projects.Codebreaker_BotQ>("bot")
+    //    .WithReference(insights)
+    //    .WithReference(botQueue)
+    //    .WithReference(gameAPIs)
+    //    .WithEnvironment("Bot__Loop", botLoop)
+    //    .WithEnvironment("Bot__Delay", botDelay);
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
