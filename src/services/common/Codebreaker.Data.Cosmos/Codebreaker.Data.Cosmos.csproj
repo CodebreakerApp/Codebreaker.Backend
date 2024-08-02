@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.7.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.5" />
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0-preview.1.31" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.7" />
   </ItemGroup>
 
   <ItemGroup>
