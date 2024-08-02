@@ -78,6 +78,7 @@ else
         .WithEnvironment("DataStore", dataStore)
         .WithEnvironment("StartupMode", startupMode);
 
+    //TODO: ERROR: error executing step command 'deploy --all': failed deploying service 'bot': publishing container: failed to get dotnet target port: empty dotnet configuration output with dotnet publish output '
     builder.AddProject<Projects.Codebreaker_BotQ>("bot")
         .WithReference(insights)
         .WithReference(botQueue)

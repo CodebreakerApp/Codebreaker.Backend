@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CNinnovation.Codebreaker.SqlServer" Version="3.7.0" />
+		<PackageReference Include="CNinnovation.Codebreaker.SqlServer" Version="3.8.0-preview.1.21" />
 	</ItemGroup>
 
 	<ItemGroup>
