@@ -107,10 +107,10 @@ else
     //    .WithReference(blob)
     //    .WithExternalHttpEndpoints();
 
-    //var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
-    //    .WithReference(insights)
-    //    .WithReference(userServiceKeyvault)
-    //    .WithExternalHttpEndpoints();
+    var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
+        .WithReference(insights)
+        .WithReference(userServiceKeyvault)
+        .WithExternalHttpEndpoints();
 
     //var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
     //    .WithExternalHttpEndpoints()
