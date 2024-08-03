@@ -35,7 +35,6 @@
     <ProjectReference Include="..\..\gateway\Codebreaker.ApiGateway\Codebreaker.ApiGateway.csproj" />
     <ProjectReference Include="..\..\live\Codebreaker.Live\Codebreaker.Live.csproj" />
     <ProjectReference Include="..\..\ranking\Codebreaker.Ranking\Codebreaker.Ranking.csproj" />
-    <ProjectReference Include="..\..\TestWeather\TestWeather.csproj" />
     <ProjectReference Include="..\..\user\CodeBreaker.UserService\CodeBreaker.UserService.csproj" />
   </ItemGroup>
 
