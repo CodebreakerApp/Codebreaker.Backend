@@ -97,19 +97,17 @@ else
     //var live = builder.AddProject<Projects.Codebreaker_Live>("live")
     //    .WithReference(insights)
     //    .WithReference(eventHub)
-    //    .WithReference(signalR)
-    //    .WithExternalHttpEndpoints();
+    //    .WithReference(signalR);
 
-    var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
-        .WithReference(cosmos)
-        .WithReference(insights)
-        .WithReference(eventHub)
-        .WithReference(blob);
+    //var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
+    //    .WithReference(cosmos)
+    //    .WithReference(insights)
+    //    .WithReference(eventHub)
+    //    .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
-        .WithReference(userServiceKeyvault)
-        .WithExternalHttpEndpoints();
+        .WithReference(userServiceKeyvault);
 
     //var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
     //    .WithExternalHttpEndpoints()
