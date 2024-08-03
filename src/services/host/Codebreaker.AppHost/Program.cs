@@ -100,12 +100,11 @@ else
     //    .WithReference(signalR)
     //    .WithExternalHttpEndpoints();
 
-    //var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
-    //    .WithReference(cosmos)
-    //    .WithReference(insights)
-    //    .WithReference(eventHub)
-    //    .WithReference(blob)
-    //    .WithExternalHttpEndpoints();
+    var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
+        .WithReference(cosmos)
+        .WithReference(insights)
+        .WithReference(eventHub)
+        .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
