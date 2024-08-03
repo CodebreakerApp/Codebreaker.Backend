@@ -94,10 +94,10 @@ else
     //    .WithEnvironment("Bot__Loop", botLoop)
     //    .WithEnvironment("Bot__Delay", botDelay);
 
-    //var live = builder.AddProject<Projects.Codebreaker_Live>("live")
-    //    .WithReference(insights)
-    //    .WithReference(eventHub)
-    //    .WithReference(signalR);
+    var live = builder.AddProject<Projects.Codebreaker_Live>("live")
+        .WithReference(insights)
+        .WithReference(eventHub)
+        .WithReference(signalR);
 
     var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
         .WithReference(cosmos)
