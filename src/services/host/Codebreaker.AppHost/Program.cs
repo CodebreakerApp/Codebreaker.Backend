@@ -80,15 +80,15 @@ else
         .WithReference(insights)
         .WithReference(eventHub)
         .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode)
-        .WithExternalHttpEndpoints();
+        .WithEnvironment("StartupMode", startupMode);
 
-    //builder.AddProject<Projects.Codebreaker_BotQ>("bot")
-    //    .WithReference(insights)
-    //    .WithReference(botQueue)
-    //    .WithReference(gameAPIs)
-    //    .WithEnvironment("Bot__Loop", botLoop)
-    //    .WithEnvironment("Bot__Delay", botDelay);
+    // TODO: change to use BotQ with Container App Jobs
+    builder.AddProject<Projects.CodeBreaker_Bot>("bot")
+        .WithReference(insights)
+        .WithReference(botQueue)
+        .WithReference(gameAPIs)
+        .WithEnvironment("Bot__Loop", botLoop)
+        .WithEnvironment("Bot__Delay", botDelay);
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
