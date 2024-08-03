@@ -99,11 +99,11 @@ else
     //    .WithReference(eventHub)
     //    .WithReference(signalR);
 
-    //var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
-    //    .WithReference(cosmos)
-    //    .WithReference(insights)
-    //    .WithReference(eventHub)
-    //    .WithReference(blob);
+    var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
+        .WithReference(cosmos)
+        .WithReference(insights)
+        .WithReference(eventHub)
+        .WithReference(blob);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
