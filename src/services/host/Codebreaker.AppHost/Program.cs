@@ -77,22 +77,21 @@ else
         .WithEnvironment("DataStore", dataStore)
         .WithEnvironment("StartupMode", startupMode);
 
-    //var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
-    //    .WithReference(cosmos)
-    //    .WithReference(redis)
-    //    .WithReference(insights)
-    //    .WithReference(eventHub)
-    //    .WithEnvironment("DataStore", dataStore)
-    //    .WithEnvironment("StartupMode", startupMode)
-    //    .WithExternalHttpEndpoints();
+    var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
+        .WithReference(cosmos)
+        .WithReference(redis)
+        .WithReference(insights)
+        .WithReference(eventHub)
+        .WithEnvironment("DataStore", dataStore)
+        .WithEnvironment("StartupMode", startupMode)
+        .WithExternalHttpEndpoints();
 
-    //TODO: ERROR: error executing step command 'deploy --all': failed deploying service 'bot': publishing container: failed to get dotnet target port: empty dotnet configuration output with dotnet publish output '
-    //builder.AddProject<Projects.Codebreaker_BotQ>("bot")
-    //    .WithReference(insights)
-    //    .WithReference(botQueue)
-    //    .WithReference(gameAPIs)
-    //    .WithEnvironment("Bot__Loop", botLoop)
-    //    .WithEnvironment("Bot__Delay", botDelay);
+    builder.AddProject<Projects.Codebreaker_BotQ>("bot")
+        .WithReference(insights)
+        .WithReference(botQueue)
+        .WithReference(gameAPIs)
+        .WithEnvironment("Bot__Loop", botLoop)
+        .WithEnvironment("Bot__Delay", botDelay);
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
@@ -109,18 +108,17 @@ else
         .WithReference(insights)
         .WithReference(userServiceKeyvault);
 
-    //var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
-    //    .WithExternalHttpEndpoints()
-    //    .WithReference(gameAPIs)
-    //    .WithReference(live)
-    //    .WithReference(ranking)
-    //    .WithReference(users)
-    //    .WithReference(gatewayKeyvault);
+    var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
+        .WithExternalHttpEndpoints()
+        .WithReference(gameAPIs)
+        .WithReference(live)
+        .WithReference(ranking)
+        .WithReference(users)
+        .WithReference(gatewayKeyvault);
 
-    //builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
-    //    .WithExternalHttpEndpoints()
-    //    .WithReference(gateway);
+    builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
+        .WithExternalHttpEndpoints()
+        .WithReference(gateway);
 }
-
 
 builder.Build().Run();
