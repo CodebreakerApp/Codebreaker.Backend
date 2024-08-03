@@ -58,8 +58,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Blazor.Client",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBreaker.Blazor.UI", "services\Codebreaker.Blazor\src\CodeBreaker.Blazor.UI\CodeBreaker.Blazor.UI.csproj", "{852E383D-210D-4828-8516-66AA75E00A5B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWeather", "services\TestWeather\TestWeather.csproj", "{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,10 +140,6 @@ Global
 		{852E383D-210D-4828-8516-66AA75E00A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{852E383D-210D-4828-8516-66AA75E00A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{852E383D-210D-4828-8516-66AA75E00A5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,7 +164,6 @@ Global
 		{7CC49E47-99DB-4093-9DBE-51F119E21DC5} = {D88DEDE8-217E-43CE-AB08-BF381441E6C8}
 		{6D302E91-0C76-4C56-BE5D-AF16A7D353C6} = {D88DEDE8-217E-43CE-AB08-BF381441E6C8}
 		{852E383D-210D-4828-8516-66AA75E00A5B} = {D88DEDE8-217E-43CE-AB08-BF381441E6C8}
-		{F22F1202-A42B-4A1D-96D6-5B46DE6C7E91} = {942BFF57-8098-4844-937B-A20F2CE4FCF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5DE33962-11C6-4B2F-A356-DDE0B4F5CC56}
