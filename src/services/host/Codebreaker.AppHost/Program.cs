@@ -70,12 +70,9 @@ else
     var gatewayKeyvault = builder.AddAzureKeyVault("gateway-keyvault");
     var userServiceKeyvault = builder.AddAzureKeyVault("users-keyvault");
 
-    var weather = builder.AddProject<Projects.TestWeather>("testweather")
+    builder.AddProject<Projects.Codebreaker_CosmosCreate>("cosmoscreate")
         .WithReference(cosmos)
-        .WithReference(redis)
-        .WithReference(insights)
-        .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode);
+        .WithReference(insights);
 
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithReference(cosmos)

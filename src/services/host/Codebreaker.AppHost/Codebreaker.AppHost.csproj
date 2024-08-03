@@ -30,6 +30,7 @@
     <ProjectReference Include="..\..\bot\Codebreaker.BotQ\Codebreaker.BotQ.csproj" />
     <ProjectReference Include="..\..\bot\CodeBreaker.Bot\CodeBreaker.Bot.csproj" />
     <ProjectReference Include="..\..\Codebreaker.Blazor\src\CodeBreaker.Blazor\CodeBreaker.Blazor.csproj" />
+    <ProjectReference Include="..\..\gameapis\Codebreaker.CosmosCreate\Codebreaker.CosmosCreate.csproj" />
     <ProjectReference Include="..\..\gameapis\Codebreaker.GameAPIs\Codebreaker.GameAPIs.csproj" />
     <ProjectReference Include="..\..\gateway\Codebreaker.ApiGateway\Codebreaker.ApiGateway.csproj" />
     <ProjectReference Include="..\..\live\Codebreaker.Live\Codebreaker.Live.csproj" />
