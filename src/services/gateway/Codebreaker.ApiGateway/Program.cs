@@ -20,7 +20,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             OnValidateCredentials = context =>
             {
                 var config = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-                if (context.Username == "AADB2C" && context.Password == config["AADB2C-ApiConnector-Password"])
+                var password = config["AADB2C-ApiConnector-Password"];
+
+                if (string.IsNullOrEmpty(password))
+                    throw new InvalidOperationException("AADB2C-ApiConnector-Password is not set in configuration."
+
+                if (context.Username == "AADB2C" && context.Password == password)
                 {
                     Claim[] claims = [
                         new (ClaimTypes.Name, context.Username, ClaimValueTypes.String, context.Options.ClaimsIssuer),
