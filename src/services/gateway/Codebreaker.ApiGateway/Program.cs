@@ -23,7 +23,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var password = config["AADB2C-ApiConnector-Password"];
 
                 if (string.IsNullOrEmpty(password))
-                    throw new InvalidOperationException("AADB2C-ApiConnector-Password is not set in configuration."
+                    throw new InvalidOperationException("AADB2C-ApiConnector-Password is not set in configuration.");
 
                 if (context.Username == "AADB2C" && context.Password == password)
                 {
