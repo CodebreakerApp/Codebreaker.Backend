@@ -99,3 +99,11 @@ These apps are using .NET 7 with the previous version of the API. See the new cl
 * Azure App Services
 * Azure Storage message queue
 * Azure Key Vault
+
+## Configuration authentication with Azure AD B2C
+
+With AADB2C, the API connectors need to be updated after publishing the backend, by:
+
+- setting the Endpoint URLs to https://<<gateway>>/users/api-connectors/validate-before-user-creation and https://<<gateway>>/users/api-connectors/enrich-token
+- setting the basic-authentication password in the gateway-keyvault with the key AADB2C-ApiConnector-Password
+- and setting that password in tha API connectors
