@@ -60,6 +60,23 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 // Aspire endpoints
 app.MapDefaultEndpoints();
 
+
+
+
+
+// ----------------------
+// FOR DEBUGGING PURPOSES
+// ----------------------
+app.MapGet("/debug", () =>
+{
+    return Results.Ok("Debugging...");
+});
+// ----------------------
+
+
+
+
+
 // GET /public/gamer-names/suggestions
 // Query: int? count
 // Response: GamerNameSuggestionsResponse
