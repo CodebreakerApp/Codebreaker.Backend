@@ -111,11 +111,13 @@ else
         .WithReference(live)
         .WithReference(ranking)
         .WithReference(users)
-        .WithReference(gatewayKeyvault);
+        .WithReference(gatewayKeyvault)
+        .WithReference(insights);
 
     builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
         .WithExternalHttpEndpoints()
-        .WithReference(gateway);
+        .WithReference(gateway)
+        .WithReference(insights);
 }
 
 builder.Build().Run();
