@@ -75,10 +75,13 @@ builder.Services.AddCors(setup => setup.AddDefaultPolicy(policy => policy.AllowA
 
 builder.AddServiceDefaults();
 
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
-    .AddServiceDiscoveryDestinationResolver();
+var reverseProxyBuilder = builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+if (!builder.Environment.IsProduction())
+{ 
+    reverseProxyBuilder.AddServiceDiscoveryDestinationResolver();
+}
 
 // builder.Services.AddRazorPages(); // authentication UI in Views
 
