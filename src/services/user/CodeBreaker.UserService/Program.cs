@@ -67,7 +67,7 @@ app.MapDefaultEndpoints();
 // ----------------------
 // FOR DEBUGGING PURPOSES
 // ----------------------
-app.MapGet("/debug", () =>
+app.MapGet("/users/debug", () =>
 {
     return Results.Ok("Debugging...");
 });
