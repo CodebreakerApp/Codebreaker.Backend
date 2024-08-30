@@ -47,6 +47,9 @@ var app = builder.Build();
 // CORS
 app.UseCors();
 
+// Static files
+app.UseStaticFiles("/public/static");
+
 // Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
