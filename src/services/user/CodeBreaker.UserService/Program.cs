@@ -47,9 +47,6 @@ var app = builder.Build();
 // CORS
 app.UseCors();
 
-// Aspire endpoints
-app.MapDefaultEndpoints();
-
 // Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
