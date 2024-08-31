@@ -92,7 +92,7 @@ app.MapGet("/public/gamer-names/suggestions", (int? count, IOptions<GamerNameSug
     return Results.Ok(new GamerNameSuggestionsResponse(suggestions));
 })
 .WithName("SuggestGamerNames")
-.WithDescription("Suggessts possible and available gamer names")
+.WithDescription("Suggests possible and available gamer names")
 .WithOpenApi()
 .RequireCors("DefaultFrontendPolicy");
 
