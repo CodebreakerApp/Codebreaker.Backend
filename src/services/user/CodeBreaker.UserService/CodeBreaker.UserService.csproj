@@ -21,7 +21,7 @@
     <ProjectReference Include="..\..\common\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -29,6 +29,6 @@
     <Content Update="wwwroot\aadb2c-custom-pages\self-asserted_slate-gray.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
