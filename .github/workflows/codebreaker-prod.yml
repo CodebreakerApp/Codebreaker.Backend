@@ -70,5 +70,9 @@ jobs:
         env:
           AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
 
+      - name: Configure azd to keep custom domains
+        run: azd config set alpha.aca.persistDomains on
+
       - name: Deploy Application
         run: azd deploy --no-prompt
+        
