@@ -8,6 +8,34 @@ namespace Codebreaker.GameAPIs.Analyzer.Tests;
 public class ShapeGame5x5x4AnalyzerTests
 {
     [Fact]
+    public void SetMove_ShouldNotReturnBlueWithOneWhite()
+    {
+        ShapeAndColorResult expectedKeyPegs = new(0, 1, 0);
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
+            ["Rectangle;Green", "Triangle;Blue", "Square;Blue", "Triangle;Green"],
+            ["Circle;Red", "Square;Green", "Triangle;Blue", "Star;Yellow"]
+        );
+        // Position 3: Triangle.Blue is correct, but should be in the 2nd position
+        // all the other pegs are incorrect
+
+        Assert.Equal(expectedKeyPegs, resultKeyPegs);
+    }
+
+    [Fact]
+    public void SetMove_ShouldReturnOneWhiteAndOneBlue()
+    {
+        ShapeAndColorResult expectedKeyPegs = new(0, 1, 1);
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
+            ["Rectangle;Purple", "Square;Purple", "Star;Red", "Circle;Yellow"],
+            ["Triangle;Purple", "Star;Green", "Circle;Blue", "Square;Purple"]
+        );
+        // position 4: Square;Purple is correct but in an incorrect position (should be 2) - white
+        // position 1: Purple correct - blue
+
+        Assert.Equal(expectedKeyPegs, resultKeyPegs);
+    }
+
+    [Fact]
     public void SetMove_ShouldReturnTwoBlack()
     {
         ShapeAndColorResult expectedKeyPegs = new(2, 0, 0);
@@ -111,7 +139,7 @@ public class ShapeGame5x5x4AnalyzerTests
     [Fact]
     public void SetMove_ShouldReturnOneBlackAndOneWhite()
     {
-        // the first and second guess have a correct shape, but both in the wrong positon
+        // the first and second guess have a correct shape, but both in the wrong position
         // all the colors are incorrect
         ShapeAndColorResult expectedKeyPegs = new(1, 1, 0);
         ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
