@@ -10,7 +10,7 @@
     <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="8.2.0" />
     <PackageReference Include="idunno.Authentication.Basic" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="8.2.0" />
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
