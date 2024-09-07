@@ -8,6 +8,22 @@ namespace Codebreaker.GameAPIs.Analyzer.Tests;
 public class ShapeGame5x5x4AnalyzerTests
 {
     [Fact]
+    public void SetMove_ShouldReturnOneWhiteAndJustOneBlueBecauseOfWhite()
+    {
+        ShapeAndColorResult expectedKeyPegs = new(0, 1, 1);
+        ShapeAndColorResult? resultKeyPegs = AnalyzeGame(
+            ["Square;Green", "Square;Purple", "Circle;Yellow", "Triangle;Blue"],
+            ["Triangle;Green", "Circle;Yellow", "Star;Yellow", "Circle;Red"]
+        );
+        // Position 2: pair ok, wrong position (white)
+        // Position 1: Green is correct (blue)
+        // Position 3: Yellow is correct, but the position 2 already has a white for circle/yellow, thus not another blue is added!
+        // Position 4: all wrong
+
+        Assert.Equal(expectedKeyPegs, resultKeyPegs);
+    }
+
+    [Fact]
     public void SetMove_ShouldNotReturnBlueWithOneWhite()
     {
         ShapeAndColorResult expectedKeyPegs = new(0, 1, 0);
