@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <VersionPrefix>3.7.1</VersionPrefix>
     <PackageTags>
       Codebreaker;CNinnovation;GameAnalyzers
     </PackageTags>
