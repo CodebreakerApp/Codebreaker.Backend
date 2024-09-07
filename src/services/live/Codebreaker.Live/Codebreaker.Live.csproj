@@ -18,7 +18,7 @@
 	<PackageReference Include="Aspire.Confluent.Kafka" Version="8.2.0" />
     <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="8.2.0" />
     <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="8.2.0" />
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0-preview.1.31" />
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0-preview.1.32" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="8.0.8" />
