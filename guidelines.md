@@ -4,22 +4,22 @@ This project serves as a bigger sample application showing new technologies usin
 
 ## Use modern technologies
 
-Prefer using modern APIs, e.g.
+Prefer using modern APIs, and C# syntax e.g.
 
 * Minimal APIs instead of controllers
-* C# records if possible and useful instead of classes and structs
+* C# records if possible when useful instead of classes and structs
 * Primary records when possible
-* Use *nullable reference types*, *file-scoped
+* Use *nullable reference types*, *file-scoped*...
 
 ## Released versions
 
-Use released versions (e.g. .NET 6) to make it easier using the applications and services from all developers.
+Use released versions (e.g. .NET 8) to make it easier using the applications and services from all developers.
 
-> An exception from this rule can be applied if a pre-release version is not too far away, it's not expected the pre-release version adds many required changes on the code, and offers many advantages on the implementation (e.g. .NET 7 with Minimal APIs).  If needed, a long-time branch can be used to use pre-release versions where this exception does not apply.
+> An exception from this rule can be applied if a pre-release version is not too far away, it's not expected the pre-release version adds many required changes on the code, and offers many advantages on the implementation.  If needed, a long-time dev branch can be used to use pre-release versions where this exception does not apply.
 
 ## Older technologies
 
-Older technologies can be used if required for some scenarios, e.g. **WPF** as needed for a workshop. **WinUI** should be preferred to implement more features.
+Older technologies can be used if required for some scenarios, e.g. **WPF** as needed for a workshop. **WinUI** and **Blazor** should be preferred to implement more features.
 
 ## Productivity
 
