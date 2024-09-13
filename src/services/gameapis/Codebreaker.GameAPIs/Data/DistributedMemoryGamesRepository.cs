@@ -50,6 +50,11 @@ public class DistributedMemoryGamesRepository(IDistributedCache distributedCache
             filteredGames = filteredGames.Where(g => g.HasEnded());
         }
 
+        if (gamesQuery.GameType != null)
+        {
+            filteredGames = filteredGames.Where(g => g.GameType == gamesQuery.GameType);
+        }
+
         filteredGames = filteredGames.OrderBy(g => g.Duration).ThenBy(g => g.StartTime).Take(500);
 
         filteredGames = filteredGames.ToList();
