@@ -56,12 +56,12 @@ jobs:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
           AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Download Package
-        uses: actions/download-artifact@v4
+  #    - name: Download Package
+  #      uses: actions/download-artifact@v4
 
       - name: Configure azd to keep custom domains
         run: azd config set alpha.aca.persistDomains on
 
       - name: Deploy Application
-        run: azd deploy --from-package ./package/codebreaker.zip --no-prompt
+        run: azd deploy --no-prompt
         

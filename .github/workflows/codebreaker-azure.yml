@@ -53,23 +53,24 @@ jobs:
       - name: Setup .NET Aspire
         run: dotnet workload install aspire
 
-      - name: Package Application
-        run: azd package --output-path ./dist/codebreaker.zip --environment NONE --no-prompt
-        working-directory: ./
+# issue with azd package: nothing created        
+#      - name: Package Application
+#        run: azd package --output-path ./dist/codebreaker.zip --environment NONE --no-prompt
+#        working-directory: ./
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: ./dist/codebreaker.zip
-          if-no-files-found: error
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: package
+#          path: ./dist/codebreaker.zip
+#          if-no-files-found: error
         
   deploy-test:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     needs: [build]
     with:
-      AZURE_ENV_NAME: codebreakertest
+     AZURE_ENV_NAME: codebreakertest
 
   deploy-prod:
     uses: ./.github/workflows/deploy.yml
