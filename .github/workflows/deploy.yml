@@ -1,0 +1,67 @@
+name: Deploy to Azure
+
+on:
+  workflow_call:
+    inputs:
+      AZURE_ENV_NAME:
+        required: true
+        type: string
+
+# Set up permissions for deploying with secretless Azure federated credentials
+# https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.AZURE_ENV_NAME }}
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install azd
+        uses: Azure/setup-azd@v1.0.0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+# https://github.com/Azure/azure-dev/issues/4157 - update to azd way after issue is resolved          
+      - name: Setup .NET Aspire
+        run: dotnet workload install aspire
+
+      - name: Log in with Azure (Federated Credentials)
+        run: |
+          azd auth login `
+            --client-id "$Env:AZURE_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:AZURE_TENANT_ID"
+        shell: pwsh
+
+      - name: Provision Infrastructure
+        run: azd provision --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Download Package
+        uses: actions/download-artifact@v4
+
+      - name: Configure azd to keep custom domains
+        run: azd config set alpha.aca.persistDomains on
+
+      - name: Deploy Application
+        run: azd deploy --from-package ./package/codebreaker.zip --no-prompt
+        
