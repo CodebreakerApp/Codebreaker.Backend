@@ -1,3 +1,5 @@
+name: Publish to Azure
+
 on:
   workflow_dispatch:
   push:
@@ -16,6 +18,9 @@ on:
 
 # GitHub Actions workflow to deploy to Azure using azd
 # To configure required secrets for connecting to Azure, simply run `azd pipeline config`
+# check support with multiple environments: https://github.com/Azure/azure-dev/issues/2373
+# Workaround:
+# https://github.com/jasontaylordev/todo-aspnetcore-csharp-sqlite/blob/main/OPTIONAL_FEATURES.md
 
 # Set up permissions for deploying with secretless Azure federated credentials
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
@@ -27,10 +32,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
     steps:
       - name: Checkout
@@ -50,37 +53,27 @@ jobs:
       - name: Setup .NET Aspire
         run: dotnet workload install aspire
 
-      - name: Log in with Azure (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
-        run: |
-          azd auth login `
-            --client-id "$Env:AZURE_CLIENT_ID" `
-            --federated-credential-provider "github" `
-            --tenant-id "$Env:AZURE_TENANT_ID"
-        shell: pwsh
+      - name: Package Application
+        run: azd package --output-path ./dist/codebreaker.zip --environment NON
+        working-directory: ./
 
-      - name: Log in with Azure (Client Credentials)
-        if: ${{ env.AZURE_CREDENTIALS != '' }}
-        run: |
-          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          Write-Host "::add-mask::$($info.clientSecret)"
-
-          azd auth login `
-            --client-id "$($info.clientId)" `
-            --client-secret "$($info.clientSecret)" `
-            --tenant-id "$($info.tenantId)"
-        shell: pwsh
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Provision Infrastructure
-        run: azd provision --no-prompt
-        env:
-          AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
-
-      - name: Configure azd to keep custom domains
-        run: azd config set alpha.aca.persistDomains on
-
-      - name: Deploy Application
-        run: azd deploy --no-prompt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: ./dist/codebreaker.zip
+          if-no-files-found: error
         
+  deploy-test:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    needs: [build]
+    with:
+      AZURE_ENV_NAME: codebreakertest
+
+  deploy-prod:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    needs: [deploy-test]
+    with:
+      AZURE_ENV_NAME: codebreakerprod
