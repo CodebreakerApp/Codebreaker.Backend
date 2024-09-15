@@ -21,7 +21,7 @@
     <PackageReference Include="CNInnovation.Codebreaker.Shared" Version="2.0.1-beta.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.50.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.60.4" />
     <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.26.0" />
   </ItemGroup>
 
