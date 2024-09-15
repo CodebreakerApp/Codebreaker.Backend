@@ -54,7 +54,7 @@ jobs:
         run: dotnet workload install aspire
 
       - name: Package Application
-        run: azd package --output-path ./dist/codebreaker.zip --environment NON
+        run: azd package --output-path ./dist/codebreaker.zip --environment NONE --no-prompt
         working-directory: ./
 
       - name: Upload Artifact
