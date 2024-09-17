@@ -1,3 +1,5 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,25 +44,25 @@ public static class Extensions
         });
 
         builder.Services.AddOpenTelemetry()
-         .WithMetrics(metrics =>
-         {
-             metrics.AddAspNetCoreInstrumentation()
-                 .AddHttpClientInstrumentation()
-                 .AddRuntimeInstrumentation();
-         })
-         .WithTracing(tracing =>
-         {
-             if (builder.Environment.IsDevelopment())
-             {
-                 // We want to view all traces in development
-                 tracing.SetSampler(new AlwaysOnSampler());
-             }
+            .WithMetrics(metrics =>
+            {
+                metrics.AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation();
+            })
+            .WithTracing(tracing =>
+            {
+                if (builder.Environment.IsDevelopment())
+                {
+                    // We want to view all traces in development
+                    tracing.SetSampler(new AlwaysOnSampler());
+                }
 
-             tracing.AddAspNetCoreInstrumentation()
-                 // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
-                 //.AddGrpcClientInstrumentation()
-                 .AddHttpClientInstrumentation();
-         });
+                tracing.AddAspNetCoreInstrumentation()
+                    // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
+                    // .AddGrpcClientInstrumentation()
+                    .AddHttpClientInstrumentation();
+            });
 
         builder.AddOpenTelemetryExporters();
 
@@ -77,16 +79,15 @@ public static class Extensions
         {
             builder.Services.AddOpenTelemetry().UseOtlpExporter();
         }
-        //if (Environment.GetEnvironmentVariable("STARTUP") == "Prometheus")
-        //{
-        //    builder.Services.AddOpenTelemetry()
-        //       .WithMetrics(metrics => metrics.AddPrometheusExporter());
-        //}
-        //else
-        //{
-        //    builder.Services.AddOpenTelemetry()
-        //        .UseAzureMonitor();
-        //}
+        if (Environment.GetEnvironmentVariable("StartupMode") == "OnPremises")
+        {
+            builder.Services.AddOpenTelemetry()
+               .WithMetrics(metrics => metrics.AddPrometheusExporter());
+        }
+        if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
+        {
+            builder.Services.AddOpenTelemetry().UseAzureMonitor();
+        }
         return builder;
     }
 
@@ -101,10 +102,10 @@ public static class Extensions
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
-        //if (Environment.GetEnvironmentVariable("STARTUP") == "Prometheus")
-        //{ 
-        //    app.MapPrometheusScrapingEndpoint();
-        //}
+        if (Environment.GetEnvironmentVariable("StartupMode") == "OnPremises")
+        {
+            app.MapPrometheusScrapingEndpoint();
+        }
 
         // Only health checks tagged with the "live" tag must pass for app to be considered alive
         app.MapHealthChecks("/alive", new HealthCheckOptions
