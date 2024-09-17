@@ -12,8 +12,6 @@ internal static class ApplicationServices
         builder.AddAzureQueueClient("botqueue");
         builder.Services.AddScoped<BotQueueClient>();
 
-
-
         var botConfig = builder.Configuration.GetSection("Bot");
         builder.Services.Configure<BotQueueClientOptions>(botConfig);
         builder.Services.AddScoped<CodebreakerTimer>();
