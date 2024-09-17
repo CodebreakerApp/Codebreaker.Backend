@@ -83,7 +83,7 @@ else
         .WithEnvironment("StartupMode", startupMode);
 
     // TODO: change to use BotQ with Container App Jobs
-    builder.AddProject<Projects.CodeBreaker_Bot>("bot")
+    builder.AddProject<Projects.Codebreaker_BotQ>("bot")
         .WithReference(insights)
         .WithReference(botQueue)
         .WithReference(gameAPIs)
