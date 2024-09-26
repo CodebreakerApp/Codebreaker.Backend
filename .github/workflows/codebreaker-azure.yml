@@ -72,6 +72,19 @@ jobs:
     with:
      AZURE_ENV_NAME: codebreakertest
 
+  set-blazor-staging-environmentvariable:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_TESTENV }}
+    - name: Update DOTNET_ENVIRONMENT for the Blazor containerapp to Staging
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
+        inlineScript: az containerapp update -n blazor -g rg-codebreakertest --set-env-vars DOTNET_ENVIRONMENT=Staging
+
   deploy-prod:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
