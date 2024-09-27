@@ -74,6 +74,7 @@ jobs:
 
   set-blazor-staging-environmentvariable:
     runs-on: ubuntu-latest
+    needs: [deploy-test]
     steps:
     - name: Azure Login
       uses: azure/login@v2
