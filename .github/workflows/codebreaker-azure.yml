@@ -72,7 +72,8 @@ jobs:
     with:
      AZURE_ENV_NAME: codebreakertest
 
-  set-blazor-staging-environmentvariable:
+  # Set the environment variable DOTNET_ENVIRONMENT to "Staging" for all container apps in the containerapp environment
+  set-staging-environmentvariables:
     runs-on: ubuntu-latest
     needs: [deploy-test]
     steps:
@@ -80,11 +81,15 @@ jobs:
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS_TESTENV }}
-    - name: Update DOTNET_ENVIRONMENT for the Blazor containerapp to Staging
+    - name: Update DOTNET_ENVIRONMENT for all container apps to Staging
       uses: azure/cli@v2
       with:
         azcliversion: latest
-        inlineScript: az containerapp update -n blazor -g rg-codebreakertest --set-env-vars DOTNET_ENVIRONMENT=Staging
+        # Stores the container app ids in a variable
+        # Updates the DOTNET_ENVIRONMENT environment variable to Staging for all container apps in the containerapp environment
+        inlineScript: |
+          containerAppIds=$(az containerapp list -g rg-codebreakertest --query "[].id | join(' ', @[])" | tr -d '"')
+          az containerapp update --set-env-vars DOTNET_ENVIRONMENT=Staging --ids $containerAppIds --query [].id
 
   deploy-prod:
     uses: ./.github/workflows/deploy.yml
