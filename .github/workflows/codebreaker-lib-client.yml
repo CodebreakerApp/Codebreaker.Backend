@@ -7,8 +7,8 @@ on:
     branches: 
       [ main ]
     paths:
-    - 'src/clients/common/Codebreaker.GameAPIs.Client/**'
-    - 'src/clients/common/Codebreaker.GameAPIs.Client.Tests/**'
+    - 'src/clients/Codebreaker.GameAPIs.Client/**'
+    - 'src/clients/Codebreaker.GameAPIs.Client.Tests/**'
     - 'src/Codebreaker.GameA.sln'
     - '.github/workflows/codebreaker-lib-client.yml'
     - '.github/workflows/createnuget-withbuildnumber.yml'
