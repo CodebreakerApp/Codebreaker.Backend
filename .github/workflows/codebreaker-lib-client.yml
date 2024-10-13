@@ -26,7 +26,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 10
       solutionfile-path: src/Codebreaker.GameAPIs.Client.sln
-      projectfile-path: src/clients/common/Codebreaker.GameAPIs.Client/Codebreaker.GameAPIs.Client.csproj
+      projectfile-path: src/clients/Codebreaker.GameAPIs.Client/Codebreaker.GameAPIs.Client.csproj
       dotnet-version: '8.0.x'
       artifact-name: codebreaker-clientlib
       branch-name: main
