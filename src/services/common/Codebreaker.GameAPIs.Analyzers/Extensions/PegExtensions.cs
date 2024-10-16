@@ -30,8 +30,8 @@ public static class PegExtensions
     public static string[] ToStringResults(this ShapeAndColorResult result)
     {
         return Enumerable.Repeat(Colors.Black, result.Correct)
-            .Concat(Enumerable.Repeat(Colors.Blue, result.ColorOrShape))
             .Concat(Enumerable.Repeat(Colors.White, result.WrongPosition))
+            .Concat(Enumerable.Repeat(Colors.Blue, result.ColorOrShape))
             .ToArray();
     }
 
