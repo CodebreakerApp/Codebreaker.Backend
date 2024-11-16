@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>CNinnovation.Codebreaker.SqlServer</PackageId>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -15,11 +15,12 @@
     </Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
+    <Version>3.8.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0-preview.1.32" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
