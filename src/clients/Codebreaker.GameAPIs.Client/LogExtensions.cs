@@ -1,6 +1,6 @@
 ﻿namespace Codebreaker.GameAPIs.Client;
 
-internal static partial class Log
+internal static partial class LogExtensions
 {
     [LoggerMessage(2000, LogLevel.Information, "GetGameAsync game {GameId} not found: {ErrorMessage}", EventName = "GetGame")]
     public static partial void GetGameNotFound(this ILogger logger, Guid gameId, string errorMessage);
