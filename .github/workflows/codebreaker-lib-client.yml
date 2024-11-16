@@ -10,11 +10,7 @@ on:
     - 'src/clients/Codebreaker.GameAPIs.Client/**'
     - 'src/clients/Codebreaker.GameAPIs.Client.Tests/**'
     - 'src/Codebreaker.GameA.sln'
-    - '.github/workflows/codebreaker-lib-client.yml'
-    - '.github/workflows/createnuget-withbuildnumber.yml'
-    - '.github/workflows/publishnuget-azuredevops.yml'
-    - '.github/workflows/publishnuget-nugetserver.yml'
-
+    
   # Allow manually trigger 
   workflow_dispatch:    
 
