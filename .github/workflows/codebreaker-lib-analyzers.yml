@@ -27,7 +27,7 @@ jobs:
       version-offset: 38
       solutionfile-path: src/Codebreaker.Analyzers.sln
       projectfile-path: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
-      dotnet-version: '8.0.x'
+      dotnet-version: '9.0.x'
       artifact-name: codebreaker-analyzers
       branch-name: main
 
@@ -38,6 +38,8 @@ jobs:
       artifact-name: codebreaker-analyzers
     secrets: inherit
 
+  # NuGet publish is now done with codebreaker-lib-stable.yml
+  # In case a preview version will be published again to NuGet, this can be uncommented.
   # publishnuget:
   #   uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/publishnuget-nugetserver.yml@main
   #   needs: publishdevops

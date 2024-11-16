@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <PackageId>CNinnovation.Codebreaker.Analyzers</PackageId>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <PackageTags>
       Codebreaker;CNinnovation;GameAnalyzers
     </PackageTags>
@@ -15,10 +15,7 @@
     </Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
 public abstract class GameGuessAnalyzer<TField, TResult>(IGame game, TField[] guesses, int moveNumber) : IGameGuessAnalyzer<TResult>
     where TResult : struct
 {
-    protected readonly IGame _game = game;
+    private protected readonly IGame _game = game;
     private readonly int _moveNumber = moveNumber;
 
     protected TField[] Guesses { get; private set; } = guesses;
@@ -32,7 +32,9 @@ public abstract class GameGuessAnalyzer<TField, TResult>(IGame game, TField[] gu
     {
         /// The number of codes in the game does not match the number of pegs in the move.
         if (_game.NumberCodes != Guesses.Length)
+        {
             throw new ArgumentException($"Invalid guess number {Guesses.Length} for {_game.NumberCodes} code numbers") { HResult = 4200 };
+        }
 
         ValidateGuessValues();
 
