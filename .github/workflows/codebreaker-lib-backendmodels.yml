@@ -9,10 +9,6 @@ on:
     paths:
     - 'src/services/common/Codebreaker.GameAPIs.Models/**'
     - 'src/Codebreaker.Backend.Models.sln'
-    - '.github/workflows/codebreaker-lib-backendmodels.yml'
-    - '.github/workflows/createnuget-withbuildnumber.yml'
-    - '.github/workflows/publishnuget-azuredevops.yml'
-    - '.github/workflows/publishnuget-nugetserver.yml'
 
   # Allow manually trigger 
   workflow_dispatch:    

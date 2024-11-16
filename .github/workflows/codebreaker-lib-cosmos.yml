@@ -9,10 +9,6 @@ on:
     paths:
     - 'src/services/common/Codebreaker.Data.Cosmos/**'
     - 'src/Codebreaker.Backend.Cosmos.sln'
-    - '.github/workflows/codebreaker-lib-cosmos.yml'
-    - '.github/workflows/createnuget-withbuildnumber.yml'
-    - '.github/workflows/publishnuget-azuredevops.yml'
-    - '.github/workflows/publishnuget-nugetserver.yml'
 
   # Allow manually trigger 
   workflow_dispatch:    

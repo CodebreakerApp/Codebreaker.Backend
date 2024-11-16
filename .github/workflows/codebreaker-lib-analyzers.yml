@@ -10,10 +10,6 @@ on:
     - 'src/services/common/Codebreaker.GameAPIs.Analyzers/**'
     - 'src/services/common/Codebreaker.GameAPIs.Analyzers.Tests/**'
     - 'src/Codebreaker.Analyzers.sln'
-    - '.github/workflows/codebreaker-lib-analyzers.yml'
-    - '.github/workflows/createnuget-withbuildnumber.yml'
-    - '.github/workflows/publishnuget-azuredevops.yml'
-    - '.github/workflows/publishnuget-nugetserver.yml'
 
   # Allow manually trigger 
   workflow_dispatch:    
