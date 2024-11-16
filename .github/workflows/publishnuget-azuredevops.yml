@@ -28,8 +28,8 @@ jobs:
         run: dotnet nuget add source --username USERNAME --password ${{ secrets.DEVOPSARTIFACT_PAT }} --store-password-in-clear-text --name devopscninnovation ${{ env.ARTIFACTS_URL }}
           
       - name: Publish to Azure DevOps Artifacts
-        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.DEVOPSARTIFACT_PAT }} --source devopscninnovation
+        run: dotnet nuget push "packages/*.nupkg" --api-key ${{ secrets.DEVOPSARTIFACT_PAT }} --source devopscninnovation --skip-duplicate
                 
       - name: Publish Symbols package to Azure DevOps Artifacts
-        run: dotnet nuget push "packages/*.snupkg" --api-key ${{ secrets.DEVOPSARTIFACT_PAT }} --source devopscninnovation  
+        run: dotnet nuget push "packages/*.snupkg" --api-key ${{ secrets.DEVOPSARTIFACT_PAT }} --source devopscninnovation --skip-duplicate
   
