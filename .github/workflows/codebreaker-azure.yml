@@ -42,16 +42,12 @@ jobs:
           submodules: 'true'
 
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2.0.0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
-
-# https://github.com/Azure/azure-dev/issues/4157 - update to azd way after issue is resolved          
-      - name: Setup .NET Aspire
-        run: dotnet workload install aspire
+          dotnet-version: 9.0.x
 
 # issue with azd package: nothing created        
 #      - name: Package Application
