@@ -6,7 +6,7 @@ string botLoop = builder.Configuration.GetSection("Bot")["Loop"] ?? "false";
 string botDelay = builder.Configuration.GetSection("Bot")["Delay"] ?? "1000";
 
 var redis = builder.AddRedis("redis")
-    .WithRedisCommander()
+    .WithRedisInsight()
     .PublishAsContainer();
 
 if (startupMode == "OnPremises")
