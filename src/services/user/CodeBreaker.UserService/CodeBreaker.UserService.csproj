@@ -1,24 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>02ea62b1-332b-4b39-8d2f-0aeafa1a971f</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="8.2.0" />
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
-    <PackageReference Include="FluentValidation" Version="11.9.2" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Graph" Version="5.57.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.64.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+    <PackageReference Include="Aspire.Azure.Security.KeyVault" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Graph" />
+    <PackageReference Include="Microsoft.Identity.Client" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\common\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
   </ItemGroup>
-
 </Project>

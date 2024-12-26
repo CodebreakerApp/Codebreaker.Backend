@@ -1,27 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>c51559a1-d7fb-4ce2-9052-8b1828419b89</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Queues" Version="8.2.0" />
-    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="8.2.0" />
-    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="8.2.0" />
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0-preview.1.32" />
-    <PackageReference Include="CNinnovation.Codebreaker.Cosmos" Version="3.8.0-preview.1.24" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
-    <PackageReference Include="Aspire.Azure.Messaging.EventHubs" Version="8.2.0" />
-   	<PackageReference Include="Aspire.Confluent.Kafka" Version="8.2.0" />
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="8.2.0" />
+    <PackageReference Include="Aspire.Azure.Storage.Queues" />
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" />
+    <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" />
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" />
+    <PackageReference Include="CNinnovation.Codebreaker.Cosmos" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Aspire.Azure.Messaging.EventHubs" />
+    <PackageReference Include="Aspire.Confluent.Kafka" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\common\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
   </ItemGroup>
-
 </Project>
