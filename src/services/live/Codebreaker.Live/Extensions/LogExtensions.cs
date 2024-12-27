@@ -1,6 +1,6 @@
 ﻿namespace Codebreaker.Live.Extensions;
 
-public static partial class Log
+public static partial class LogExtensions
 {
     [LoggerMessage(
         EventId = 20001,
@@ -25,6 +25,12 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "Processing game completion event")]
     public static partial void ProcessingGameCompletionEvent(this ILogger logger);
+
+    [LoggerMessage(
+        EventId = 40001,
+        Level = LogLevel.Warning,
+        Message = "Game summary is empty after deserialization")]
+    public static partial void GameSummaryIsNull(this ILogger logger);
 
     [LoggerMessage(
         EventId = 50001,
