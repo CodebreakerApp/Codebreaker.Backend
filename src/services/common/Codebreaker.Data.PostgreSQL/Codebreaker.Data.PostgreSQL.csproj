@@ -15,7 +15,7 @@
     </Description>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
-    <Version>3.8.0</Version>
+    <VersionPrefix>3.8.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
