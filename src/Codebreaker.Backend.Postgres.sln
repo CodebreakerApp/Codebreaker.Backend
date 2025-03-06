@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.Data.PostgreSQL", "services\common\Codebreaker.Data.PostgreSQL\Codebreaker.Data.PostgreSQL.csproj", "{4557EA75-02C8-B4BF-67BA-F4CA4DF1C78C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codebreaker.Data.Postgres", "services\common\Codebreaker.Data.Postgres\Codebreaker.Data.Postgres.csproj", "{2EB171A0-C848-7C0F-62E9-C0229013D73F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4557EA75-02C8-B4BF-67BA-F4CA4DF1C78C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4557EA75-02C8-B4BF-67BA-F4CA4DF1C78C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4557EA75-02C8-B4BF-67BA-F4CA4DF1C78C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4557EA75-02C8-B4BF-67BA-F4CA4DF1C78C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EB171A0-C848-7C0F-62E9-C0229013D73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EB171A0-C848-7C0F-62E9-C0229013D73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EB171A0-C848-7C0F-62E9-C0229013D73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EB171A0-C848-7C0F-62E9-C0229013D73F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

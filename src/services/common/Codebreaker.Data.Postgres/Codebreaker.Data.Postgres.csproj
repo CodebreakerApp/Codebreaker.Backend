@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>CNinnovation.Codebreaker.PostgreSQL</PackageId>
+    <PackageId>CNinnovation.Codebreaker.Postgres</PackageId>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <PackageTags>
-      Codebreaker;CNinnovation;PostgreSQL
+      Codebreaker;CNinnovation;Postgres
     </PackageTags>
     <Description>
       This library contains PostgreSQL data access for the Codebreaker backend services.
