@@ -1,4 +1,4 @@
-# CNinnovation.Codebreaker.PostgreSQL
+# CNinnovation.Codebreaker.Postgres
 
 This library contains the data backend for Codebreaker for PostgreSQL using EF Core.
 
