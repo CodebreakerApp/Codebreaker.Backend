@@ -20,7 +20,7 @@ jobs:
       version-number: ${{ github.run_number }}
       version-offset: 5
       solutionfile-path: src/Codebreaker.Backend.Postgres.sln
-      projectfile-path: src/services/common/Codebreaker.Data.PostgreSQL/Codebreaker.Data.Postgres.csproj
+      projectfile-path: src/services/common/Codebreaker.Data.Postgres/Codebreaker.Data.Postgres.csproj
       dotnet-version: '9.0.x'
       artifact-name: codebreaker-postgres
       branch-name: main
