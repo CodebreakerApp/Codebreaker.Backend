@@ -4,15 +4,8 @@ using System.Text;
 
 namespace Codebreaker.GameAPIs.Client.Tests;
 
-public class GamesClientTests
+public class GamesClientTests(ITestOutputHelper? testOutputHelper = null)
 {
-    private readonly ITestOutputHelper? _testOutputHelper;
-    
-    public GamesClientTests(ITestOutputHelper? testOutputHelper = null)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
     [Fact]
     public async Task StartGameAsync_Should_ReturnResults()
     {
@@ -22,7 +15,7 @@ public class GamesClientTests
         GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
-        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test");
+        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test", TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(4, NumberCodes);
@@ -80,7 +73,7 @@ public class GamesClientTests
         GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
 
         // Act
-        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test");
+        var (GameId, NumberCodes, MaxMoves, FieldValues) = await gamesClient.StartGameAsync(GameType.Game6x4, "test", TestContext.Current.CancellationToken);
 
         Assert.True(startActivityReceived);
         Assert.True(stopActivityReceived);
@@ -96,7 +89,7 @@ public class GamesClientTests
 
         // Act
         GamesQuery query = new(GameType.Game6x4, "test", new DateOnly(2024, 2, 14), Ended: false);
-        var games = await gamesClient.GetGamesAsync(query);
+        var games = await gamesClient.GetGamesAsync(query, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(2, games.Count());
@@ -117,7 +110,8 @@ public class GamesClientTests
             "test",
             GameType.Game6x4,
             1,
-            new[] { "Red", "Green", "Blue", "Yellow" });
+            ["Red", "Green", "Blue", "Yellow"],
+            TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(2, Results.Length);
@@ -143,7 +137,7 @@ public class GamesClientTests
 
         // Act
         var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
-        var game = await gamesClient.GetGameAsync(gameId);
+        var game = await gamesClient.GetGameAsync(gameId, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(game);
@@ -172,7 +166,7 @@ public class GamesClientTests
 
         // Act
         var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
-        await gamesClient.CancelGameAsync(gameId, "test", GameType.Game6x4);
+        await gamesClient.CancelGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken);
 
         // Assert
         handlerMock.Protected().Verify(
@@ -235,7 +229,7 @@ public class GamesClientTests
 
         // Act
         var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
-        await gamesClient.CancelGameAsync(gameId, "test", GameType.Game6x4);
+        await gamesClient.CancelGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(startActivityReceived);
