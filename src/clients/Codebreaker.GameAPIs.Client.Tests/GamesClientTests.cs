@@ -678,7 +678,6 @@ public class GamesClientTests(ITestOutputHelper? testOutputHelper = null)
         Mock<IConfiguration> configMock = new();
         configMock.Setup(x => x[It.IsAny<string>()]).Returns("http://localhost:5000");
         Mock<HttpMessageHandler> handlerMock = new(MockBehavior.Strict);
-        var gameId = "91f3c729-5e6e-459a-b656-2d77f3f45dd9";
         string getReturnMessage = """
         {
           "id": "91f3c729-5e6e-459a-b656-2d77f3f45dd9",
