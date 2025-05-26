@@ -16,7 +16,7 @@ The `IGamesClient` class is the main contract to be used for communication to pl
 | `SetMoveAsync` | Set guesses for a game move |
 | `GetGameAsync` | Get a game by id with all details and moves |
 | `GetGamesAsync` | Get a list of games with all details and moves (use the `GamesQuery` class to define the filter) |
-
+| `RevealGameAsync` | Ends a game and returns the correct answer |
 
 The `GamesClient` class implements the `IGamesClient` interface. In the constructor, inject the `HttpClient` class. You can use `Microsoft.Extensions.Http` to configure the `HttpClient` class.
 
@@ -50,8 +50,16 @@ Start a game:
 (Guid id, int numberCodes, int maxMoves, IDictionary<string, string[]> fieldValues) = await gamesClient.StartGameAsync("Game6x4", "player1");
 ```
 
+The returned fieldValues contains an array of possible values for code fields, with the key being "colors". With a Game5x5x4 game, the returned fieldValues contains a key "shapes", and a key "colors".
+
 Set a move:
 
 ```csharp
 (string[] result, bool ended, bool isVictory) = await gameClient.SetMoveAsync(id, "Game6x4", [ "Red", "Green", "Blue", "Yellow" ]);
+```
+
+With a Game5x5x4 game, you can set a move like this:
+
+```csharp
+(string[] result, bool ended, bool isVictory) = await gameClient.SetMoveAsync(id, "Game5x5x4", [ "Circle;Red", "Rectangle;Green", "Triangle;Blue", "Circle;Yellow" ]);
 ```
