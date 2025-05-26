@@ -89,7 +89,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             // First cancel/end the game
-            var request = new UpdateGameRequest(id, gameType, playerName, 0, true);
+            var request = new UpdateGameRequest(id, gameType, playerName, 0, End: true);
             var cancelResponse = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
             cancelResponse.EnsureSuccessStatusCode();
             

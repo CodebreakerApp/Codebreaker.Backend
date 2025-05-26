@@ -236,6 +236,114 @@ public class GamesClientTests(ITestOutputHelper? testOutputHelper = null)
         Assert.True(stopActivityReceived);
     }
 
+    [Fact]
+    public async Task RevealGameAsync_Should_CancelAndReturnGameInfo()
+    {
+        // Arrange
+        (var httpClient, var handlerMock) = GetHttpClientForRevealGame();
+        GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
+        var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
+
+        // Act
+        var game = await gamesClient.RevealGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.NotNull(game);
+        Assert.Equal(gameId, game.Id);
+        Assert.Equal("Game6x4", game.GameType);
+        Assert.Equal("test", game.PlayerName);
+        Assert.Equal(1, game.LastMoveNumber);
+        Assert.Equal(4, game.NumberCodes);
+        Assert.Equal(12, game.MaxMoves);
+        Assert.False(game.IsVictory);
+        Assert.NotNull(game.Codes);
+        Assert.NotEmpty(game.Codes);
+        Assert.NotNull(game.Moves);
+        Assert.Single(game.Moves);
+
+        handlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Exactly(2), // PATCH and GET
+            ItExpr.IsAny<HttpRequestMessage>(), 
+            ItExpr.IsAny<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task RevealGameAsync_Should_TrackActivity()
+    {
+        // Arrange
+        (var httpClient, var handlerMock) = GetHttpClientForRevealGame();
+        bool startActivityReceived = false;
+        bool stopActivityReceived = false;
+        bool revealedEventReceived = false;
+        var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
+
+        using ActivityListener listener = new()
+        {
+            ShouldListenTo = _ => true,
+            ActivityStarted = activity =>
+            {
+                if (activity.OperationName == "RevealGameAsync")
+                {
+                    startActivityReceived = true;
+                    Assert.Equal(ActivityKind.Client, activity.Kind);
+                }
+            },
+            ActivityStopped = activity =>
+            {
+                if (activity.OperationName == "RevealGameAsync")
+                {
+                    stopActivityReceived = true;
+                    ActivityEvent? revealedEvent = activity.Events.FirstOrDefault(e => e.Name == "GameRevealed");
+                    if (revealedEvent != null)
+                    {
+                        revealedEventReceived = true;
+                        var tag = revealedEvent.Value.Tags.FirstOrDefault(t => t.Key == "gameId");
+                        Assert.Equal(gameId.ToString(), tag.Value);
+                    }
+                    Assert.Equal(ActivityKind.Client, activity.Kind);
+                }
+            },
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData
+        };
+        ActivitySource.AddActivityListener(listener);
+        GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
+
+        // Act
+        await gamesClient.RevealGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.True(startActivityReceived);
+        Assert.True(stopActivityReceived);
+        Assert.True(revealedEventReceived);
+    }
+
+    [Fact]
+    public async Task RevealGameAsync_Should_Throw_OnPatchError()
+    {
+        // Arrange
+        (var httpClient, var handlerMock) = GetHttpClientForRevealGame(patchFails: true);
+        GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
+        var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
+
+        // Act & Assert
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            gamesClient.RevealGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task RevealGameAsync_Should_Throw_OnGetError()
+    {
+        // Arrange
+        (var httpClient, var handlerMock) = GetHttpClientForRevealGame(getFails: true);
+        GamesClient gamesClient = new(httpClient, NullLogger<GamesClient>.Instance);
+        var gameId = Guid.Parse("91f3c729-5e6e-459a-b656-2d77f3f45dd9");
+
+        // Act & Assert
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            gamesClient.RevealGameAsync(gameId, "test", GameType.Game6x4, TestContext.Current.CancellationToken));
+    }
+
     private static (HttpClient Client, Mock<HttpMessageHandler> Handler) GetHttpClientReturningACreatedGameSkeleton()
     {
         Mock<IConfiguration> configMock = new();
@@ -559,6 +667,114 @@ public class GamesClientTests(ITestOutputHelper? testOutputHelper = null)
                 StatusCode = HttpStatusCode.OK
             }).Verifiable();
 
+        return (new(handlerMock.Object)
+        {
+            BaseAddress = new Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
+        }, handlerMock);
+    }
+
+    private static (HttpClient Client, Mock<HttpMessageHandler> Handler) GetHttpClientForRevealGame(bool patchFails = false, bool getFails = false)
+    {
+        Mock<IConfiguration> configMock = new();
+        configMock.Setup(x => x[It.IsAny<string>()]).Returns("http://localhost:5000");
+        Mock<HttpMessageHandler> handlerMock = new(MockBehavior.Strict);
+        var gameId = "91f3c729-5e6e-459a-b656-2d77f3f45dd9";
+        string getReturnMessage = """
+        {
+          "id": "91f3c729-5e6e-459a-b656-2d77f3f45dd9",
+          "gameType": "Game6x4",
+          "playerName": "test",
+          "playerIsAuthenticated": false,
+          "startTime": "2024-02-14T18:14:49.4420411Z",
+          "endTime": "2024-02-14T18:20:00.0000000Z",
+          "duration": "00:05:10.0000000",
+          "lastMoveNumber": 1,
+          "numberCodes": 4,
+          "maxMoves": 12,
+          "isVictory": false,
+          "fieldValues": {
+            "colors": [
+              "Red",
+              "Green",
+              "Blue",
+              "Yellow",
+              "Purple",
+              "Orange"
+            ]
+          },
+          "codes": [
+            "Yellow",
+            "Yellow",
+            "Green",
+            "Green"
+          ],
+          "moves": [
+            {
+              "id": "963baba8-44b8-45e5-81f3-193959ae5bf6",
+              "moveNumber": 1,
+              "guessPegs": [
+                "Red",
+                "Green",
+                "Blue",
+                "Yellow"
+              ],
+              "keyPegs": [
+                "White",
+                "White"
+              ]
+            }
+          ]
+        }
+        """;
+        if (!patchFails)
+        {
+            handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Patch),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK
+                }).Verifiable();
+        }
+        else
+        {
+            handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Patch),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest
+                }).Verifiable();
+        }
+        if (!getFails)
+        {
+            handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(getReturnMessage, Encoding.UTF8, "application/json")
+                }).Verifiable();
+        }
+        else
+        {
+            handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.NotFound
+                }).Verifiable();
+        }
         return (new(handlerMock.Object)
         {
             BaseAddress = new Uri(configMock.Object["GameAPIs"] ?? throw new InvalidOperationException())
