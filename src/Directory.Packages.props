@@ -60,13 +60,13 @@
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-		<PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
@@ -81,9 +81,9 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
     <PackageVersion Include="Microsoft.Playwright.NUnit" Version="1.49.0" />
-		<PackageVersion Include="Microsoft.Testing.Platform" Version="1.7.0" />
-		<PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.7.0" />
-		<PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="Microsoft.Testing.Platform" Version="1.7.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.7.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="NUnit" Version="4.3.1" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.5.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
@@ -98,8 +98,9 @@
     <PackageVersion Include="System.Formats.Asn1" Version="9.0.0" />
     <PackageVersion Include="System.Text.Json" Version="9.0.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.analyzers" Version="1.21.0" />
+    <PackageVersion Include="xunit.v3" Version="2.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.2.0" />
-		<PackageVersion Include="xunit.analyzers" Version="1.21.0" />
   </ItemGroup>
 </Project>
