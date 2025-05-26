@@ -5,5 +5,6 @@ global using Moq;
 global using Moq.Protected;
 
 global using System.Net;
+global using System.Text.Json;
 
 global using Xunit;

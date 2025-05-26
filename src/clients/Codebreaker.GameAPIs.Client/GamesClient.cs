@@ -46,7 +46,6 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         }
     }
 
-
     /// <summary>
     /// Cancels a game.
     /// </summary>
@@ -69,6 +68,44 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         catch (HttpRequestException ex)
         {
             logger.CancelGameError(ex.Message, ex);
+            activity?.ErrorEvent(ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Cancels and reveals the details of a game based on the specified parameters.
+    /// </summary>
+    /// <param name="id">The unique identifier of the game to reveal.</param>
+    /// <param name="playerName">The name of the player requesting the game details. Cannot be null or empty.</param>
+    /// <param name="gameType">The type of the game to reveal.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests. Optional.</param>
+    /// <returns>A <see cref="GameInfo"/> object containing the details of the revealed game.</returns>
+    /// <exception cref="HttpRequestException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    public async Task<GameInfo> RevealGameAsync(Guid id, string playerName, GameType gameType, CancellationToken cancellationToken = default)
+    {
+        using Activity? activity = ActivitySource.StartActivity("RevealGameAsync", ActivityKind.Client);
+        try
+        {
+            // First cancel/end the game
+            var request = new UpdateGameRequest(id, gameType, playerName, 0, End: true);
+            var cancelResponse = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            cancelResponse.EnsureSuccessStatusCode();
+            
+            // Then get the full game details
+            var gameResponse = await httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken) 
+                ?? throw new InvalidOperationException($"Could not retrieve game with ID {id}");
+            
+            int moveCount = gameResponse.Moves?.Count ?? 0;
+            logger.GameRevealed(id, moveCount);
+            activity?.GameRevealedEvent(id.ToString(), gameType.ToString());
+            
+            return gameResponse;
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.RevealGameError(ex.Message, ex);
             activity?.ErrorEvent(ex.Message);
             throw;
         }
@@ -101,7 +138,11 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
                 ?? throw new InvalidOperationException();
 
             logger.MoveSet(id, moveResponse.MoveNumber);
-            activity?.AddEvent(new ActivityEvent("GameCreated"));
+            activity?.AddEvent(new ActivityEvent("MoveSet", 
+                tags: [ 
+                    new KeyValuePair<string, object?>("gameId", id.ToString()),
+                    new KeyValuePair<string, object?>("moveNumber", moveResponse.MoveNumber)
+                ]));
 
             (_, _, _, bool ended, bool isVictory, string[] results) = moveResponse;
             return (results, ended, isVictory);
@@ -157,8 +198,17 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             string urlQuery = query.AsUrlQuery();
-            IEnumerable<GameInfo> games = (await httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games/{urlQuery}", s_jsonOptions, cancellationToken)) ?? Enumerable.Empty<GameInfo>();
-            logger.GamesReceived(urlQuery, games.Count());
+            IEnumerable<GameInfo> games = (await httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games{urlQuery}", s_jsonOptions, cancellationToken)) ?? [];
+
+            int gameCount = games.Count();
+            logger.GamesReceived(urlQuery, gameCount);
+
+            activity?.AddEvent(new ActivityEvent("GamesReceived",
+                tags: [
+                    new KeyValuePair<string, object?>("count", gameCount),
+                    new KeyValuePair<string, object?>("query", urlQuery)
+                ]));
+
             return games;
         }
         catch (HttpRequestException ex)
