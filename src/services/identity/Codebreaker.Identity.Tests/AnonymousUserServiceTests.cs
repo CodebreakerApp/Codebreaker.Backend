@@ -30,26 +30,26 @@ public class AnonymousUserServiceTests
         _mockLogger = new Mock<ILogger<GraphAnonymousUserService>>();
     }
 
-    [Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
-    public async Task CreateAnonUser_ShouldCreateAnonymousUser()
-    {
-        // This test would require extensive mocking of GraphServiceClient
-        // In a real implementation, we would use a test double or wrapper for GraphServiceClient
-    }
+    //[Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
+    //public async Task CreateAnonUser_ShouldCreateAnonymousUser()
+    //{
+    //    // This test would require extensive mocking of GraphServiceClient
+    //    // In a real implementation, we would use a test double or wrapper for GraphServiceClient
+    //}
 
-    [Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
-    public async Task DeleteAnonUsers_ShouldDeleteStaleAnonymousUsers()
-    {
-        // This test would require extensive mocking of GraphServiceClient
-        // In a real implementation, we would use a test double or wrapper for GraphServiceClient
-    }
+    //[Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
+    //public async Task DeleteAnonUsers_ShouldDeleteStaleAnonymousUsers()
+    //{
+    //    // This test would require extensive mocking of GraphServiceClient
+    //    // In a real implementation, we would use a test double or wrapper for GraphServiceClient
+    //}
 
-    [Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
-    public async Task PromoteAnonUser_ShouldPromoteAnonymousUser()
-    {
-        // This test would require extensive mocking of GraphServiceClient
-        // In a real implementation, we would use a test double or wrapper for GraphServiceClient
-    }
+    //[Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
+    //public async Task PromoteAnonUser_ShouldPromoteAnonymousUser()
+    //{
+    //    // This test would require extensive mocking of GraphServiceClient
+    //    // In a real implementation, we would use a test double or wrapper for GraphServiceClient
+    //}
 
     [Fact]
     public void ServiceInitialization_WithValidOptions_ShouldNotThrow()

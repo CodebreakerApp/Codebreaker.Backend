@@ -153,12 +153,12 @@ public class MockAnonymousUserServiceTests
     }
 
     [Fact]
-    public void ClearUsers_ShouldRemoveAllUsers()
+    public async Task ClearUsers_ShouldRemoveAllUsers()
     {
         // Arrange
         var service = new MockAnonymousUserService(_mockLogger.Object);
-        _ = service.CreateAnonUser("User1").Result;
-        _ = service.CreateAnonUser("User2").Result;
+        _ = await service.CreateAnonUser("User1");
+        _ = await service.CreateAnonUser("User2");
         Assert.Equal(2, service.GetUsers().Count);
 
         // Act

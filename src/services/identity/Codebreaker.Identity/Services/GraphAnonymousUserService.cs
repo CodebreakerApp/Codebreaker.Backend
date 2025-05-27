@@ -60,7 +60,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
             {
                 AccountEnabled = true,
                 DisplayName = displayName,
-                MailNickname = _options.UserNamePrefix + Guid.NewGuid().ToString("N").Substring(0, 8),
+                MailNickname = _options.UserNamePrefix + Guid.NewGuid().ToString("N")[..8],
                 UserPrincipalName = email,
                 PasswordProfile = new PasswordProfile
                 {
