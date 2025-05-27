@@ -56,7 +56,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
         try
         {
             // Create the user in Azure AD via Microsoft Graph
-            var newUser = new User
+            User newUser = new()
             {
                 AccountEnabled = true,
                 DisplayName = displayName,

@@ -80,15 +80,10 @@ public class AnonymousUserServiceTests
     }
 
     // A test wrapper for GraphAnonymousUserService that allows testing without actually using Graph API
-    private class GraphAnonymousUserServiceWrapper : GraphAnonymousUserService
+    private class GraphAnonymousUserServiceWrapper(
+        IOptions<AnonymousUserOptions> options,
+        ILogger<GraphAnonymousUserService> logger) : GraphAnonymousUserService(options, logger)
     {
-        public GraphAnonymousUserServiceWrapper(
-            IOptions<AnonymousUserOptions> options,
-            ILogger<GraphAnonymousUserService> logger)
-            : base(options, logger)
-        {
-            // Constructor only for initialization testing
-        }
 
         // We don't test the actual Graph API methods here
         public new Task<AnonymousUser> CreateAnonUser(string userName) =>

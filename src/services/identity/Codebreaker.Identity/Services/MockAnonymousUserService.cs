@@ -9,7 +9,7 @@ namespace Codebreaker.Identity.Services;
 public class MockAnonymousUserService : IAnonymousUserService
 {
     private readonly ILogger<MockAnonymousUserService> _logger;
-    private readonly List<AnonymousUser> _users = new();
+    private readonly List<AnonymousUser> _users = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockAnonymousUserService"/> class
