@@ -63,12 +63,14 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.0.0" />
     <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.0" />
