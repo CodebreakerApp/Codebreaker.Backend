@@ -177,6 +177,79 @@ public class GraphAnonymousUserService : IAnonymousUserService
         }
     }
 
+    /// <inheritdoc />
+    public async Task<AnonymousUser> PromoteAnonUser(string anonymousUserId, string email, string displayName, string password)
+    {
+        _logger.LogInformation("Promoting anonymous user {UserId} to registered user", anonymousUserId);
+
+        try
+        {
+            // First, verify the user exists and is actually an anonymous user
+            var user = await _graphClient.Users[anonymousUserId].GetAsync(requestConfig =>
+            {
+                requestConfig.QueryParameters.Select = ["id", "displayName", "userPrincipalName", "mail", "extension_AnonymousUser"];
+            });
+
+            if (user == null)
+            {
+                throw new InvalidOperationException($"User with ID {anonymousUserId} not found");
+            }
+
+            // Verify this is an anonymous user
+            if (user.AdditionalData == null || 
+                !user.AdditionalData.TryGetValue("extension_AnonymousUser", out var isAnonObj) ||
+                isAnonObj is not bool isAnon || 
+                !isAnon)
+            {
+                throw new InvalidOperationException($"User with ID {anonymousUserId} is not an anonymous user");
+            }
+
+            // Update the user properties but keep the same ID
+            await _graphClient.Users[anonymousUserId].PatchAsync(new User
+            {
+                DisplayName = displayName,
+                UserPrincipalName = email,
+                Mail = email,
+                PasswordProfile = new PasswordProfile
+                {
+                    ForceChangePasswordNextSignIn = false,
+                    Password = password
+                },
+                // Remove the anonymous user flag and add promoted flag
+                AdditionalData = new Dictionary<string, object>
+                {
+                    { "extension_AnonymousUser", false },
+                    { "extension_PromotedAt", DateTimeOffset.UtcNow.ToString("o") }
+                }
+            });
+
+            // Get the updated user to return
+            var updatedUser = await _graphClient.Users[anonymousUserId].GetAsync();
+
+            if (updatedUser == null)
+            {
+                throw new InvalidOperationException($"Failed to retrieve updated user with ID {anonymousUserId}");
+            }
+
+            // Return the updated user details
+            return new AnonymousUser
+            {
+                Id = updatedUser.Id ?? anonymousUserId,
+                UserName = updatedUser.UserPrincipalName ?? email,
+                DisplayName = updatedUser.DisplayName ?? displayName,
+                Email = updatedUser.Mail ?? email,
+                Password = password,
+                CreatedAt = DateTimeOffset.Parse(user.AdditionalData?["extension_CreatedAt"]?.ToString() ?? DateTimeOffset.UtcNow.ToString()),
+                LastLoginAt = updatedUser.SignInActivity?.LastSignInDateTime ?? DateTimeOffset.UtcNow
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to promote anonymous user {UserId}: {Message}", anonymousUserId, ex.Message);
+            throw;
+        }
+    }
+
     private static string GenerateSecurePassword(int length)
     {
         const string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -44,6 +44,13 @@ public class AnonymousUserServiceTests
         // In a real implementation, we would use a test double or wrapper for GraphServiceClient
     }
 
+    [Fact(Skip = "Requires mocking of GraphServiceClient which is challenging")]
+    public async Task PromoteAnonUser_ShouldPromoteAnonymousUser()
+    {
+        // This test would require extensive mocking of GraphServiceClient
+        // In a real implementation, we would use a test double or wrapper for GraphServiceClient
+    }
+
     [Fact]
     public void ServiceInitialization_WithValidOptions_ShouldNotThrow()
     {
@@ -84,12 +91,14 @@ public class AnonymousUserServiceTests
         IOptions<AnonymousUserOptions> options,
         ILogger<GraphAnonymousUserService> logger) : GraphAnonymousUserService(options, logger)
     {
-
         // We don't test the actual Graph API methods here
         public new Task<AnonymousUser> CreateAnonUser(string userName) =>
             Task.FromResult(new AnonymousUser());
 
         public new Task<int> DeleteAnonUsers() =>
             Task.FromResult(0);
+            
+        public new Task<AnonymousUser> PromoteAnonUser(string anonymousUserId, string email, string displayName, string password) =>
+            Task.FromResult(new AnonymousUser());
     }
 }

@@ -98,6 +98,47 @@ public class MockAnonymousUserServiceTests
     }
 
     [Fact]
+    public async Task PromoteAnonUser_ShouldUpdateUserProperties()
+    {
+        // Arrange
+        var service = new MockAnonymousUserService(_mockLogger.Object);
+        var user = await service.CreateAnonUser("AnonUser");
+        
+        string newEmail = "registered@example.com";
+        string newDisplayName = "Registered User";
+        string newPassword = "SecurePassword123!";
+
+        // Act
+        var result = await service.PromoteAnonUser(user.Id, newEmail, newDisplayName, newPassword);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(user.Id, result.Id);  // ID should remain the same
+        Assert.Equal(newEmail, result.Email);
+        Assert.Equal(newDisplayName, result.DisplayName);
+        Assert.Equal(newPassword, result.Password);
+        Assert.NotNull(result.LastLoginAt);  // Should set last login time
+        
+        // Verify the user was updated in the collection
+        var users = service.GetUsers();
+        Assert.Single(users);
+        Assert.Equal(newEmail, users[0].Email);
+        Assert.Equal(newDisplayName, users[0].DisplayName);
+    }
+
+    [Fact]
+    public async Task PromoteAnonUser_WithInvalidId_ShouldThrowException()
+    {
+        // Arrange
+        var service = new MockAnonymousUserService(_mockLogger.Object);
+        string invalidId = "non-existent-id";
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => 
+            await service.PromoteAnonUser(invalidId, "email@example.com", "Display Name", "password"));
+    }
+
+    [Fact]
     public void GetUsers_ShouldReturnReadOnlyListOfUsers()
     {
         // Arrange

@@ -34,15 +34,4 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAnonymousUserService, GraphAnonymousUserService>();
         return services;
     }
-    
-    /// <summary>
-    /// Adds a mock anonymous user service for testing purposes
-    /// </summary>
-    /// <param name="services">The service collection</param>
-    /// <returns>The service collection</returns>
-    public static IServiceCollection AddMockAnonymousUserService(this IServiceCollection services)
-    {
-        services.AddScoped<IAnonymousUserService, MockAnonymousUserService>();
-        return services;
-    }
 }

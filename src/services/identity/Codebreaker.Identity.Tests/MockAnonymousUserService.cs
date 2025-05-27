@@ -1,7 +1,8 @@
 using Codebreaker.Identity.Models;
+using Codebreaker.Identity.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Codebreaker.Identity.Services;
+namespace Codebreaker.Identity.Tests;
 
 /// <summary>
 /// A mock implementation of <see cref="IAnonymousUserService"/> for testing
@@ -52,6 +53,26 @@ public class MockAnonymousUserService : IAnonymousUserService
 
         _logger.LogInformation("Deleted {Count} stale anonymous users", count);
         return Task.FromResult(count);
+    }
+
+    /// <inheritdoc />
+    public Task<AnonymousUser> PromoteAnonUser(string anonymousUserId, string email, string displayName, string password)
+    {
+        _logger.LogInformation("Promoting mock anonymous user: {UserId}", anonymousUserId);
+
+        var user = _users.FirstOrDefault(u => u.Id == anonymousUserId);
+        if (user == null)
+        {
+            throw new InvalidOperationException($"User with ID {anonymousUserId} not found");
+        }
+
+        // Update the user properties
+        user.Email = email;
+        user.DisplayName = displayName;
+        user.Password = password;
+        user.LastLoginAt = DateTimeOffset.UtcNow;
+
+        return Task.FromResult(user);
     }
 
     /// <summary>
