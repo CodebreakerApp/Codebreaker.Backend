@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Codebreaker.GameAPIs.Client.Tests;
 
-public class GamesClientTests(ITestOutputHelper? testOutputHelper = null)
+public class GamesClientTests
 {
     [Fact]
     public async Task StartGameAsync_Should_ReturnResults()
