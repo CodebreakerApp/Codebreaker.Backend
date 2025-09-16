@@ -1,4 +1,5 @@
 using System.Collections;
+using Codebreaker.GameAPIs.Client.Models;
 
 using Xunit;
 
@@ -7,10 +8,24 @@ namespace CodeBreaker.Bot.Tests;
 public class CodeBreakerAlgorithmsTests
 {
     [Fact]
-    public void SelectPeg_Should_ThrowException()
+    public void SelectPeg_Should_ThrowException_ForGame6x4()
     {
         Assert.Throws<InvalidOperationException>(() => 
-            CodeBreakerAlgorithms.SelectPeg(44, 4));
+            CodeBreakerAlgorithms.SelectPeg(44, GameType.Game6x4, 4));
+    }
+
+    [Fact]
+    public void SelectPeg_Should_ThrowException_ForGame8x5()
+    {
+        Assert.Throws<InvalidOperationException>(() => 
+            CodeBreakerAlgorithms.SelectPeg(44, GameType.Game8x5, 5));
+    }
+
+    [Fact]
+    public void SelectPeg_Should_ThrowException_ForGame5x5x4()
+    {
+        Assert.Throws<InvalidOperationException>(() => 
+            CodeBreakerAlgorithms.SelectPeg(44, GameType.Game5x5x4, 4));
     }
 
     [Theory]
@@ -18,14 +33,37 @@ public class CodeBreakerAlgorithmsTests
     [InlineData(0b_000100_000100_000100_000100, 1, 0b_000100)]
     [InlineData(0b_000100_000100_000100_000100, 2, 0b_000100)]
     [InlineData(0b_000100_000100_000100_000100, 3, 0b_000100)]
-    public void SelectPegTest(int code, int number, int expected)
+    public void SelectPegTest_Game6x4(int code, int number, int expected)
     {
-        int actual = CodeBreakerAlgorithms.SelectPeg(code, number);
+        int actual = CodeBreakerAlgorithms.SelectPeg(code, GameType.Game6x4, number);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(0b_0100_0100_0100_0100_0100, 0, 0b_0100)]
+    [InlineData(0b_0100_0100_0100_0100_0100, 1, 0b_0100)]
+    [InlineData(0b_0100_0100_0100_0100_0100, 2, 0b_0100)]
+    [InlineData(0b_0100_0100_0100_0100_0100, 3, 0b_0100)]
+    [InlineData(0b_0100_0100_0100_0100_0100, 4, 0b_0100)]
+    public void SelectPegTest_Game8x5(int code, int number, int expected)
+    {
+        int actual = CodeBreakerAlgorithms.SelectPeg(code, GameType.Game8x5, number);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(0b_00100_00100_00100_00100, 0, 0b_00100)]
+    [InlineData(0b_00100_00100_00100_00100, 1, 0b_00100)]
+    [InlineData(0b_00100_00100_00100_00100, 2, 0b_00100)]
+    [InlineData(0b_00100_00100_00100_00100, 3, 0b_00100)]
+    public void SelectPegTest_Game5x5x4(int code, int number, int expected)
+    {
+        int actual = CodeBreakerAlgorithms.SelectPeg(code, GameType.Game5x5x4, number);
         Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void HandleBlackMatches_Should_Find1BlackMatch()
+    public void HandleBlackMatches_Should_Find1BlackMatch_Game6x4()
     {
         List<int> toMatch =
         [
@@ -35,12 +73,27 @@ public class CodeBreakerAlgorithmsTests
         ];
         int selection = 0b_000001_010000_000001_000001;
 
-        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game6x4, 1, selection);
         Assert.Equal(2, actual.Count);
     }
 
     [Fact]
-    public void HandleBlackMatches_Should_Find2BlackMatches()
+    public void HandleBlackMatches_Should_Find1BlackMatch_Game8x5()
+    {
+        List<int> toMatch =
+        [
+            0b_1000_0100_1000_1000_1000,  // hit
+            0b_1000_0100_0100_1000_1000,  // hit
+            0b_0010_0010_0010_0010_0010   // miss
+        ];
+        int selection = 0b_0001_0100_0001_0001_0001;
+
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game8x5, 1, selection);
+        Assert.Equal(2, actual.Count);
+    }
+
+    [Fact]
+    public void HandleBlackMatches_Should_Find2BlackMatches_Game6x4()
     {
         List<int> toMatch =
         [
@@ -50,12 +103,12 @@ public class CodeBreakerAlgorithmsTests
         ];
         int selection = 0b_000001_010000_010000_000001;
 
-        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 2, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game6x4, 2, selection);
         Assert.Equal(2, actual.Count);
     }
 
     [Fact]
-    public void HandleBlackMatches_Should_Find3BlackMatches()
+    public void HandleBlackMatches_Should_Find3BlackMatches_Game6x4()
     {
         List<int> toMatch =
         [
@@ -65,24 +118,24 @@ public class CodeBreakerAlgorithmsTests
         ];
         int selection = 0b_000001_100000_010000_000001;
 
-        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 3, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game6x4, 3, selection);
         Assert.Single(actual);
     }
 
     [Fact]
-    public void HandleBlackMatches_Should_BeEmpty()
+    public void HandleBlackMatches_Should_BeEmpty_Game6x4()
     {
         List<int> toMatch =
         [
             0b_000100_010000_001000_000010
         ];
         int selection = 0b_000001_010000_001000_001000;
-        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game6x4, 1, selection);
         Assert.Empty(actual);
     }
 
     [Fact]
-    public void HandleWhiteMatches_Should_Find1WhiteMatches()
+    public void HandleWhiteMatches_Should_Find1WhiteMatches_Game6x4()
     {
         List<int> toMatch =
         [
@@ -92,21 +145,30 @@ public class CodeBreakerAlgorithmsTests
         ];
         int selection = 0b_000001_010000_000001_000001;
 
-        List<int> actual = CodeBreakerAlgorithms.HandleWhiteMatches(toMatch, 1, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleWhiteMatches(toMatch, GameType.Game6x4, 1, selection);
         Assert.Equal(2, actual.Count);
     }
 
     [Fact]
-    public void IntToColors_Should_ConvertToCorrectColor()
+    public void IntToColors_Should_ConvertToCorrectColor_Game6x4()
     {
         int value = 0b_000100_010000_000001_100000;
+        Dictionary<int, string> colorNames = new()
+        {
+            { 0b_000001, "Black" },
+            { 0b_000010, "White" },
+            { 0b_000100, "Red" },
+            { 0b_001000, "Green" },
+            { 0b_010000, "Blue" },
+            { 0b_100000, "Yellow" }
+        };
         string[] expected = ["Red", "Blue", "Black", "Yellow"];
-        string[] actual = CodeBreakerAlgorithms.IntToColors(value);
+        string[] actual = CodeBreakerAlgorithms.IntToColors(value, GameType.Game6x4, colorNames);
         Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void HandleNoMatches_Should_MatchOneResult()
+    public void HandleNoMatches_Should_MatchOneResult_Game6x4()
     {
         List<int> toMatch =
         [
@@ -115,7 +177,7 @@ public class CodeBreakerAlgorithmsTests
             0b_001000_001000_001000_001000   // hit
         ];
         int selection = 0b_000100_010000_000001_100000;
-        List<int> actual = CodeBreakerAlgorithms.HandleNoMatches(toMatch, selection);
+        List<int> actual = CodeBreakerAlgorithms.HandleNoMatches(toMatch, GameType.Game6x4, selection);
         Assert.Single(actual);
     }
 
