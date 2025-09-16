@@ -40,11 +40,11 @@ public class CodeBreakerAlgorithmsTests
     }
 
     [Theory]
-    [InlineData(0b_0100_0100_0100_0100_0100, 0, 0b_0100)]
-    [InlineData(0b_0100_0100_0100_0100_0100, 1, 0b_0100)]
-    [InlineData(0b_0100_0100_0100_0100_0100, 2, 0b_0100)]
-    [InlineData(0b_0100_0100_0100_0100_0100, 3, 0b_0100)]
-    [InlineData(0b_0100_0100_0100_0100_0100, 4, 0b_0100)]
+    [InlineData(0b_000100_000100_000100_000100_000100, 0, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100_000100, 1, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100_000100, 2, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100_000100, 3, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100_000100, 4, 0b_000100)]
     public void SelectPegTest_Game8x5(int code, int number, int expected)
     {
         int actual = CodeBreakerAlgorithms.SelectPeg(code, GameType.Game8x5, number);
@@ -52,10 +52,10 @@ public class CodeBreakerAlgorithmsTests
     }
 
     [Theory]
-    [InlineData(0b_00100_00100_00100_00100, 0, 0b_00100)]
-    [InlineData(0b_00100_00100_00100_00100, 1, 0b_00100)]
-    [InlineData(0b_00100_00100_00100_00100, 2, 0b_00100)]
-    [InlineData(0b_00100_00100_00100_00100, 3, 0b_00100)]
+    [InlineData(0b_000100_000100_000100_000100, 0, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100, 1, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100, 2, 0b_000100)]
+    [InlineData(0b_000100_000100_000100_000100, 3, 0b_000100)]
     public void SelectPegTest_Game5x5x4(int code, int number, int expected)
     {
         int actual = CodeBreakerAlgorithms.SelectPeg(code, GameType.Game5x5x4, number);
@@ -82,11 +82,11 @@ public class CodeBreakerAlgorithmsTests
     {
         List<int> toMatch =
         [
-            0b_1000_0100_1000_1000_1000,  // hit
-            0b_1000_0100_0100_1000_1000,  // hit
-            0b_0010_0010_0010_0010_0010   // miss
+            0b_100000_010000_100000_100000_100000,  // hit
+            0b_100000_010000_010000_100000_100000,  // hit
+            0b_000100_000100_000100_000100_000100   // miss
         ];
-        int selection = 0b_0001_0100_0001_0001_0001;
+        int selection = 0b_000001_010000_000001_000001_000001;
 
         List<int> actual = CodeBreakerAlgorithms.HandleBlackMatches(toMatch, GameType.Game8x5, 1, selection);
         Assert.Equal(2, actual.Count);

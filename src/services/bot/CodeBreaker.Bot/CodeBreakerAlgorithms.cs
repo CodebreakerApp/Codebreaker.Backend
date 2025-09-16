@@ -45,11 +45,11 @@ public static class CodeBreakerAlgorithms
 
     private static string[] IntToColors8x5(int value, Dictionary<int, string>? colorNames)
     {
-        int i1 = (value >> 0) & 0b1111;
-        int i2 = (value >> 4) & 0b1111;
-        int i3 = (value >> 8) & 0b1111;
-        int i4 = (value >> 12) & 0b1111;
-        int i5 = (value >> 16) & 0b1111;
+        int i1 = (value >> 0) & 0b111111;
+        int i2 = (value >> 6) & 0b111111;
+        int i3 = (value >> 12) & 0b111111;
+        int i4 = (value >> 18) & 0b111111;
+        int i5 = (value >> 24) & 0b111111;
         
         string[] colorNamesArray =
         [
@@ -65,10 +65,10 @@ public static class CodeBreakerAlgorithms
 
     private static string[] IntToColors5x5x4(int value, Dictionary<int, string>? colorNames)
     {
-        int i1 = (value >> 0) & 0b11111;
-        int i2 = (value >> 5) & 0b11111;
-        int i3 = (value >> 10) & 0b11111;
-        int i4 = (value >> 15) & 0b11111;
+        int i1 = (value >> 0) & 0b111111;
+        int i2 = (value >> 6) & 0b111111;
+        int i3 = (value >> 12) & 0b111111;
+        int i4 = (value >> 18) & 0b111111;
         
         string[] colorNamesArray =
         [
@@ -253,8 +253,8 @@ public static class CodeBreakerAlgorithms
         gameType switch
         {
             GameType.Game6x4 => 6,  // 6 bits for up to 64 values (using 6)
-            GameType.Game8x5 => 4,  // 4 bits for up to 16 values (using 8)
-            GameType.Game5x5x4 => 5, // 5 bits for up to 32 values (using 25)
+            GameType.Game8x5 => 6,  // 6 bits for up to 64 values (using 8)  
+            GameType.Game5x5x4 => 6, // 6 bits for up to 64 values (using 25, but limited per position)
             _ => 6
         };
 }

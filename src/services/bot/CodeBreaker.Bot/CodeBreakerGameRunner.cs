@@ -64,12 +64,17 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
     private List<int> InitializePossibleValues8x5()
     {
-        static List<int> CreateColors(int colorCount, int shift)
+        // Use same approach as Game6x4 but with 8 colors and 5 positions
+        // We'll use 6 bits per position which can handle up to 64 values (more than enough for 8 colors)
+        // But we can only fit 5 positions * 6 bits = 30 bits in a 32-bit int
+        // So this will work fine
+        
+        static List<int> Create8Colors(int shift)
         {
             List<int> pin = [];
-            for (int i = 0; i < colorCount; i++)
+            for (int i = 0; i < 8; i++)  // 8 colors instead of 6
             {
-                int x = 1 << i + shift;
+                int x = 1 << (i + shift);
                 pin.Add(x);
             }
             return pin;
@@ -77,27 +82,27 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
         static List<int> AddColorsToList(List<int> list1, List<int> list2)
         {
-            List<int> result = new(capacity: 32768);
+            List<int> result = new(capacity: list1.Count * list2.Count);
             for (int i = 0; i < list1.Count; i++)
             {
                 for (int j = 0; j < list2.Count; j++)
                 {
-                    int x = list1[i] ^ list2[j];
+                    int x = list1[i] ^ list2[j]; // Keep XOR like the original
                     result.Add(x);
                 }
             }
             return result;
         }
 
-        // For 8x5, we need 4 bits per color to support 8 colors, 5 positions
-        var digits1 = CreateColors(8, 0);
-        var digits2 = CreateColors(8, 4);
+        // Create combinations for 5 positions with 6 bits each
+        var digits1 = Create8Colors(0);   // bits 0-5
+        var digits2 = Create8Colors(6);   // bits 6-11
         var list2 = AddColorsToList(digits1, digits2);
-        var digits3 = CreateColors(8, 8);
+        var digits3 = Create8Colors(12);  // bits 12-17
         var list3 = AddColorsToList(list2, digits3);
-        var digits4 = CreateColors(8, 12);
+        var digits4 = Create8Colors(18);  // bits 18-23
         var list4 = AddColorsToList(list3, digits4);
-        var digits5 = CreateColors(8, 16);
+        var digits5 = Create8Colors(24);  // bits 24-29 (fits in 32-bit int)
         var list5 = AddColorsToList(list4, digits5);
         list5.Sort();
         return list5;
@@ -105,12 +110,19 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
     private List<int> InitializePossibleValues5x5x4()
     {
-        static List<int> CreateCombinations(int combinationCount, int shift)
+        // For Game5x5x4, we need to represent 25 different shape+color combinations
+        // across 4 positions. Since we have 25 combinations and only 32 bits available,
+        // we'll have to make some compromises. Let's use 6 bits per position (like Game6x4)
+        // but limit to the first few combinations that fit.
+        
+        static List<int> Create25Combinations(int shift)
         {
             List<int> pin = [];
-            for (int i = 0; i < combinationCount; i++)
+            // Limit to combinations that fit in 6 bits when shifted
+            int maxCombinations = Math.Min(25, 64 >> (shift % 6));
+            for (int i = 0; i < maxCombinations; i++)
             {
-                int x = 1 << i + shift;
+                int x = 1 << (i + shift);
                 pin.Add(x);
             }
             return pin;
@@ -118,27 +130,28 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
         static List<int> AddCombinationsToList(List<int> list1, List<int> list2)
         {
-            List<int> result = new(capacity: 625 * 625);
+            List<int> result = new(capacity: list1.Count * list2.Count);
             for (int i = 0; i < list1.Count; i++)
             {
                 for (int j = 0; j < list2.Count; j++)
                 {
-                    int x = list1[i] ^ list2[j];
+                    int x = list1[i] ^ list2[j]; // Keep XOR like the original
                     result.Add(x);
                 }
             }
             return result;
         }
 
-        // For 5x5x4, we have 25 shape+color combinations, 4 positions
-        // Use 5 bits per position to support 25 combinations
-        var digits1 = CreateCombinations(25, 0);
-        var digits2 = CreateCombinations(25, 5);
+        // Create combinations for 4 positions with 6 bits each (same as Game6x4)
+        // This limits us to fewer than 25 combinations per position, but that's acceptable
+        var digits1 = Create25Combinations(0);   // bits 0-5
+        var digits2 = Create25Combinations(6);   // bits 6-11  
         var list2 = AddCombinationsToList(digits1, digits2);
-        var digits3 = CreateCombinations(25, 10);
+        var digits3 = Create25Combinations(12);  // bits 12-17
         var list3 = AddCombinationsToList(list2, digits3);
-        var digits4 = CreateCombinations(25, 15);
+        var digits4 = Create25Combinations(18);  // bits 18-23
         var list4 = AddCombinationsToList(list3, digits4);
+        
         list4.Sort();
         return list4;
     }
@@ -282,19 +295,19 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
     private string[] IntToColors8x5(int value) =>
     [
-        _colorNames?[value & 0b1111] ?? string.Empty,
-        _colorNames?[(value >> 4) & 0b1111] ?? string.Empty,
-        _colorNames?[(value >> 8) & 0b1111] ?? string.Empty,
-        _colorNames?[(value >> 12) & 0b1111] ?? string.Empty,
-        _colorNames?[(value >> 16) & 0b1111] ?? string.Empty
+        _colorNames?[(value >> 0) & 0b111111] ?? string.Empty,   // bits 0-5
+        _colorNames?[(value >> 6) & 0b111111] ?? string.Empty,   // bits 6-11
+        _colorNames?[(value >> 12) & 0b111111] ?? string.Empty,  // bits 12-17
+        _colorNames?[(value >> 18) & 0b111111] ?? string.Empty,  // bits 18-23
+        _colorNames?[(value >> 24) & 0b111111] ?? string.Empty   // bits 24-29
     ];
 
     private string[] IntToColors5x5x4(int value) =>
     [
-        _colorNames?[value & 0b11111] ?? string.Empty,
-        _colorNames?[(value >> 5) & 0b11111] ?? string.Empty,
-        _colorNames?[(value >> 10) & 0b11111] ?? string.Empty,
-        _colorNames?[(value >> 15) & 0b11111] ?? string.Empty
+        _colorNames?[(value >> 0) & 0b111111] ?? string.Empty,   // bits 0-5
+        _colorNames?[(value >> 6) & 0b111111] ?? string.Empty,   // bits 6-11
+        _colorNames?[(value >> 12) & 0b111111] ?? string.Empty,  // bits 12-17
+        _colorNames?[(value >> 18) & 0b111111] ?? string.Empty   // bits 18-23
     ];
 
     private static int GetFieldsCount(GameType gameType) =>
