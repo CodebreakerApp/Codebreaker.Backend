@@ -19,6 +19,9 @@ internal static partial class LogExtensions
 
     [LoggerMessage(5005, LogLevel.Error, "CancelGameAsync error {ErrorMessage}", EventName = "CancelGameError")]
     public static partial void CancelGameError(this ILogger logger, string errorMessage, Exception ex);
+    
+    [LoggerMessage(5006, LogLevel.Error, "RevealGameAsync error {ErrorMessage}", EventName = "RevealGameError")]
+    public static partial void RevealGameError(this ILogger logger, string errorMessage, Exception ex);
 
     [LoggerMessage(8001, LogLevel.Information, "Game {GameId} created", EventName = "GameCreated")]
     public static partial void GameCreated(this ILogger logger,Guid gameId);
@@ -34,4 +37,7 @@ internal static partial class LogExtensions
 
     [LoggerMessage(8005, LogLevel.Information, "Game {GameId} canceled", EventName = "GameCanceled")]
     public static partial void GameCanceled(this ILogger logger, Guid gameId);
+    
+    [LoggerMessage(8006, LogLevel.Information, "Game {GameId} revealed with {MoveCount} moves", EventName = "GameRevealed")]
+    public static partial void GameRevealed(this ILogger logger, Guid gameId, int moveCount);
 }
