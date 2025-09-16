@@ -22,7 +22,7 @@ public static class ApplicationServices
         }
         else
         {
-            builder.AddKeyedAzureBlobClient("checkpoints");
+            builder.AddKeyedAzureBlobServiceClient("checkpoints");
 
             builder.AddAzureEventProcessorClient("codebreakerevents", settings =>
             {
