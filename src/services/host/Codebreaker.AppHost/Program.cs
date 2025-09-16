@@ -6,7 +6,7 @@ string botLoop = builder.Configuration.GetSection("Bot")["Loop"] ?? "false";
 string botDelay = builder.Configuration.GetSection("Bot")["Delay"] ?? "1000";
 
 var redis = builder.AddRedis("redis")
-    .WithRedisCommander()
+    .WithRedisInsight()
     .PublishAsContainer();
 
 if (startupMode == "OnPremises")
@@ -20,7 +20,7 @@ if (startupMode == "OnPremises")
         .AddDatabase("CodebreakerSql");        
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
-        .AddDatabase("codebreaker");
+        .AddCosmosDatabase("codebreaker");
 
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithExternalHttpEndpoints()
@@ -62,17 +62,19 @@ else
     var blob = storage.AddBlobs("checkpoints");
 
     var eventHub = builder.AddAzureEventHubs("codebreakerevents")
-        .AddEventHub("games");
+        .AddHub("games");
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
-        .AddDatabase("codebreaker");
+        .AddCosmosDatabase("codebreaker");
 
     var gatewayKeyvault = builder.AddAzureKeyVault("gateway-keyvault");
     var userServiceKeyvault = builder.AddAzureKeyVault("users-keyvault");
 
-    builder.AddProject<Projects.Codebreaker_CosmosCreate>("cosmoscreate")
+    var cosmoscreate = builder.AddProject<Projects.Codebreaker_CosmosCreate>("cosmoscreate")
         .WithReference(cosmos)
-        .WithReference(insights);
+        .WithReference(insights)
+        .WaitFor(cosmos)
+        .WaitFor(insights);
 
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithReference(cosmos)
@@ -80,30 +82,39 @@ else
         .WithReference(insights)
         .WithReference(eventHub)
         .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode);
+        .WithEnvironment("StartupMode", startupMode)
+        .WaitForCompletion(cosmoscreate);  // we use cosmos with the Azure option
 
     // TODO: change to use BotQ with Container App Jobs
-    builder.AddProject<Projects.Codebreaker_BotQ>("botq")
+    var botq = builder.AddProject<Projects.Codebreaker_BotQ>("botq")
         .WithReference(insights)
         .WithReference(botQueue)
         .WithReference(gameAPIs)
         .WithEnvironment("Bot__Loop", botLoop)
-        .WithEnvironment("Bot__Delay", botDelay);
+        .WithEnvironment("Bot__Delay", botDelay)
+        .WaitFor(gameAPIs);
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
         .WithReference(eventHub)
-        .WithReference(signalR);
+        .WithReference(signalR)
+        .WaitFor(eventHub)
+        .WaitFor(gameAPIs);
 
     var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
         .WithReference(cosmos)
         .WithReference(insights)
         .WithReference(eventHub)
-        .WithReference(blob);
+        .WithReference(blob)
+        .WaitFor(eventHub)
+        .WaitFor(insights)
+        .WaitFor(gameAPIs);
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
-        .WithReference(userServiceKeyvault);
+        .WithReference(userServiceKeyvault)
+        .WaitFor(insights)
+        .WaitFor(userServiceKeyvault);
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
@@ -112,12 +123,21 @@ else
         .WithReference(ranking)
         .WithReference(users)
         .WithReference(gatewayKeyvault)
-        .WithReference(insights);
+        .WithReference(insights)
+        .WaitFor(gameAPIs)
+        .WaitFor(live)
+        .WaitFor(ranking)
+        .WaitFor(users)
+        .WaitFor(gatewayKeyvault)
+        .WaitFor(insights);
+
 
     builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
         .WithExternalHttpEndpoints()
         .WithReference(gateway)
-        .WithReference(insights);
+        .WithReference(insights)
+        .WaitFor(gateway)
+        .WaitFor(insights);
 }
 
 builder.Build().Run();

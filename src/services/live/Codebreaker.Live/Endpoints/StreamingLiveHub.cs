@@ -1,7 +1,5 @@
 ﻿using Azure.Messaging.EventHubs.Consumer;
 
-using Microsoft.Extensions.Azure;
-
 using System.Runtime.CompilerServices;
 
 namespace Codebreaker.Live.Endpoints;
@@ -12,11 +10,16 @@ public class StreamingLiveHub(EventHubConsumerClient consumerClient, ILogger<Str
     {
         await foreach (PartitionEvent ev in consumerClient.ReadEventsAsync(cancellationToken))
         {
-            GameSummary gameSummary;
+            GameSummary? gameSummary;
             try
             {
                 logger.ProcessingGameCompletionEvent();
                 gameSummary = ev.Data.EventBody.ToObjectFromJson<GameSummary>();
+                if (gameSummary is null)
+                {
+                    logger.GameSummaryIsNull();
+                    continue;
+                }
             }
             catch (Exception ex)
             {
