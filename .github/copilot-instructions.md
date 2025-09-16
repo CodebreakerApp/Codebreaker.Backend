@@ -7,16 +7,17 @@ Always reference these instructions first and fallback to search or bash command
 ## Working Effectively
 
 ### Prerequisites
-- Install .NET 9 SDK: `curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.103`
+- Install .NET 9 SDK: `curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 9.0`
 - Install .NET 8 runtime for multi-targeted tests: `curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --runtime dotnet`
 - Set PATH: `export PATH="$HOME/.dotnet:$PATH"`
-- Verify installation: `dotnet --version` should show 9.0.103
+- Verify installation: `dotnet --version` should show 9.0.103 or later
 
 ### Build Individual Solutions
 The repository contains multiple solution files that can be built independently:
 
 - `dotnet build src/Codebreaker.Analyzers.sln` -- takes 9 seconds. NEVER CANCEL. Set timeout to 20+ seconds.
 - `dotnet build src/Codebreaker.Backend.Models.sln` -- takes 7 seconds. NEVER CANCEL. Set timeout to 20+ seconds.
+- `dotnet build src/Codebreaker.Backend.slnx` -- main solution
 - `dotnet build src/Codebreaker.GameAPIs.Client.sln` -- takes 10 seconds. NEVER CANCEL. Set timeout to 20+ seconds.
 - `dotnet build src/Codebreaker.Backend.Cosmos.sln` -- library solution
 - `dotnet build src/Codebreaker.Backend.SqlServer.sln` -- library solution
@@ -37,7 +38,7 @@ Services can be run independently for development:
 - Services start quickly but require proper database configuration for full functionality
 
 ### Full Solution Build Limitations
-- The main solution `src/Codebreaker.Backend.slnx` is in .slnx format (not yet supported by .NET CLI)
+- The main solution `src/Codebreaker.Backend.slnx` is in .slnx format
 - Building the AppHost project requires private Azure DevOps feeds: `dotnet build src/services/host/Codebreaker.AppHost/Codebreaker.AppHost.csproj` -- takes 45+ minutes and requires Azure DevOps authentication. NEVER CANCEL. Set timeout to 60+ minutes.
 - Azure deployment requires `azd` CLI and Azure authentication
 
@@ -114,7 +115,7 @@ src/
 
 ### Known Build Issues
 - Central Package Management requires proper setup
-- Private Azure DevOps feeds needed for full solution
+- Private Azure DevOps feeds with anonymous access needed for full solution
 - Some test projects may need package reference fixes
 - Docker/container builds require Azure authentication
 
@@ -130,5 +131,5 @@ src/
 - Individual solution builds: 3-10 seconds
 - Individual solution tests: 4-8 seconds
 - Code formatting: 10 seconds
-- Full AppHost build: 45+ minutes (requires private feeds)
+- Full AppHost build: 5+ minutes (requires private feeds)
 - Service startup: 2-5 seconds
