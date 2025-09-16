@@ -230,6 +230,7 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
 
             int blackHits = results.Count(c => c == "Black");
             int whiteHits = results.Count(c => c == "White");
+            int blueHits = results.Count(c => c == "Blue");
 
             if (blackHits >= fieldsCount)
                 throw new InvalidOperationException($"{fieldsCount} or more blacks but won was not set: {blackHits}");
@@ -237,7 +238,10 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
             if (whiteHits > fieldsCount)
                 throw new InvalidOperationException($"more than {fieldsCount} whites is not possible: {whiteHits}");
 
-            if (blackHits == 0 && whiteHits == 0)
+            if (blueHits > fieldsCount)
+                throw new InvalidOperationException($"more than {fieldsCount} blues is not possible: {blueHits}");
+
+            if (blackHits == 0 && whiteHits == 0 && blueHits == 0)
             {
                 _possibleValues = _possibleValues.HandleNoMatches(gameType, selection);
                 logger.ReducedPossibleValues(_possibleValues.Count, "none", gameId);
@@ -251,6 +255,11 @@ public class CodeBreakerGameRunner(IGamesClient gamesClient, ILogger<CodeBreaker
             {
                 _possibleValues = _possibleValues.HandleWhiteMatches(gameType, whiteHits + blackHits, selection);
                 logger.ReducedPossibleValues(_possibleValues.Count, "White", gameId);
+            }
+            if (blueHits > 0)
+            {
+                _possibleValues = _possibleValues.HandleBlueMatches(gameType, blueHits, selection);
+                logger.ReducedPossibleValues(_possibleValues.Count, "Blue", gameId);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(thinkSeconds), cancellationToken);  // thinking delay

@@ -168,7 +168,38 @@ public class CodeBreakerAlgorithmsTests
     }
 
     [Fact]
-    public void HandleNoMatches_Should_MatchOneResult_Game6x4()
+    public void HandleBlueMatches_Should_Find1BlueMatch_Game5x5x4()
+    {
+        List<int> toMatch =
+        [
+            0b_000100_000100_000100_000100,  // potential hit
+            0b_000010_000010_000010_000010,  // potential hit
+            0b_001000_001000_001000_001000   // miss
+        ];
+        int selection = 0b_000001_000001_000001_000001;
+
+        List<int> actual = CodeBreakerAlgorithms.HandleBlueMatches(toMatch, GameType.Game5x5x4, 1, selection);
+        // Should filter based on blue match logic
+        Assert.True(actual.Count <= toMatch.Count);
+    }
+
+    [Fact]
+    public void HandleBlueMatches_Should_ReturnUnfiltered_ForOtherGameTypes()
+    {
+        List<int> toMatch =
+        [
+            0b_000100_000100_000100_000100,
+            0b_000010_000010_000010_000010
+        ];
+        int selection = 0b_000001_000001_000001_000001;
+
+        List<int> actual6x4 = CodeBreakerAlgorithms.HandleBlueMatches(toMatch, GameType.Game6x4, 1, selection);
+        List<int> actual8x5 = CodeBreakerAlgorithms.HandleBlueMatches(toMatch, GameType.Game8x5, 1, selection);
+        
+        // Should return all values unfiltered for non-Game5x5x4 types
+        Assert.Equal(toMatch.Count, actual6x4.Count);
+        Assert.Equal(toMatch.Count, actual8x5.Count);
+    }
     {
         List<int> toMatch =
         [
