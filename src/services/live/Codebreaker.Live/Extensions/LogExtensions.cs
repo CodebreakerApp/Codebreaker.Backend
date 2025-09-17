@@ -27,6 +27,12 @@ public static partial class LogExtensions
     public static partial void ProcessingGameCompletionEvent(this ILogger logger);
 
     [LoggerMessage(
+        EventId = 20005,
+        Level = LogLevel.Information,
+        Message = "Received game ended {GameType} {GameId}")]
+    public static partial void ReceivedGameEnded(this ILogger logger, string gameType, string gameId);
+
+    [LoggerMessage(
         EventId = 40001,
         Level = LogLevel.Warning,
         Message = "Game summary is empty after deserialization")]
