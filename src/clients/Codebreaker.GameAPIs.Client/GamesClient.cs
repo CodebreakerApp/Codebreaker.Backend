@@ -9,11 +9,6 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     internal const string Version = "1.0.0";
     internal static ActivitySource ActivitySource { get; } = new ActivitySource(ActivitySourceName, Version);
 
-    private readonly static JsonSerializerOptions s_jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     /// <summary>
     /// Starts a new game.
     /// </summary>
@@ -30,9 +25,9 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             CreateGameRequest createGameRequest = new(gameType, playerName);
-            var response = await httpClient.PostAsJsonAsync("/games", createGameRequest, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PostAsJsonAsync("/games", createGameRequest, GamesClientJsonContext.Default.CreateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(s_jsonOptions, cancellationToken) ?? throw new InvalidOperationException();
+            var gameResponse = await response.Content.ReadFromJsonAsync(GamesClientJsonContext.Default.CreateGameResponse, cancellationToken) ?? throw new InvalidOperationException();
 
             logger.GameCreated(gameResponse.Id);
             activity?.GameCreatedEvent(gameResponse.Id.ToString(), gameResponse.GameType.ToString());
@@ -60,7 +55,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             var request = new UpdateGameRequest(id, gameType, playerName, 0, true);
-            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", request, GamesClientJsonContext.Default.UpdateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
             logger.GameCanceled(id);
             activity?.GameCanceledEvent(id.ToString());
@@ -90,11 +85,11 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         {
             // First cancel/end the game
             var request = new UpdateGameRequest(id, gameType, playerName, 0, End: true);
-            var cancelResponse = await httpClient.PatchAsJsonAsync($"/games/{id}", request, s_jsonOptions, cancellationToken);
+            var cancelResponse = await httpClient.PatchAsJsonAsync($"/games/{id}", request, GamesClientJsonContext.Default.UpdateGameRequest, cancellationToken);
             cancelResponse.EnsureSuccessStatusCode();
             
             // Then get the full game details
-            var gameResponse = await httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken) 
+            var gameResponse = await httpClient.GetFromJsonAsync($"/games/{id}", GamesClientJsonContext.Default.GameInfo, cancellationToken) 
                 ?? throw new InvalidOperationException($"Could not retrieve game with ID {id}");
             
             int moveCount = gameResponse.Moves?.Count ?? 0;
@@ -132,9 +127,9 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             {
                 GuessPegs = guessPegs
             };
-            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", updateGameRequest, s_jsonOptions, cancellationToken);
+            var response = await httpClient.PatchAsJsonAsync($"/games/{id}", updateGameRequest, GamesClientJsonContext.Default.UpdateGameRequest, cancellationToken);
             response.EnsureSuccessStatusCode();
-            var moveResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(s_jsonOptions, cancellationToken)
+            var moveResponse = await response.Content.ReadFromJsonAsync(GamesClientJsonContext.Default.UpdateGameResponse, cancellationToken)
                 ?? throw new InvalidOperationException();
 
             logger.MoveSet(id, moveResponse.MoveNumber);
@@ -168,7 +163,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         GameInfo? game;
         try
         {
-            game = await httpClient.GetFromJsonAsync<GameInfo>($"/games/{id}", s_jsonOptions, cancellationToken);
+            game = await httpClient.GetFromJsonAsync($"/games/{id}", GamesClientJsonContext.Default.GameInfo, cancellationToken);
             logger.GameReceived(id, game?.EndTime != null, game?.LastMoveNumber ?? 0);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
@@ -198,7 +193,7 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
         try
         {
             string urlQuery = query.AsUrlQuery();
-            IEnumerable<GameInfo> games = (await httpClient.GetFromJsonAsync<IEnumerable<GameInfo>>($"/games{urlQuery}", s_jsonOptions, cancellationToken)) ?? [];
+            IEnumerable<GameInfo> games = (await httpClient.GetFromJsonAsync($"/games{urlQuery}", GamesClientJsonContext.Default.IEnumerableGameInfo, cancellationToken)) ?? [];
 
             int gameCount = games.Count();
             logger.GamesReceived(urlQuery, gameCount);
@@ -218,4 +213,22 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
             throw;
         }
     }
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true, PropertyNameCaseInsensitive = true)]
+[JsonSerializable(typeof(CreateGameRequest))]
+[JsonSerializable(typeof(CreateGameResponse))]
+[JsonSerializable(typeof(UpdateGameRequest))]
+[JsonSerializable(typeof(UpdateGameResponse))]
+[JsonSerializable(typeof(GameInfo))]
+[JsonSerializable(typeof(MoveInfo))]
+[JsonSerializable(typeof(GamesQuery))]
+[JsonSerializable(typeof(GameType))]
+[JsonSerializable(typeof(IEnumerable<GameInfo>))]
+[JsonSerializable(typeof(IDictionary<string, string[]>))]
+[JsonSerializable(typeof(IDictionary<string, IEnumerable<string>>))]
+[JsonSerializable(typeof(ICollection<MoveInfo>))]
+internal partial class GamesClientJsonContext : JsonSerializerContext
+{
+
 }
