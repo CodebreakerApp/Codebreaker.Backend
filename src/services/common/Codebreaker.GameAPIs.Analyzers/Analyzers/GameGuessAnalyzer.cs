@@ -40,7 +40,7 @@ public abstract class GameGuessAnalyzer<TField, TResult>(IGame game, TField[] gu
 
         if ((_game.LastMoveNumber + 1) != _moveNumber)
         {
-            throw new ArgumentException($"Incorrect move number received {_moveNumber}") { HResult = 4300 };
+            throw new ArgumentException($"Incorrect move number received {_moveNumber}, expected {_game.LastMoveNumber + 1}") { HResult = 4300 };
         }
 
         _game.LastMoveNumber++;

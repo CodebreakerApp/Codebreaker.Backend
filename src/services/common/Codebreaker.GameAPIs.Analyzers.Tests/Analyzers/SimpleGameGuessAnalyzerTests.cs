@@ -35,7 +35,7 @@ public class SimpleGameGuessAnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black"]
@@ -45,7 +45,7 @@ public class SimpleGameGuessAnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black", "Der", "Blue", "Yellow"]      // "Der" is the wrong value
@@ -55,7 +55,7 @@ public class SimpleGameGuessAnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidMoveNumber()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 [Green, Yellow, Green, Black],
                 [Yellow, Green, Black, Blue], moveNumber: 2));
@@ -128,7 +128,7 @@ public class SimpleGameGuessAnalyzerTests
         Assert.False(game.IsVictory);
     }
 
-    private static MockColorGame CreateGame(string[] codes) => 
+    private static MockColorGame CreateGame(string[] codes) =>
         new()
         {
             GameType = GameTypes.Game6x4Mini,
@@ -180,8 +180,8 @@ public class TestData6x4Mini : IEnumerable<object[]>
             new SimpleColorResult(
             [
                 ResultValue.CorrectPositionAndColor,
-                ResultValue.CorrectColor, 
-                ResultValue.Incorrect, 
+                ResultValue.CorrectColor,
+                ResultValue.Incorrect,
                 ResultValue.Incorrect
             ]) // expected
         };

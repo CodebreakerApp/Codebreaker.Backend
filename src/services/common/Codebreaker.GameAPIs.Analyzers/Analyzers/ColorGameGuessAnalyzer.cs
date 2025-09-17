@@ -15,8 +15,8 @@ public class ColorGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveNu
     protected override ColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<ColorField> codesToCheck = [.. _game.Codes.ToPegs<ColorField>() ];
-        List<ColorField> guessPegsToCheck = [.. Guesses ];
+        List<ColorField> codesToCheck = [.. _game.Codes.ToPegs<ColorField>()];
+        List<ColorField> guessPegsToCheck = [.. Guesses];
         int black = 0;
         List<string> whitePegs = [];
 

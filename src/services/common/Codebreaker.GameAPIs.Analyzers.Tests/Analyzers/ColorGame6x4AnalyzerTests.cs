@@ -24,7 +24,7 @@ public class ColorGame6x4AnalyzerTests
     public void SetMove_UsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
     {
         string[] code = [Red, Green, Blue, Red];
-        ColorResult expectedKeyPegs = new (expectedBlack, expectedWhite);
+        ColorResult expectedKeyPegs = new(expectedBlack, expectedWhite);
         ColorResult resultKeyPegs = AnalyzeGame(code, guessValues);
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
@@ -40,7 +40,7 @@ public class ColorGame6x4AnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black"]
@@ -50,7 +50,7 @@ public class ColorGame6x4AnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black"],
                 ["Black", "Der", "Blue", "Yellow"]      // "Der" is the wrong value
@@ -60,7 +60,7 @@ public class ColorGame6x4AnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidMoveNumber()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 [Green, Yellow, Green, Black],
                 [Yellow, Green, Black, Blue], moveNumber: 2));
@@ -76,7 +76,19 @@ public class ColorGame6x4AnalyzerTests
         Assert.Equal(0, game?.LastMoveNumber);
     }
 
-    private static MockColorGame CreateGame(string[] codes) => 
+    [Fact]
+    public void SetMove_ShouldIncludeExpectedMoveNumberInErrorMessage()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            AnalyzeGame(
+                [Green, Yellow, Green, Black],
+                [Yellow, Green, Black, Blue], moveNumber: 3));
+
+        Assert.Contains("received 3", exception.Message);
+        Assert.Contains("expected 1", exception.Message);
+    }
+
+    private static MockColorGame CreateGame(string[] codes) =>
         new()
         {
             GameType = GameTypes.Game6x4,
@@ -93,7 +105,7 @@ public class ColorGame6x4AnalyzerTests
     private static ColorResult AnalyzeGame(string[] codes, string[] guesses, int moveNumber = 1)
     {
         MockColorGame game = CreateGame(codes);
-        ColorGameGuessAnalyzer analyzer = new(game, [.. guesses.ToPegs<ColorField>() ], moveNumber);
+        ColorGameGuessAnalyzer analyzer = new(game, [.. guesses.ToPegs<ColorField>()], moveNumber);
         return analyzer.GetResult();
     }
 

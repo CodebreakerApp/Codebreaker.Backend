@@ -14,7 +14,7 @@ public static class PegExtensions
     public static IEnumerable<string> AsStringFields<T>(this T[] pegs)
         where T : IFormattable
     {
-        foreach(var peg in pegs)
+        foreach (var peg in pegs)
         {
             yield return peg.ToString(default, default);
         }

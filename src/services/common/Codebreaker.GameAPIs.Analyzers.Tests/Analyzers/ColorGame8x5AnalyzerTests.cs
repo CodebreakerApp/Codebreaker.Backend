@@ -24,7 +24,7 @@ public class ColorGame8x5AnalyzerTests
     public void SetMove_UsingVariousData(int expectedBlack, int expectedWhite, params string[] guessValues)
     {
         string[] code = [Red, Green, Blue, Red, Brown];
-        ColorResult expectedKeyPegs = new (expectedBlack, expectedWhite);
+        ColorResult expectedKeyPegs = new(expectedBlack, expectedWhite);
         ColorResult resultKeyPegs = AnalyzeGame(code, guessValues);
         Assert.Equal(expectedKeyPegs, resultKeyPegs);
     }
@@ -40,7 +40,7 @@ public class ColorGame8x5AnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessCount()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black", "Black"],
                 ["Black"]
@@ -50,14 +50,14 @@ public class ColorGame8x5AnalyzerTests
     [Fact]
     public void SetMove_ShouldThrowOnInvalidGuessValues()
     {
-        Assert.Throws<ArgumentException>(() => 
+        Assert.Throws<ArgumentException>(() =>
             AnalyzeGame(
                 ["Black", "Black", "Black", "Black", "Black"],
                 ["Black", "Der", "Blue", "Yellow", "Black"]      // "Der" is the wrong value
             ));
     }
 
-    private static MockColorGame CreateGame(string[] codes) => 
+    private static MockColorGame CreateGame(string[] codes) =>
         new()
         {
             GameType = GameTypes.Game8x5,
