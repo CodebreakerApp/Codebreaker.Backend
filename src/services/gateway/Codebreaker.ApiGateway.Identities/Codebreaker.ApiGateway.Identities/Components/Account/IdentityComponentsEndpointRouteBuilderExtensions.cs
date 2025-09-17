@@ -9,6 +9,7 @@ using Microsoft.Extensions.Primitives;
 using Codebreaker.ApiGateway.Identities.Components.Account.Pages;
 using Codebreaker.ApiGateway.Identities.Components.Account.Pages.Manage;
 using Codebreaker.ApiGateway.Identities.Data;
+using Codebreaker.ApiGateway.Identities.Extensions;
 
 namespace Microsoft.AspNetCore.Routing;
 
@@ -83,7 +84,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
             }
 
             var userId = await userManager.GetUserIdAsync(user);
-            downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
+            downloadLogger.UserRequestedPersonalData(userId);
 
             // Only include personal data for download
             var personalData = new Dictionary<string, string>();

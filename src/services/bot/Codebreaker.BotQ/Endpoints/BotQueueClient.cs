@@ -1,4 +1,5 @@
 ﻿using static Codebreaker.BotQ.Endpoints.BotQueueClient;
+using static CodeBreaker.Bot.Log;
 
 namespace Codebreaker.BotQ.Endpoints;
 
@@ -25,7 +26,7 @@ public class BotQueueClient(QueueServiceClient client, CodebreakerTimer timer, I
         QueueProperties properties = await queueClient.GetPropertiesAsync();
         if (properties.ApproximateMessagesCount > 0)
         {
-            logger.LogInformation("Queue has {count} messages", properties.ApproximateMessagesCount);
+            logger.QueueHasMessages(properties.ApproximateMessagesCount);
             QueueMessage[] messages = await queueClient.ReceiveMessagesAsync();
             foreach (var encodedMessage in messages)
             {
@@ -41,7 +42,7 @@ public class BotQueueClient(QueueServiceClient client, CodebreakerTimer timer, I
 
                     byte[] bytes = Convert.FromBase64String(encodedMessage.MessageText);
                     string message = Encoding.UTF8.GetString(bytes);
-                    logger.LogInformation("Received queue message: {message}", message);
+                    logger.ReceivedQueueMessage(message);
 
                     var botMessage = JsonSerializer.Deserialize<BotMessage>(message);
                     if (botMessage is null)

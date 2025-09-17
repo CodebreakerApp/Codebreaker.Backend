@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Codebreaker.GameAPIs.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using System.Diagnostics;
 
@@ -154,7 +155,7 @@ public static class ApplicationServices
                 if (repo is GamesSqlServerContext context)
                 {
                     await context.Database.MigrateAsync();
-                    app.Logger.LogInformation("Database updated");
+                    app.Logger.DatabaseUpdated();
                 }
 
                 // add a delay to try out /health checks
@@ -162,7 +163,7 @@ public static class ApplicationServices
             }
             catch (Exception ex)
             {
-                app.Logger.LogError(ex, "Error updating database");
+                app.Logger.ErrorUpdatingDatabase(ex);
             }
         }
 

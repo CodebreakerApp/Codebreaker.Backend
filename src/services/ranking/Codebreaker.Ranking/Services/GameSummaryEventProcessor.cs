@@ -2,6 +2,7 @@
 
 using Codebreaker.GameAPIs.Models;
 using Codebreaker.Ranking.Data;
+using Codebreaker.Ranking.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -13,17 +14,17 @@ public class GameSummaryEventProcessor(EventProcessorClient client, IDbContextFa
     {
         client.ProcessEventAsync += async (args) =>
         {
-            logger.LogInformation("Processing event");
+            logger.ProcessingEvent();
 
             GameSummary? summary = args.Data.EventBody.ToObjectFromJson<GameSummary>();
 
             if (summary is null)
             {
-                logger.LogWarning("Game summary is empty after deserialization");
+                logger.GameSummaryIsEmpty();
                 return;
             }
 
-            logger.LogInformation("Received game completion event for game {gameId}", summary.Id);
+            logger.ReceivedGameCompletionEvent(summary.Id);
             using var context = await factory.CreateDbContextAsync(cancellationToken);
 
             await context.AddGameSummaryAsync(summary, cancellationToken);
@@ -32,7 +33,7 @@ public class GameSummaryEventProcessor(EventProcessorClient client, IDbContextFa
 
         client.ProcessErrorAsync += (args) =>
         {
-            logger.LogError(args.Exception, "Error processing event, {error}", args.Exception.Message);
+            logger.ErrorProcessingEvent(args.Exception, args.Exception.Message);
             return Task.CompletedTask;
         };
 
@@ -47,7 +48,7 @@ public class GameSummaryEventProcessor(EventProcessorClient client, IDbContextFa
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error: {Error}", ex.Message);
+            logger.Error(ex, ex.Message);
             throw;
         }
     }
