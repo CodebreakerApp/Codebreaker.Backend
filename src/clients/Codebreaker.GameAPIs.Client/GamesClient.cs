@@ -215,7 +215,6 @@ public class GamesClient(HttpClient httpClient, ILogger<GamesClient> logger) : I
     }
 }
 
-
 [JsonSourceGenerationOptions(WriteIndented = true, PropertyNameCaseInsensitive = true)]
 [JsonSerializable(typeof(CreateGameRequest))]
 [JsonSerializable(typeof(CreateGameResponse))]
