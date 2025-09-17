@@ -1,7 +1,7 @@
 namespace Codebreaker.GameAPIs.Analyzer.Tests;
 
 public class ShapeAndColorResultTests
-{ 
+{
     [Fact]
     public void ToStringShouldReturnFormat()
     {

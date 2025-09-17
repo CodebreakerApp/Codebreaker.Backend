@@ -11,9 +11,9 @@ public class SimpleGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveN
     protected override SimpleColorResult GetCoreResult()
     {
         // Check black and white keyPegs
-        List<string> codesToCheck = [.. _game.Codes.ToPegs<ColorField>().Select(cf => cf.ToString()) ];
+        List<string> codesToCheck = [.. _game.Codes.ToPegs<ColorField>().Select(cf => cf.ToString())];
         List<string> guessPegsToCheck = [.. Guesses.Select(g => g.ToString())];
-        List<int> positionsToIgnore = []; 
+        List<int> positionsToIgnore = [];
 
         ResultValue[] results = [.. Enumerable.Repeat(ResultValue.Incorrect, 4)];
 
@@ -38,7 +38,7 @@ public class SimpleGameGuessAnalyzer(IGame game, ColorField[] guesses, int moveN
             results[i] = ResultValue.CorrectColor;
             codesToCheck[ix] = string.Empty;
         }
- 
+
         return new SimpleColorResult(results);
     }
 

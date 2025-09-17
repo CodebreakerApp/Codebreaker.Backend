@@ -178,7 +178,7 @@ public class ShapeGame5x5x4AnalyzerTests
                 [FieldCategories.Colors] = TestData5x5x4.Colors5.ToList(),
                 [FieldCategories.Shapes] = TestData5x5x4.Shapes5.ToList()
             },
-            Codes = codes   
+            Codes = codes
         };
 
     private static ShapeAndColorResult AnalyzeGame(string[] codes, string[] guesses)
