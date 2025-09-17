@@ -15,7 +15,7 @@ public class GameScenarioBenchmarks
 {
     private List<int> _initialValues6x4 = null!;
     private List<int> _initialValues8x5 = null!;
-    
+
     [GlobalSetup]
     public void Setup()
     {
@@ -41,14 +41,14 @@ public class GameScenarioBenchmarks
         // Simulate mid-game with some black matches
         var values = _initialValues6x4.ToList();
         var selection1 = BenchmarkTestData.CreateTestSelection(GameType.Game6x4);
-        
+
         // First move: no matches
         values = values.HandleNoMatches(GameType.Game6x4, selection1);
-        
+
         // Second move: 1 black match
         var selection2 = 0b_001000_000100_000100_000100; // Different first position
         values = values.HandleBlackMatches(GameType.Game6x4, 1, selection2);
-        
+
         // Third move: 2 white matches
         var selection3 = 0b_000100_001000_000100_000100; // Rearranged colors
         return values.HandleWhiteMatches(GameType.Game6x4, 2, selection3);
@@ -61,12 +61,12 @@ public class GameScenarioBenchmarks
         // Simulate late game with high precision
         var values = _initialValues6x4.ToList();
         var baseSelection = BenchmarkTestData.CreateTestSelection(GameType.Game6x4);
-        
+
         // Apply multiple filtering operations
         values = values.HandleNoMatches(GameType.Game6x4, baseSelection);
         values = values.HandleBlackMatches(GameType.Game6x4, 2, 0b_001000_000100_000100_000100);
         values = values.HandleWhiteMatches(GameType.Game6x4, 3, 0b_000100_001000_010000_000100);
-        
+
         // Final precise move
         return values.HandleBlackMatches(GameType.Game6x4, 3, 0b_001000_010000_000100_100000);
     }
@@ -86,13 +86,13 @@ public class GameScenarioBenchmarks
     {
         // Simulate more complex 8x5 game progression
         var values = _initialValues8x5.ToList();
-        
+
         // Move 1: Some white matches
         values = values.HandleWhiteMatches(GameType.Game8x5, 3, 0b_000100_001000_010000_100000_000010);
-        
+
         // Move 2: Black matches
         values = values.HandleBlackMatches(GameType.Game8x5, 2, 0b_001000_000100_010000_000010_100000);
-        
+
         // Move 3: More precise filtering
         return values.HandleBlackMatches(GameType.Game8x5, 4, 0b_000100_001000_000010_010000_100000);
     }
@@ -107,14 +107,14 @@ public class GameScenarioBenchmarks
     {
         // Scenario where filtering operations don't reduce the list much
         var values = _initialValues6x4.ToList();
-        
+
         // Multiple operations that don't filter much
         for (int i = 0; i < 5; i++)
         {
             var selection = 0b_000001_000001_000001_000001 << i; // Different selections
             values = values.HandleWhiteMatches(GameType.Game6x4, 1, selection);
         }
-        
+
         return values;
     }
 
@@ -124,11 +124,11 @@ public class GameScenarioBenchmarks
     {
         // Scenario where filtering operations reduce the list significantly
         var values = _initialValues6x4.ToList();
-        
+
         // Operations that should filter aggressively
         values = values.HandleBlackMatches(GameType.Game6x4, 3, BenchmarkTestData.CreateTestSelection(GameType.Game6x4));
         values = values.HandleBlackMatches(GameType.Game6x4, 3, 0b_001000_010000_100000_000010);
-        
+
         return values;
     }
 
@@ -142,13 +142,13 @@ public class GameScenarioBenchmarks
     {
         var values = _initialValues6x4.ToList();
         int moveCount = 0;
-        
+
         // Simulate a complete game until very few values remain
         while (values.Count > 10 && moveCount < 8)
         {
             moveCount++;
             var selection = 0b_000100_000100_000100_000100 << (moveCount % 6);
-            
+
             switch (moveCount % 4)
             {
                 case 0:
@@ -168,7 +168,7 @@ public class GameScenarioBenchmarks
                     break;
             }
         }
-        
+
         return values.Count;
     }
 

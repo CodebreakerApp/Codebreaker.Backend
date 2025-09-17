@@ -18,11 +18,11 @@ public class AlgorithmBenchmarks
     private List<int> _reducedGame6x4Values = null!;
     private List<int> _reducedGame8x5Values = null!;
     private List<int> _smallGame6x4Values = null!;
-    
+
     private int _testSelection6x4;
     private int _testSelection8x5;
     private int _testSelection5x5x4;
-    
+
     private Dictionary<int, string> _colorNames6x4 = null!;
     private Dictionary<int, string> _colorNames8x5 = null!;
     private Dictionary<int, string> _colorNames5x5x4 = null!;
@@ -33,17 +33,17 @@ public class AlgorithmBenchmarks
         // Initialize full possible values for different game types
         _fullGame6x4Values = BenchmarkTestData.CreateGame6x4PossibleValues();
         _fullGame8x5Values = BenchmarkTestData.CreateGame8x5PossibleValues();
-        
+
         // Create reduced lists simulating games in progress
         _reducedGame6x4Values = BenchmarkTestData.CreateReducedPossibleValues(_fullGame6x4Values, 100);
         _reducedGame8x5Values = BenchmarkTestData.CreateReducedPossibleValues(_fullGame8x5Values, 200);
         _smallGame6x4Values = BenchmarkTestData.CreateReducedPossibleValues(_fullGame6x4Values, 20);
-        
+
         // Create test selections
         _testSelection6x4 = BenchmarkTestData.CreateTestSelection(GameType.Game6x4);
         _testSelection8x5 = BenchmarkTestData.CreateTestSelection(GameType.Game8x5);
         _testSelection5x5x4 = BenchmarkTestData.CreateTestSelection(GameType.Game5x5x4);
-        
+
         // Create color name mappings
         _colorNames6x4 = BenchmarkTestData.CreateColorNames(GameType.Game6x4);
         _colorNames8x5 = BenchmarkTestData.CreateColorNames(GameType.Game8x5);

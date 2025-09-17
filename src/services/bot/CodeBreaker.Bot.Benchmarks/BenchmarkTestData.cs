@@ -102,12 +102,12 @@ public static class BenchmarkTestData
         // Create a reduced list by taking every nth element
         var step = fullList.Count / targetSize;
         var reducedList = new List<int>(targetSize);
-        
+
         for (int i = 0; i < fullList.Count && reducedList.Count < targetSize; i += step)
         {
             reducedList.Add(fullList[i]);
         }
-        
+
         return reducedList;
     }
 
@@ -132,13 +132,13 @@ public static class BenchmarkTestData
     {
         var colorNames = new Dictionary<int, string>();
         int key = 1;
-        
+
         if (gameType == GameType.Game5x5x4)
         {
             // Create shape+color combinations
             var colors = new[] { "Red", "Green", "Blue", "Yellow", "Orange" };
             var shapes = new[] { "Circle", "Square", "Triangle", "Diamond", "Star" };
-            
+
             foreach (var shape in shapes)
             {
                 foreach (var color in colors)
@@ -151,17 +151,17 @@ public static class BenchmarkTestData
         else
         {
             // Color-only games
-            var colors = gameType == GameType.Game8x5 
+            var colors = gameType == GameType.Game8x5
                 ? new[] { "Red", "Green", "Blue", "Yellow", "Orange", "Purple", "Pink", "White" }
                 : new[] { "Red", "Green", "Blue", "Yellow", "Orange", "Purple" };
-                
+
             foreach (var color in colors)
             {
                 colorNames[key] = color;
                 key <<= 1;
             }
         }
-        
+
         return colorNames;
     }
 }
