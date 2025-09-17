@@ -1,6 +1,6 @@
 namespace Codebreaker.Ranking.Extensions;
 
-public static partial class LogExtensions
+public static partial class LoggerExtensions
 {
     [LoggerMessage(
         EventId = 10001,

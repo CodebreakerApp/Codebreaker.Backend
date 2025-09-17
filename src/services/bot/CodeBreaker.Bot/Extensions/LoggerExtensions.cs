@@ -1,6 +1,6 @@
 ﻿namespace CodeBreaker.Bot;
 
-internal static partial class Log
+internal static partial class LoggerExtensions
 {
     [LoggerMessage(
         EventId = 3000,

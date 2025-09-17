@@ -1,6 +1,6 @@
 ﻿namespace Codebreaker.GameAPIs.Extensions;
 
-public static partial class Log
+public static partial class LoggerExtensions
 {
     [LoggerMessage(
         EventId = 3000,
