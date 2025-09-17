@@ -29,7 +29,7 @@ public static partial class Log
     [LoggerMessage(
         EventId = 3004,
         Level = LogLevel.Error,
-        Message = "Error writing game completed event, game id: {gameId}")]
+        Message = "Error writing game completed event, game id: {GameId}")]
     public static partial void ErrorWritingGameCompletedEvent(this ILogger logger, Guid gameId, Exception ex);
 
     [LoggerMessage(

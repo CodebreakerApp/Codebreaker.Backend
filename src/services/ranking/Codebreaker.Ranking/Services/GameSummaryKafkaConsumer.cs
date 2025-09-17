@@ -1,5 +1,6 @@
 ﻿using Codebreaker.GameAPIs.Models;
 using Codebreaker.Ranking.Data;
+using Codebreaker.Ranking.Extensions;
 
 using Confluent.Kafka;
 
@@ -28,7 +29,7 @@ public class GameSummaryKafkaConsumer(IConsumer<string, string> kafkaClient, IDb
 
                     if (summary is null)
                     {
-                        logger.LogError("Deserialized null GameSummary");
+                        logger.DeserializedNullGameSummary();
                         continue;
                     }
 
@@ -37,18 +38,18 @@ public class GameSummaryKafkaConsumer(IConsumer<string, string> kafkaClient, IDb
                 }
                 catch (ConsumeException ex) when (ex.HResult == -2146233088)
                 {
-                    logger.LogWarning("Consume exception {Message}", ex.Message);
+                    logger.ConsumeException(ex.Message);
                     await Task.Delay(TimeSpan.FromSeconds(10));
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            logger.LogInformation("Processing was cancelled");
+            logger.ProcessingWasCancelled();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error: {Error}", ex.Message);
+            logger.Error(ex, ex.Message);
             throw;
         }
     }
