@@ -43,16 +43,22 @@ public static class ApplicationServices
 
         static void ConfigureCosmos(IHostApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<IGamesRepository, GamesCosmosContext>(options =>
-            {
-                string connectionString = builder.Configuration.GetConnectionString("codebreaker") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
-                options.UseCosmos(connectionString, "codebreaker");
+            builder.AddCosmosDbContext<GamesCosmosContext>("codebreaker", "codebreaker");
 
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
-            builder.EnrichCosmosDbContext<GamesCosmosContext>(settings =>
-            {
-            });
+            builder.Services.AddScoped<IGamesRepository, DataContextProxy<GamesCosmosContext>>();
+
+
+            //builder.Services.AddDbContext<IGamesRepository, GamesCosmosContext>(options =>
+            //{
+            //    //string connectionString = builder.Configuration.GetConnectionString("codebreaker") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
+            //    //options.UseCosmos(connectionString, "codebreaker");
+
+            //    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            //});
+            //builder.AddCosmosDbContext<GamesCosmosContext>("codebreaker");
+            ////builder.EnrichCosmosDbContext<GamesCosmosContext>(settings =>
+            ////{
+            ////});
         }
 
         static void ConfigureInMemory(IHostApplicationBuilder builder)
