@@ -61,29 +61,34 @@ else
     var botQueue = storage.AddQueues("botqueue");
     var blob = storage.AddBlobs("checkpoints");
 
-    var eventHub = builder.AddAzureEventHubs("codebreakerevents")
-        .AddHub("games");
+    var eventHub = builder.AddAzureEventHubs("codebreakerevents");
+
+    eventHub.AddHub("games");
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
         .AddCosmosDatabase("codebreaker");
 
+    cosmos.AddContainer("GamesV3", "/PartitionKey");
+
     var gatewayKeyvault = builder.AddAzureKeyVault("gateway-keyvault");
     var userServiceKeyvault = builder.AddAzureKeyVault("users-keyvault");
 
-    var cosmoscreate = builder.AddProject<Projects.Codebreaker_CosmosCreate>("cosmoscreate")
-        .WithReference(cosmos)
-        .WithReference(insights)
-        .WaitFor(cosmos)
-        .WaitFor(insights);
-
+    // TODO: fix new eventhub namings
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
         .WithReference(cosmos)
         .WithReference(redis)
         .WithReference(insights)
         .WithReference(eventHub)
         .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode)
-        .WaitForCompletion(cosmoscreate);  // we use cosmos with the Azure option
+        .WithEnvironment("StartupMode", startupMode);
+
+    var bot = builder.AddProject<Projects.CodeBreaker_Bot>("bot")
+        .WithReference(insights)
+        .WithReference(botQueue)
+        .WithReference(gameAPIs)
+        .WithEnvironment("Bot__Loop", botLoop)
+        .WithEnvironment("Bot__Delay", botDelay)
+        .WaitFor(gameAPIs);
 
     // TODO: change to use BotQ with Container App Jobs
     var botq = builder.AddProject<Projects.Codebreaker_BotQ>("botq")
@@ -130,7 +135,6 @@ else
         .WaitFor(users)
         .WaitFor(gatewayKeyvault)
         .WaitFor(insights);
-
 
     builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
         .WithExternalHttpEndpoints()

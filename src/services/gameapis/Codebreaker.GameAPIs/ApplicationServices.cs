@@ -45,7 +45,7 @@ public static class ApplicationServices
         {
             builder.Services.AddDbContext<IGamesRepository, GamesCosmosContext>(options =>
             {
-                string connectionString = builder.Configuration.GetConnectionString("codebreakercosmos") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
+                string connectionString = builder.Configuration.GetConnectionString("codebreaker") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
                 options.UseCosmos(connectionString, "codebreaker");
 
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
@@ -160,27 +160,27 @@ public static class ApplicationServices
             }
         }
 
-        // The database is created from the AppHost AddDatabase method. The Cosmos container is created here - if it doesn't exist yet.
-        if (app.Configuration["DataStore"] == "Cosmos")
-        {
-            try
-            {
-                using var scope = app.Services.CreateScope();
-                // TODO: update with .NET Aspire Preview 4
-                var repo = scope.ServiceProvider.GetRequiredService<GamesCosmosContext>();
-                //                var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
-                if (repo is GamesCosmosContext context)
-                {
-                    bool created = await context.Database.EnsureCreatedAsync();
-                    app.Logger.LogInformation("Database created: {created}", created);
-                }
-            }
-            catch (Exception ex)
-            {
-                app.Logger.LogError(ex, "Error updating database");
-                throw;
-            }
-        }
+        // The database is created from the AppHost AddDatabase method. The Cosmos container is now created from the AppHost as well!
+        //if (app.Configuration["DataStore"] == "Cosmos")
+        //{
+        //    try
+        //    {
+        //        using var scope = app.Services.CreateScope();
+        //        // TODO: update with .NET Aspire Preview 4
+        //        var repo = scope.ServiceProvider.GetRequiredService<GamesCosmosContext>();
+        //        //                var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
+        //        if (repo is GamesCosmosContext context)
+        //        {
+        //            bool created = await context.Database.EnsureCreatedAsync();
+        //            app.Logger.LogInformation("Database created: {created}", created);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        app.Logger.LogError(ex, "Error updating database");
+        //        throw;
+        //    }
+        //}
 
         s_IsDatabaseUpdateComplete = true;
     }
