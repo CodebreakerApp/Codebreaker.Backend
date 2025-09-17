@@ -200,6 +200,9 @@ public class CodeBreakerAlgorithmsTests
         Assert.Equal(toMatch.Count, actual6x4.Count);
         Assert.Equal(toMatch.Count, actual8x5.Count);
     }
+
+    [Fact]
+    public void HandleBlueMatches_ShouldHandleNoMatches()
     {
         List<int> toMatch =
         [
