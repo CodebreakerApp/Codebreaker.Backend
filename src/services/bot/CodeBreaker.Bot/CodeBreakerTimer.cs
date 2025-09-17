@@ -1,5 +1,6 @@
 ﻿using CodeBreaker.Bot.Api;
 using CodeBreaker.Bot.Exceptions;
+using Codebreaker.GameAPIs.Client.Models;
 
 namespace CodeBreaker.Bot;
 
@@ -16,7 +17,7 @@ public class CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerT
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public Guid Start(int delaySecondsBetweenGames, int numberGames, int thinkSeconds)
+    public Guid Start(GameType gameType, int delaySecondsBetweenGames, int numberGames, int thinkSeconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(delaySecondsBetweenGames);
         ArgumentOutOfRangeException.ThrowIfLessThan(numberGames, 1);
@@ -39,8 +40,8 @@ public class CodeBreakerTimer(CodeBreakerGameRunner runner, ILogger<CodeBreakerT
                     if (await _timer.WaitForNextTickAsync(_cancellationTokenSource.Token)) // simulate some waiting time
                     {
                         logger.TimerTickFired(_loop);
-                        await _gameRunner.StartGameAsync(_cancellationTokenSource.Token);  // start the game
-                        await _gameRunner.RunAsync(thinkSeconds, _cancellationTokenSource.Token); // play the game until finished
+                        await _gameRunner.StartGameAsync(gameType, _cancellationTokenSource.Token);  // start the game
+                        await _gameRunner.RunAsync(gameType, thinkSeconds, _cancellationTokenSource.Token); // play the game until finished
                         _loop++;
                     }
 
