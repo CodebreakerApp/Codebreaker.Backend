@@ -29,7 +29,7 @@ public static partial class LogExtensions
     [LoggerMessage(
         EventId = 10005,
         Level = LogLevel.Error,
-        Message = "Error: {Error}")]
+        Message = "{Error}")]
     public static partial void Error(this ILogger logger, Exception ex, string error);
 
     [LoggerMessage(
