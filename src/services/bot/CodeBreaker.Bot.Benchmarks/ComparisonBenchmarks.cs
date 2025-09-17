@@ -9,7 +9,6 @@ namespace CodeBreaker.Bot.Benchmarks;
 /// </summary>
 [MemoryDiagnoser]
 [SimpleJob]
-[RankColumn]
 [GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
 public class ComparisonBenchmarks
 {
