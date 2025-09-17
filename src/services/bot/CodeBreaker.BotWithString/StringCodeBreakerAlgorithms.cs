@@ -79,7 +79,7 @@ public static class StringCodeBreakerAlgorithms
             // First, create arrays excluding black matches (exact position matches)
             var selectionCopy = new StringPegWithFlag[fieldsCount];
             var valueCopy = new StringPegWithFlag[fieldsCount];
-            
+
             for (int i = 0; i < fieldsCount; i++)
             {
                 // If it's a black match (same position, same color), mark as used so it won't count as white
@@ -105,7 +105,7 @@ public static class StringCodeBreakerAlgorithms
                     }
                 }
             }
-            
+
             if (whiteMatchCount == whiteHits)
             {
                 newValues.Add(value);
@@ -133,20 +133,20 @@ public static class StringCodeBreakerAlgorithms
 
         List<string[]> newValues = new(values.Count);
         int fieldsCount = GetFieldsCount(gameType);
-        
+
         foreach (string[] value in values)
         {
             // For Game5x5x4, we need to count partial matches
             // This is a simplified implementation that counts blue-like matches
             // In a real implementation, this would need to understand shape+color combinations
             // For now, we'll do a basic filtering that reduces possibilities
-            
+
             int partialMatches = 0;
             for (int i = 0; i < fieldsCount; i++)
             {
                 string selectionField = selection[i];
                 string valueField = value[i];
-                
+
                 // This is a simplified blue match check
                 // In reality, blue matches are more complex for shape+color combinations
                 // For string-based implementation, we'll check if they share some common characteristics
@@ -156,7 +156,7 @@ public static class StringCodeBreakerAlgorithms
                     partialMatches++;
                 }
             }
-            
+
             if (partialMatches == blueHits)
             {
                 newValues.Add(value);
@@ -177,11 +177,11 @@ public static class StringCodeBreakerAlgorithms
         // This is a simplified implementation for partial matching
         // In a real Game5x5x4 implementation, this would check shape+color combinations
         // For now, we'll implement a simple string-based partial match
-        
+
         // If strings are the same, it's not a partial match (that would be a black match)
         if (value == selection)
             return false;
-            
+
         // Check if they have any common characters (simplified partial match logic)
         return value.Any(c => selection.Contains(c));
     }
