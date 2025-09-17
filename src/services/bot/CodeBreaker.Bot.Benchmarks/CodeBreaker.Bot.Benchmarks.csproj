@@ -9,7 +9,4 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CodeBreaker.Bot\CodeBreaker.Bot.csproj" />
-  </ItemGroup>
 </Project>

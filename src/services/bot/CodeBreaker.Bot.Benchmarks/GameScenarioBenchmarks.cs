@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnosers;
-using Codebreaker.GameAPIs.Client.Models;
 
 namespace CodeBreaker.Bot.Benchmarks;
 

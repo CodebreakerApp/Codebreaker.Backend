@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnosers;
-using Codebreaker.GameAPIs.Client.Models;
 
 namespace CodeBreaker.Bot.Benchmarks;
 
@@ -56,7 +55,7 @@ public class AlgorithmBenchmarks
     [BenchmarkCategory("BlackMatches", "Game6x4", "FullList")]
     public List<int> HandleBlackMatches_Game6x4_FullList()
     {
-        return _fullGame6x4Values.HandleBlackMatches(GameType.Game6x4, 2, _testSelection6x4);
+        return BinaryCodeBreakerAlgorithms.HandleBlackMatches(_fullGame6x4Values, GameType.Game6x4, 2, _testSelection6x4);
     }
 
     [Benchmark]
