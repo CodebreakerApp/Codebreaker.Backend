@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      solutionfile-path: src/Codebreaker.Backend.Models.sln
+      solutionfile-path: src/Codebreaker.Backend.Models.slnx
       projectfile-path: src/services/common/Codebreaker.GameAPIs.Models/Codebreaker.GameAPIs.Models.csproj
       artifact-name: codebreaker-backendmodels-stable   
 

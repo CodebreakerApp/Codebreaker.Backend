@@ -9,7 +9,7 @@ on:
     paths:
     - 'src/clients/Codebreaker.GameAPIs.Client/**'
     - 'src/clients/Codebreaker.GameAPIs.Client.Tests/**'
-    - 'src/Codebreaker.GameAPIs.Client.sln'
+    - 'src/Codebreaker.GameAPIs.Client.slnx'
     
   # Allow manually trigger 
   workflow_dispatch:    

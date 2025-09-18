@@ -8,7 +8,7 @@ on:
       [ main ]
     paths:
     - 'src/services/common/Codebreaker.Data.Cosmos/**'
-    - 'src/Codebreaker.Backend.Cosmos.sln'
+    - 'src/Codebreaker.Backend.Cosmos.slnx'
 
   # Allow manually trigger 
   workflow_dispatch:    

@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      solutionfile-path: src/Codebreaker.Backend.Cosmos.sln
+      solutionfile-path: src/Codebreaker.Backend.Cosmos.slnx
       projectfile-path: src/services/common/Codebreaker.Data.Cosmos/Codebreaker.Data.Cosmos.csproj
       artifact-name: codebreaker-cosmos-stable   
 

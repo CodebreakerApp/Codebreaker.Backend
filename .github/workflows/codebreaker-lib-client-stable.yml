@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      solutionfile-path: src/Codebreaker.GameAPIs.Client.sln
+      solutionfile-path: src/Codebreaker.GameAPIs.Client.slnx
       projectfile-path: src/clients/Codebreaker.GameAPIs.Client/Codebreaker.GameAPIs.Client.csproj
       artifact-name: codebreaker-client-stable   
 
