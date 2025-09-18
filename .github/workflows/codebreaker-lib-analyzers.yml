@@ -9,7 +9,6 @@ on:
     paths:
     - 'src/services/common/Codebreaker.GameAPIs.Analyzers/**'
     - 'src/services/common/Codebreaker.GameAPIs.Analyzers.Tests/**'
-    - 'src/Codebreaker.Analyzers.slnx'
 
   # Allow manually trigger 
   workflow_dispatch:    
@@ -21,7 +20,7 @@ jobs:
       version-suffix: preview.1.
       version-number: ${{ github.run_number }}
       version-offset: 38
-      solutionfile-path: src/Codebreaker.Analyzers.sln
+      solutionfile-path: src/Codebreaker.Analyzers.slnx
       projectfile-path: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
       dotnet-version: '9.0.x'
       artifact-name: codebreaker-analyzers
