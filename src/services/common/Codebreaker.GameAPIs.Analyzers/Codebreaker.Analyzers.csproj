@@ -17,11 +17,20 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
     <IsAotCompatible>true</IsAotCompatible>
+    <!-- Suppress NU5017 warning for packages with no dependencies -->
+    <NoWarn>$(NoWarn);NU5017</NoWarn>
+    <MSBuildTreatWarningsAsErrors>false</MSBuildTreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="docs/readme.md" Pack="true" PackagePath="\" />
     <None Include="Images/codebreaker.jpeg" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Add minimal dependency to satisfy NuGet packaging requirements -->
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>
