@@ -20,9 +20,6 @@
 
   <ItemGroup>
     <PackageReference Include="CNinnovation.Codebreaker.BackendModels" />
-  </ItemGroup>
-
-  <ItemGroup>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />	
   </ItemGroup>
 
