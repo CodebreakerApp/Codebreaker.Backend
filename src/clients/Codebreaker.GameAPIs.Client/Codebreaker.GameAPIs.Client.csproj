@@ -25,7 +25,6 @@
     <None Include="Images/codebreaker.jpeg" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <!-- Not forcing a .NET 8 client who reference this package to use a newer Microsoft.Extensions.Logging.Abstractions library -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
