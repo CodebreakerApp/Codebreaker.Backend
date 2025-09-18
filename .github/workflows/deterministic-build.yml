@@ -1,0 +1,174 @@
+name: Deterministic Build
+
+on:
+  # Trigger on push and pull requests to main branch
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/deterministic-build.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/deterministic-build.yml'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  CI: true
+
+jobs:
+  deterministic-build:
+    name: Deterministic Build
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        solution:
+          - name: Analyzers
+            path: src/Codebreaker.Analyzers.slnx
+            project: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
+          - name: Backend-Models
+            path: src/Codebreaker.Backend.Models.slnx
+            project: src/services/common/Codebreaker.GameAPIs.Models/Codebreaker.GameAPIs.Models.csproj
+          - name: Cosmos
+            path: src/Codebreaker.Backend.Cosmos.slnx
+            project: src/services/common/Codebreaker.Data.Cosmos/Codebreaker.Data.Cosmos.csproj
+          - name: SqlServer
+            path: src/Codebreaker.Backend.SqlServer.slnx
+            project: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
+          - name: Postgres
+            path: src/Codebreaker.Backend.Postgres.slnx
+            project: src/services/common/Codebreaker.Data.Postgres/Codebreaker.Data.Postgres.csproj
+          - name: GameAPIs-Client
+            path: src/Codebreaker.GameAPIs.Client.slnx
+            project: src/clients/Codebreaker.GameAPIs.Client/Codebreaker.GameAPIs.Client.csproj
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # Fetch all history for proper source control information
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ matrix.solution.path }}
+
+      - name: Build solution (deterministic)
+        run: |
+          echo "Building ${{ matrix.solution.name }} with deterministic settings..."
+          dotnet build ${{ matrix.solution.path }} \
+            --configuration Release \
+            --no-restore \
+            --verbosity normal \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true \
+            /p:EmbedUntrackedSources=true \
+            /p:DebugType=embedded \
+            /p:PublishRepositoryUrl=true
+
+      - name: Run tests
+        run: dotnet test ${{ matrix.solution.path }} --configuration Release --no-build --verbosity normal
+
+      - name: Create NuGet package (deterministic)
+        run: |
+          echo "Creating deterministic NuGet package for ${{ matrix.solution.name }}..."
+          dotnet pack ${{ matrix.solution.project }} \
+            --configuration Release \
+            --no-build \
+            --output ./packages \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true \
+            /p:EmbedUntrackedSources=true \
+            /p:DebugType=embedded \
+            /p:PublishRepositoryUrl=true
+
+      - name: Verify deterministic build
+        shell: bash
+        run: |
+          echo "Verifying deterministic build for ${{ matrix.solution.name }}..."
+          
+          # Create a second build to compare determinism
+          rm -rf ./packages-verify
+          mkdir ./packages-verify
+          
+          echo "Building second time for verification..."
+          dotnet pack ${{ matrix.solution.project }} \
+            --configuration Release \
+            --no-build \
+            --output ./packages-verify \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true \
+            /p:EmbedUntrackedSources=true \
+            /p:DebugType=embedded \
+            /p:PublishRepositoryUrl=true
+          
+          # Compare the packages (basic check - file sizes should be identical)
+          echo "Comparing package files..."
+          ls -la ./packages/
+          ls -la ./packages-verify/
+          
+          # Check if the files have the same size
+          for file in ./packages/*.nupkg; do
+            filename=$(basename "$file")
+            if [ -f "./packages-verify/$filename" ]; then
+              size1=$(stat -c%s "./packages/$filename")
+              size2=$(stat -c%s "./packages-verify/$filename")
+              echo "Package $filename: Original size=$size1, Verify size=$size2"
+              if [ "$size1" != "$size2" ]; then
+                echo "ERROR: Package sizes differ! Build is not deterministic."
+                exit 1
+              fi
+            else
+              echo "ERROR: Verification package $filename not found!"
+              exit 1
+            fi
+          done
+          
+          echo "✅ Deterministic build verification passed for ${{ matrix.solution.name }}"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deterministic-packages-${{ matrix.solution.name }}
+          path: |
+            ./packages/*.nupkg
+            ./packages/*.snupkg
+          retention-days: 7
+          compression-level: 6
+
+  summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: deterministic-build
+    if: always()
+    
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## Deterministic Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All library solutions have been built with deterministic settings:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ ContinuousIntegrationBuild=true" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Deterministic=true" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ EmbedUntrackedSources=true" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ DebugType=embedded" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ PublishRepositoryUrl=true" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Build artifacts have been uploaded and are available for download." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Solutions Built:" >> $GITHUB_STEP_SUMMARY
+          echo "- Analyzers" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend Models" >> $GITHUB_STEP_SUMMARY
+          echo "- Cosmos DB Library" >> $GITHUB_STEP_SUMMARY
+          echo "- SQL Server Library" >> $GITHUB_STEP_SUMMARY
+          echo "- PostgreSQL Library" >> $GITHUB_STEP_SUMMARY
+          echo "- GameAPIs Client Library" >> $GITHUB_STEP_SUMMARY

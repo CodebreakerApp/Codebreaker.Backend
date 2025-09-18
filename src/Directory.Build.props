@@ -17,4 +17,13 @@
   <PropertyGroup>
     <VersionPrefix>3.8.0</VersionPrefix>
   </PropertyGroup>
+
+  <!-- Deterministic Build Properties -->
+  <PropertyGroup Condition="'$(CI)' == 'true' OR '$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
 </Project>

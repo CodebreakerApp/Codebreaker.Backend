@@ -49,6 +49,8 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ inputs.branch-name }}
+          # Fetch all history for proper source control information in deterministic builds
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -71,14 +73,28 @@ jobs:
         run: |
           echo "version-suffix-string=$VERSION_SUFFIX$VERSION_NUMBER_WITH_OFFSET" >> "$GITHUB_OUTPUT"
 
-      - name: Build the library
-        run: dotnet build --version-suffix ${{ steps.version-suffix.outputs.version-suffix-string }} -c Release ${{ inputs.solutionfile-path }}
+      - name: Build the library (deterministic)
+        run: |
+          echo "Building with deterministic settings..."
+          dotnet build --version-suffix ${{ steps.version-suffix.outputs.version-suffix-string }} -c Release ${{ inputs.solutionfile-path }} \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true \
+            /p:EmbedUntrackedSources=true \
+            /p:DebugType=embedded \
+            /p:PublishRepositoryUrl=true
 
       - name: Run the unit tests
         run: dotnet test ${{ inputs.solutionfile-path }}
         
-      - name: Create a Package
-        run: dotnet pack --version-suffix ${{ steps.version-suffix.outputs.version-suffix-string }} -c Release ${{ inputs.projectfile-path }} -o packages
+      - name: Create a Package (deterministic)
+        run: |
+          echo "Creating deterministic NuGet package..."
+          dotnet pack --version-suffix ${{ steps.version-suffix.outputs.version-suffix-string }} -c Release ${{ inputs.projectfile-path }} -o packages \
+            /p:ContinuousIntegrationBuild=true \
+            /p:Deterministic=true \
+            /p:EmbedUntrackedSources=true \
+            /p:DebugType=embedded \
+            /p:PublishRepositoryUrl=true
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
