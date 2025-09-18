@@ -16,7 +16,6 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
 	  <Version>3.9.0</Version>
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
