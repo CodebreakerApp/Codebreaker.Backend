@@ -81,7 +81,8 @@ jobs:
             /p:Deterministic=true \
             /p:EmbedUntrackedSources=true \
             /p:DebugType=embedded \
-            /p:PublishRepositoryUrl=true
+            /p:PublishRepositoryUrl=true \
+            /p:PathMap='$(MSBuildProjectDirectory)=/'
 
       - name: Run the unit tests
         run: dotnet test ${{ inputs.solutionfile-path }}
@@ -94,7 +95,8 @@ jobs:
             /p:Deterministic=true \
             /p:EmbedUntrackedSources=true \
             /p:DebugType=embedded \
-            /p:PublishRepositoryUrl=true
+            /p:PublishRepositoryUrl=true \
+            /p:PathMap='$(MSBuildProjectDirectory)=/'
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
