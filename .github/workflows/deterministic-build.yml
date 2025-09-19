@@ -89,7 +89,6 @@ jobs:
           echo "Creating deterministic NuGet package for ${{ matrix.solution.name }}..."
           dotnet pack ${{ matrix.solution.project }} \
             --configuration Release \
-            --no-build \
             --output ./packages \
             /p:ContinuousIntegrationBuild=true \
             /p:Deterministic=true \
@@ -110,7 +109,6 @@ jobs:
           echo "Building second time for verification..."
           dotnet pack ${{ matrix.solution.project }} \
             --configuration Release \
-            --no-build \
             --output ./packages-verify \
             /p:ContinuousIntegrationBuild=true \
             /p:Deterministic=true \
