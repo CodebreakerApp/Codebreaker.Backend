@@ -11,18 +11,18 @@
     <PackageVersion Include="Aspire.Azure.Storage.Blobs" Version="9.5.0" />
     <PackageVersion Include="Aspire.Azure.Storage.Queues" Version="9.5.0" />
     <PackageVersion Include="Aspire.Confluent.Kafka" Version="9.5.0" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AppConfiguration" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.EventHubs" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.KeyVault" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.SignalR" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="9.4.2" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppConfiguration" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.EventHubs" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.KeyVault" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.SignalR" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="9.5.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="9.4.2" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="9.5.0" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.0" />
