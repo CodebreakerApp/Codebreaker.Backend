@@ -85,4 +85,16 @@ internal static partial class Log
         Level = LogLevel.Information,
         Message = "Started playing games with sequence {Id}")]
     public static partial void StartedPlayingGames(this ILogger logger, Guid id);
+
+    [LoggerMessage(
+        EventId = 4009,
+        Level = LogLevel.Information,
+        Message = "Queue has {Count} messages")]
+    public static partial void QueueHasMessages(this ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 4010,
+        Level = LogLevel.Information,
+        Message = "Received queue message: {Message}")]
+    public static partial void ReceivedQueueMessage(this ILogger logger, string message);
 }

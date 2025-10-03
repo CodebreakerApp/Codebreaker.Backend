@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" Version="3.8.0" />
+    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" />
   </ItemGroup>
 
   <ItemGroup>

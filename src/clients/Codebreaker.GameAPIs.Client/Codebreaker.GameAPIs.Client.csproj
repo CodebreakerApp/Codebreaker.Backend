@@ -17,6 +17,7 @@
     <PackageIcon>codebreaker.jpeg</PackageIcon>
 	  <Version>3.9.0</Version>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +31,7 @@
   </ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net9.0'">
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-	</ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+  </ItemGroup>
 
 </Project>

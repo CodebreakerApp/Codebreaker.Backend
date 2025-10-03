@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="services/common/Codebreaker.Data.SqlServer.Tests/Codebreaker.Data.SqlServer.Tests.csproj" />
+  <Project Path="services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj" />
+</Solution>

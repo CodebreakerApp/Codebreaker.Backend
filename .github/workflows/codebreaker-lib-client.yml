@@ -9,7 +9,6 @@ on:
     paths:
     - 'src/clients/Codebreaker.GameAPIs.Client/**'
     - 'src/clients/Codebreaker.GameAPIs.Client.Tests/**'
-    - 'src/Codebreaker.GameAPIs.Client.sln'
     
   # Allow manually trigger 
   workflow_dispatch:    
@@ -21,7 +20,7 @@ jobs:
       version-suffix: preview.1.
       version-number: ${{ github.run_number }}
       version-offset: 10
-      solutionfile-path: src/Codebreaker.GameAPIs.Client.sln
+      solutionfile-path: src/Codebreaker.GameAPIs.Client.slnx
       projectfile-path: src/clients/Codebreaker.GameAPIs.Client/Codebreaker.GameAPIs.Client.csproj
       dotnet-version: '9.0.x'
       artifact-name: codebreaker-clientlib

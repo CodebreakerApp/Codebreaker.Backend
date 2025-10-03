@@ -20,8 +20,8 @@ public class ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, in
     protected override ShapeAndColorResult GetCoreResult()
     {
         // Check black, white and blue keyPegs
-        List<ShapeAndColorField> codesToCheck = [.._game.Codes.ToPegs<ShapeAndColorField>() ]; // all the codes that need to be verified with the actual check
-        List<ShapeAndColorField> guessPegsToCheck = [.. Guesses ]; // all the guesses that need to be verified with the actual check
+        List<ShapeAndColorField> codesToCheck = [.. _game.Codes.ToPegs<ShapeAndColorField>()]; // all the codes that need to be verified with the actual check
+        List<ShapeAndColorField> guessPegsToCheck = [.. Guesses]; // all the guesses that need to be verified with the actual check
         List<ShapeAndColorField> remainingCodesToCheck = []; // the codes that need to be checked with the check following - filled by the actual check
         List<ShapeAndColorField> remainingGuessPegsToCheck = []; // the guesses that need to be checked with the check following - filled by the actual check
 
@@ -74,9 +74,9 @@ public class ShapeGameGuessAnalyzer(IGame game, ShapeAndColorField[] guesses, in
 
         for (int i = 0; i < guessPegsToCheck.Count; i++)
         {
-            if ((guessPegsToCheck[i] != ShapeAndColorField.Empty || 
+            if ((guessPegsToCheck[i] != ShapeAndColorField.Empty ||
                 codesToCheck[i] != ShapeAndColorField.Empty) &&
-                (guessPegsToCheck[i].Shape == codesToCheck[i].Shape || 
+                (guessPegsToCheck[i].Shape == codesToCheck[i].Shape ||
                 guessPegsToCheck[i].Color == codesToCheck[i].Color))
             {
                 blue++;

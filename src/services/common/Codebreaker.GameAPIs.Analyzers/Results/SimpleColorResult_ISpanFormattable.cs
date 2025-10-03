@@ -1,5 +1,5 @@
 ﻿namespace Codebreaker.GameAPIs.Models;
-public readonly partial struct SimpleColorResult :  ISpanFormattable
+public readonly partial struct SimpleColorResult : ISpanFormattable
 {
     public override string ToString() => ToString(default, default);
 
@@ -32,8 +32,8 @@ public readonly partial struct SimpleColorResult :  ISpanFormattable
 
         for (int i = 0, j = 0; i < length; i++, j += 2)
         {
-            destination[j] = (char)((byte)Results[i] + '0'); 
-            if (j < (length * 2 - 2)) 
+            destination[j] = (char)((byte)Results[i] + '0');
+            if (j < (length * 2 - 2))
                 destination[j + 1] = Separator;
         }
         charsWritten = length * 2 - 1;

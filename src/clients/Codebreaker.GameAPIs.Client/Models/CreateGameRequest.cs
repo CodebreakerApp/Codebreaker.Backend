@@ -5,11 +5,7 @@ namespace Codebreaker.GameAPIs.Client.Models;
 /// <summary>
 /// The list of possible game types
 /// </summary>
-#if NET8_0_OR_GREATER
 [JsonConverter(typeof(JsonStringEnumConverter<GameType>))]
-#else
-[JsonConverter(typeof(JsonStringEnumConverter))]
-#endif
 public enum GameType
 {
     Game6x4,

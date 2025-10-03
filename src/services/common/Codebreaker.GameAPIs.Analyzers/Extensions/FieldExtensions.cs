@@ -14,7 +14,7 @@ public static class FieldExtensions
     public static IEnumerable<string> ToStringFields<T>(this T[] fields)
         where T : IFormattable
     {
-        foreach(var field in fields)
+        foreach (var field in fields)
         {
             yield return field.ToString(default, default);
         }

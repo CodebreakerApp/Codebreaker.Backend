@@ -8,7 +8,7 @@ on:
       [ main ]
     paths:
     - 'src/services/common/Codebreaker.GameAPIs.Models/**'
-    - 'src/Codebreaker.Backend.Models.sln'
+    - 'src/Codebreaker.Backend.Models.slnx'
 
   # Allow manually trigger 
   workflow_dispatch:    

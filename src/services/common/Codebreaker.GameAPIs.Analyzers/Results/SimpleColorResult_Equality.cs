@@ -17,7 +17,7 @@ public readonly partial struct SimpleColorResult : IEquatable<SimpleColorResult>
     public override int GetHashCode() =>
         Results.GetHashCode();
 
-    public static bool operator==(SimpleColorResult left, SimpleColorResult right) => left.Equals(right);
+    public static bool operator ==(SimpleColorResult left, SimpleColorResult right) => left.Equals(right);
 
-    public static bool operator!=(SimpleColorResult left, SimpleColorResult right) => !(left == right);
+    public static bool operator !=(SimpleColorResult left, SimpleColorResult right) => !(left == right);
 }

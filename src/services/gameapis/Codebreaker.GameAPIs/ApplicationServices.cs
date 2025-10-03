@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Codebreaker.GameAPIs.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using System.Diagnostics;
 
@@ -43,16 +44,22 @@ public static class ApplicationServices
 
         static void ConfigureCosmos(IHostApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<IGamesRepository, GamesCosmosContext>(options =>
-            {
-                string connectionString = builder.Configuration.GetConnectionString("codebreakercosmos") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
-                options.UseCosmos(connectionString, "codebreaker");
+            builder.AddCosmosDbContext<GamesCosmosContext>("codebreaker", "codebreaker");
 
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
-            builder.EnrichCosmosDbContext<GamesCosmosContext>(settings =>
-            {
-            });
+            builder.Services.AddScoped<IGamesRepository, DataContextProxy<GamesCosmosContext>>();
+
+
+            //builder.Services.AddDbContext<IGamesRepository, GamesCosmosContext>(options =>
+            //{
+            //    //string connectionString = builder.Configuration.GetConnectionString("codebreaker") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
+            //    //options.UseCosmos(connectionString, "codebreaker");
+
+            //    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            //});
+            //builder.AddCosmosDbContext<GamesCosmosContext>("codebreaker");
+            ////builder.EnrichCosmosDbContext<GamesCosmosContext>(settings =>
+            ////{
+            ////});
         }
 
         static void ConfigureInMemory(IHostApplicationBuilder builder)
@@ -143,12 +150,12 @@ public static class ApplicationServices
                 using var scope = app.Services.CreateScope();
                 var repo = scope.ServiceProvider.GetRequiredService<GamesSqlServerContext>();
 
-                // TODO: update with .NET Aspire Preview 4
+                // TODO: implement with updated Aspire patterns
                 // var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
                 if (repo is GamesSqlServerContext context)
                 {
                     await context.Database.MigrateAsync();
-                    app.Logger.LogInformation("Database updated");
+                    app.Logger.DatabaseUpdated();
                 }
 
                 // add a delay to try out /health checks
@@ -156,31 +163,31 @@ public static class ApplicationServices
             }
             catch (Exception ex)
             {
-                app.Logger.LogError(ex, "Error updating database");
+                app.Logger.ErrorUpdatingDatabase(ex);
             }
         }
 
-        // The database is created from the AppHost AddDatabase method. The Cosmos container is created here - if it doesn't exist yet.
-        if (app.Configuration["DataStore"] == "Cosmos")
-        {
-            try
-            {
-                using var scope = app.Services.CreateScope();
-                // TODO: update with .NET Aspire Preview 4
-                var repo = scope.ServiceProvider.GetRequiredService<GamesCosmosContext>();
-                //                var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
-                if (repo is GamesCosmosContext context)
-                {
-                    bool created = await context.Database.EnsureCreatedAsync();
-                    app.Logger.LogInformation("Database created: {created}", created);
-                }
-            }
-            catch (Exception ex)
-            {
-                app.Logger.LogError(ex, "Error updating database");
-                throw;
-            }
-        }
+        // The database is created from the AppHost AddDatabase method. The Cosmos container is now created from the AppHost as well!
+        //if (app.Configuration["DataStore"] == "Cosmos")
+        //{
+        //    try
+        //    {
+        //        using var scope = app.Services.CreateScope();
+        //        // TODO: implement with updated Aspire patterns
+        //        var repo = scope.ServiceProvider.GetRequiredService<GamesCosmosContext>();
+        //        //                var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
+        //        if (repo is GamesCosmosContext context)
+        //        {
+        //            bool created = await context.Database.EnsureCreatedAsync();
+        //            app.Logger.LogInformation("Database created: {created}", created);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        app.Logger.LogError(ex, "Error updating database");
+        //        throw;
+        //    }
+        //}
 
         s_IsDatabaseUpdateComplete = true;
     }

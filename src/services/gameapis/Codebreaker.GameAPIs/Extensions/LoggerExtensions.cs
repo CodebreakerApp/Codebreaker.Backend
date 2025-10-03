@@ -1,6 +1,6 @@
 ﻿namespace Codebreaker.GameAPIs.Extensions;
 
-public static partial class Log
+public static partial class LoggerExtensions
 {
     [LoggerMessage(
         EventId = 3000,
@@ -29,7 +29,7 @@ public static partial class Log
     [LoggerMessage(
         EventId = 3004,
         Level = LogLevel.Error,
-        Message = "Error writing game completed event, game id: {gameId}")]
+        Message = "Error writing game completed event, game id: {GameId}")]
     public static partial void ErrorWritingGameCompletedEvent(this ILogger logger, Guid gameId, Exception ex);
 
     [LoggerMessage(
@@ -114,4 +114,16 @@ public static partial class Log
         Level = LogLevel.Information,
         Message = "Game {GameId} completion sent via {Service}")]
     public static partial void GameCompletionSent(this ILogger logger, Guid gameId, string service);
+
+    [LoggerMessage(
+        EventId = 4010,
+        Level = LogLevel.Information,
+        Message = "Database updated")]
+    public static partial void DatabaseUpdated(this ILogger logger);
+
+    [LoggerMessage(
+        EventId = 4011,
+        Level = LogLevel.Error,
+        Message = "Error updating database")]
+    public static partial void ErrorUpdatingDatabase(this ILogger logger, Exception ex);
 }

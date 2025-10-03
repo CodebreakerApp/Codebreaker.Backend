@@ -8,7 +8,6 @@ on:
       [ main ]
     paths:
     - 'src/services/common/Codebreaker.Data.SqlServer/**'
-    - 'src/Codebreaker.Backend.SqlServer.sln'
 
   # Allow manually trigger 
   workflow_dispatch:    
@@ -20,7 +19,7 @@ jobs:
       version-suffix: preview.1.
       version-number: ${{ github.run_number }}
       version-offset: 10
-      solutionfile-path: src/Codebreaker.Backend.SqlServer.sln
+      solutionfile-path: src/Codebreaker.Backend.SqlServer.slnx
       projectfile-path: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
       dotnet-version: '9.0.x'
       artifact-name: codebreaker-sqlserver

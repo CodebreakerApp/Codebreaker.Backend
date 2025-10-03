@@ -22,7 +22,7 @@ public static class ApplicationServices
         }
         else
         {
-            builder.AddKeyedAzureBlobClient("checkpoints");
+            builder.AddKeyedAzureBlobServiceClient("checkpoints");
 
             builder.AddAzureEventProcessorClient("codebreakerevents", settings =>
             {
@@ -35,7 +35,7 @@ public static class ApplicationServices
 
         builder.Services.AddDbContextFactory<RankingsContext>(options =>
         {
-            string connectionString = builder.Configuration.GetConnectionString("codebreakercosmos") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
+            string connectionString = builder.Configuration.GetConnectionString("codebreaker") ?? throw new InvalidOperationException("Could not read the Cosmos connection-string");
             options.UseCosmos(connectionString, "codebreaker");
         });
 
@@ -56,22 +56,22 @@ public static class ApplicationServices
 
     public static async Task CreateOrUpdateDatabaseAsync(this WebApplication app)
     {
-        try
-        {
-            using var scope = app.Services.CreateScope();
-            // TODO: update with .NET Aspire Preview 4
-            var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<RankingsContext>>();
-            using var context = await factory.CreateDbContextAsync();
+        //try
+        //{
+        //    using var scope = app.Services.CreateScope();
+        //    // TODO: implement with updated Aspire patterns
+        //    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<RankingsContext>>();
+        //    using var context = await factory.CreateDbContextAsync();
 
-            bool created = await context.Database.EnsureCreatedAsync();
-            app.Logger.LogInformation("Database created: {created}", created);
+        //    bool created = await context.Database.EnsureCreatedAsync();
+        //    app.Logger.LogInformation("Database created: {created}", created);
             
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError(ex, "Error updating database");
-            throw;
-        }
+        //}
+        //catch (Exception ex)
+        //{
+        //    app.Logger.LogError(ex, "Error updating database");
+        //    throw;
+        //}
 
         s_IsDatabaseUpdateComplete = true;
     }

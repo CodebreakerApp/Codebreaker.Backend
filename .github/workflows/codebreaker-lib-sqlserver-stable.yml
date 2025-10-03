@@ -9,18 +9,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      solutionfile-path: src/Codebreaker.Backend.SqlServer.sln
+      solutionfile-path: src/Codebreaker.Backend.SqlServer.slnx
       projectfile-path: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
       artifact-name: codebreaker-sqlserver-stable   
 
     steps:
       - name: Checkout to the branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with: 
           dotnet-version: 9.0.x
 

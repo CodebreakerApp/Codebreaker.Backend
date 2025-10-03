@@ -29,7 +29,7 @@ public readonly partial struct SimpleColorResult : ISpanParsable<SimpleColorResu
             return false;
         }
 
-        var values = new  ResultValue[4];
+        var values = new ResultValue[4];
         for (int i = 0, j = 0; i < 4; i++, j += 2)
         {
 
