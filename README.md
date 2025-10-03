@@ -104,10 +104,35 @@ TODO: this test will move to this repo
 * Azure Storage message queue
 * Azure Key Vault
 
-## Configuration authentication with Azure AD B2C
+## Authentication Configuration
 
-With AADB2C, the API connectors need to be updated after publishing the backend, by:
+The Codebreaker platform uses **Microsoft External ID** (formerly Azure AD B2C) for authentication across all components.
 
-- setting the Endpoint URLs to https://<<gateway>>/users/api-connectors/validate-before-user-creation and https://<<gateway>>/users/api-connectors/enrich-token
-- setting the basic-authentication password in the gateway-keyvault with the key AADB2C-ApiConnector-Password
-- and setting that password in tha API connectors
+### Documentation
+
+- **[Complete Authentication Guide](docs/authentication/microsoft-external-id.md)**: Comprehensive documentation covering Gateway, APIs, Blazor, WPF, MAUI, Uno Platform, and WinUI configuration
+- **[Quick Start Guide](docs/authentication/quick-start.md)**: Fast-track setup with code snippets and common patterns
+- **[Authentication Overview](docs/authentication/README.md)**: Architecture overview and platform support matrix
+
+### Quick Setup
+
+For the Gateway service with Azure AD B2C:
+
+1. Configure `appsettings.json`:
+```json
+{
+  "AzureAdB2C": {
+    "Instance": "https://<tenant>.b2clogin.com",
+    "Domain": "<tenant>.onmicrosoft.com",
+    "ClientId": "<client-id>",
+    "SignUpSignInPolicyId": "B2C_1_SUSI"
+  }
+}
+```
+
+2. The API connectors need to be updated after publishing the backend:
+   - Set Endpoint URLs to `https://<gateway>/users/api-connectors/validate-before-user-creation` and `https://<gateway>/users/api-connectors/enrich-token`
+   - Store the basic-authentication password in `gateway-keyvault` with the key `AADB2C-ApiConnector-Password`
+   - Set that password in the API connectors configuration
+
+For detailed configuration instructions for all platforms, see the [authentication documentation](docs/authentication/).
