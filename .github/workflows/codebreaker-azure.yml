@@ -72,6 +72,9 @@ jobs:
   set-staging-environmentvariables:
     runs-on: ubuntu-latest
     needs: [deploy-test]
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: Azure Login
       uses: azure/login@v2

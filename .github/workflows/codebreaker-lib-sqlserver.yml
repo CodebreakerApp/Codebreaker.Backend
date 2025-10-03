@@ -12,6 +12,9 @@ on:
   # Allow manually trigger 
   workflow_dispatch:    
 
+permissions:
+  contents: read
+
 jobs:
   build:
     uses: CodebreakerApp/Codebreaker.Backend/.github/workflows/createnuget-withbuildnumber.yml@main
