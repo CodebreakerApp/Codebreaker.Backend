@@ -26,6 +26,17 @@ Fast-track guide with:
 
 **When to use**: Use this guide when you need to quickly set up authentication or find a specific code snippet.
 
+### [Architecture Diagrams](./architecture-diagrams.md)
+
+Visual documentation with:
+- High-level architecture diagrams
+- Authentication flow diagrams for web and desktop
+- Token flow through Gateway
+- Security boundaries visualization
+- Token lifecycle diagrams
+
+**When to use**: Reference these diagrams to understand the system architecture and authentication flows visually.
+
 ## Overview
 
 The Codebreaker platform uses **Microsoft External ID** (formerly Azure AD B2C) for identity and access management across all client applications and backend services.
