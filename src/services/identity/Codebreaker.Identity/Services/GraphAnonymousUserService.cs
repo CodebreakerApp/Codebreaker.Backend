@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Codebreaker.Identity.Configuration;
+using Codebreaker.Identity.Extensions;
 using Codebreaker.Identity.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,7 +43,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
     /// <inheritdoc />
     public async Task<AnonymousUser> CreateAnonUser(string userName)
     {
-        _logger.LogInformation("Creating anonymous user with name {UserName}", userName);
+        _logger.CreatingAnonymousUser(userName);
 
         // Generate a secure random password
         string password = GenerateSecurePassword(_options.PasswordLength);
@@ -99,7 +100,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to create anonymous user {UserName}: {Message}", userName, ex.Message);
+            _logger.FailedToCreateAnonymousUser(ex, userName, ex.Message);
             throw;
         }
     }
@@ -107,7 +108,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
     /// <inheritdoc />
     public async Task<int> DeleteAnonUsers()
     {
-        _logger.LogInformation("Deleting anonymous users that haven't logged in for at least three months");
+        _logger.DeletingStaleAnonymousUsers();
         
         try
         {
@@ -125,7 +126,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
 
             if (usersToDelete?.Value == null)
             {
-                _logger.LogInformation("No anonymous users found");
+                _logger.NoAnonymousUsersFound();
                 return 0;
             }
 
@@ -163,16 +164,15 @@ public class GraphAnonymousUserService : IAnonymousUserService
                 await _graphClient.Users[user.Id].DeleteAsync();
                 deletedCount++;
                 
-                _logger.LogInformation("Deleted anonymous user: {UserId}, {DisplayName}", 
-                    user.Id, user.DisplayName);
+                _logger.DeletedAnonymousUser(user.Id, user.DisplayName);
             }
 
-            _logger.LogInformation("Deleted {Count} anonymous users", deletedCount);
+            _logger.DeletedAnonymousUsers(deletedCount);
             return deletedCount;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to delete anonymous users: {Message}", ex.Message);
+            _logger.FailedToDeleteAnonymousUsers(ex, ex.Message);
             throw;
         }
     }
@@ -180,7 +180,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
     /// <inheritdoc />
     public async Task<AnonymousUser> PromoteAnonUser(string anonymousUserId, string email, string displayName, string password)
     {
-        _logger.LogInformation("Promoting anonymous user {UserId} to registered user", anonymousUserId);
+        _logger.PromotingAnonymousUser(anonymousUserId);
 
         try
         {
@@ -245,7 +245,7 @@ public class GraphAnonymousUserService : IAnonymousUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to promote anonymous user {UserId}: {Message}", anonymousUserId, ex.Message);
+            _logger.FailedToPromoteAnonymousUser(ex, anonymousUserId, ex.Message);
             throw;
         }
     }

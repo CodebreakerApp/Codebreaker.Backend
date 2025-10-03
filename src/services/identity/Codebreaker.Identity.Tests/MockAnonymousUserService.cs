@@ -1,5 +1,6 @@
 using Codebreaker.Identity.Models;
 using Codebreaker.Identity.Services;
+using Codebreaker.Identity.Tests.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Codebreaker.Identity.Tests;
@@ -24,7 +25,7 @@ public class MockAnonymousUserService : IAnonymousUserService
     /// <inheritdoc />
     public Task<AnonymousUser> CreateAnonUser(string userName)
     {
-        _logger.LogInformation("Creating mock anonymous user: {UserName}", userName);
+        _logger.CreatingMockAnonymousUser(userName);
 
         var user = new AnonymousUser
         {
@@ -43,7 +44,7 @@ public class MockAnonymousUserService : IAnonymousUserService
     /// <inheritdoc />
     public Task<int> DeleteAnonUsers()
     {
-        _logger.LogInformation("Deleting stale anonymous users");
+        _logger.DeletingStaleAnonymousUsers();
 
         // Delete users older than 3 months
         DateTimeOffset cutoffDate = DateTimeOffset.UtcNow.AddMonths(-3);
@@ -51,14 +52,14 @@ public class MockAnonymousUserService : IAnonymousUserService
             (u.LastLoginAt == null && u.CreatedAt < cutoffDate) || 
             (u.LastLoginAt != null && u.LastLoginAt < cutoffDate));
 
-        _logger.LogInformation("Deleted {Count} stale anonymous users", count);
+        _logger.DeletedStaleAnonymousUsers(count);
         return Task.FromResult(count);
     }
 
     /// <inheritdoc />
     public Task<AnonymousUser> PromoteAnonUser(string anonymousUserId, string email, string displayName, string password)
     {
-        _logger.LogInformation("Promoting mock anonymous user: {UserId}", anonymousUserId);
+        _logger.PromotingMockAnonymousUser(anonymousUserId);
 
         var user = _users.FirstOrDefault(u => u.Id == anonymousUserId);
         if (user == null)
