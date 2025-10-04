@@ -19,8 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0"/>
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
   </ItemGroup>
 
   <ItemGroup>
