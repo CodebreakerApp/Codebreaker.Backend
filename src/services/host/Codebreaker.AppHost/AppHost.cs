@@ -1,6 +1,5 @@
 using Azure.Provisioning.AppContainers;
 using Azure.Provisioning.EventHubs;
-using Azure.Provisioning.Sql;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -67,7 +66,7 @@ else
     var botQueue = storage.AddQueues("botqueue");
     var blob = storage.AddBlobs("checkpoints");
 
-    var eventHub = builder.AddAzureEventHubs("codebreakerevents")
+    var eventHubs = builder.AddAzureEventHubs("codebreakerevents")
         .ConfigureInfrastructure(infrastructure =>
         {
             var eventHubsNamespace = infrastructure.GetProvisionableResources().OfType<EventHubsNamespace>().Single();
@@ -76,9 +75,20 @@ else
                 Name = EventHubsSkuName.Basic,
                 Tier = EventHubsSkuTier.Basic
             };
+
+            var eventHub = infrastructure.GetProvisionableResources().OfType<EventHub>().Single();
+            eventHub.RetentionDescription = new RetentionDescription()
+            {
+                CleanupPolicy = CleanupPolicyRetentionDescription.Delete,
+                RetentionTimeInHours = 24
+            };
         });
 
-    eventHub.AddHub("games");
+    var eventHub = eventHubs.AddHub("games", hubName: "games")
+        .WithProperties(config =>
+    {
+        config.PartitionCount = 1;
+    });
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
         .AddCosmosDatabase("codebreaker");
