@@ -150,7 +150,7 @@ public static class ApplicationServices
                 using var scope = app.Services.CreateScope();
                 var repo = scope.ServiceProvider.GetRequiredService<GamesSqlServerContext>();
 
-                // TODO: update with .NET Aspire Preview 4
+                // TODO: implement with updated Aspire patterns
                 // var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
                 if (repo is GamesSqlServerContext context)
                 {
@@ -173,7 +173,7 @@ public static class ApplicationServices
         //    try
         //    {
         //        using var scope = app.Services.CreateScope();
-        //        // TODO: update with .NET Aspire Preview 4
+        //        // TODO: implement with updated Aspire patterns
         //        var repo = scope.ServiceProvider.GetRequiredService<GamesCosmosContext>();
         //        //                var repo = scope.ServiceProvider.GetRequiredService<IGamesRepository>();
         //        if (repo is GamesCosmosContext context)

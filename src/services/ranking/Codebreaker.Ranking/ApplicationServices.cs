@@ -59,7 +59,7 @@ public static class ApplicationServices
         //try
         //{
         //    using var scope = app.Services.CreateScope();
-        //    // TODO: update with .NET Aspire Preview 4
+        //    // TODO: implement with updated Aspire patterns
         //    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<RankingsContext>>();
         //    using var context = await factory.CreateDbContextAsync();
 

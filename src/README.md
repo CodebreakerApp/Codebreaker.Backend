@@ -53,18 +53,6 @@ NuGet: https://www.nuget.org/packages/CNinnovation.Codebreaker.GamesClient
 
 ## Builds
 
-### Deterministic Builds
-
-All NuGet packages produced by this repository are built using deterministic builds to ensure reproducible outputs. The deterministic build process is configured with the following MSBuild properties:
-
-- `ContinuousIntegrationBuild=true` - Enables CI-specific build optimizations
-- `Deterministic=true` - Ensures deterministic compilation outputs  
-- `EmbedUntrackedSources=true` - Embeds source files in PDB for better debugging
-- `DebugType=embedded` - Embeds PDB information directly in assemblies
-- `PublishRepositoryUrl=true` - Includes repository information in packages
-
-The deterministic build workflow runs on push and pull requests to main branch, building all library solutions and uploading artifacts for inspection. Individual library workflows also use deterministic build settings.
-
 ### Libraries
 
 #### Preview versions
@@ -108,7 +96,7 @@ TODO: this test will move to this repo
 
 * Azure Container Apps
 * Azure Cosmos DB
-* Azure Active Directory B2C
+* Microsoft Entra External ID
 * Azure SignalR Services
 * Azure App Configuration
 * Azure Event Hub
@@ -118,7 +106,7 @@ TODO: this test will move to this repo
 
 ## Authentication Configuration
 
-The Codebreaker platform uses **Microsoft External ID** (formerly Azure AD B2C) for authentication across all components.
+The Codebreaker platform uses **Microsoft Entra External ID** for authentication across all components.
 
 ### Documentation
 
@@ -128,23 +116,23 @@ The Codebreaker platform uses **Microsoft External ID** (formerly Azure AD B2C) 
 
 ### Quick Setup
 
-For the Gateway service with Azure AD B2C:
+For the Gateway service with Microsoft Entra External ID:
 
 1. Configure `appsettings.json`:
 ```json
 {
-  "AzureAdB2C": {
-    "Instance": "https://<tenant>.b2clogin.com",
+  "EntraExternalId": {
+    "Instance": "https://<tenant>.ciamlogin.com",
     "Domain": "<tenant>.onmicrosoft.com",
-    "ClientId": "<client-id>",
-    "SignUpSignInPolicyId": "B2C_1_SUSI"
+    "TenantId": "<tenant-id>",
+    "ClientId": "<client-id>"
   }
 }
 ```
 
 2. The API connectors need to be updated after publishing the backend:
    - Set Endpoint URLs to `https://<gateway>/users/api-connectors/validate-before-user-creation` and `https://<gateway>/users/api-connectors/enrich-token`
-   - Store the basic-authentication password in `gateway-keyvault` with the key `AADB2C-ApiConnector-Password`
+   - Store the basic-authentication password in `gateway-keyvault` with the key `EntraExternalId-ApiConnector-Password`
    - Set that password in the API connectors configuration
 
 For detailed configuration instructions for all platforms, see the [authentication documentation](docs/authentication/).

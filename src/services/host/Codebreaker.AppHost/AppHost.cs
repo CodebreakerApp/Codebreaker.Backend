@@ -1,3 +1,6 @@
+using Azure.Provisioning.AppContainers;
+using Azure.Provisioning.EventHubs;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 string dataStore = builder.Configuration["DataStore"] ?? "InMemory";
@@ -17,7 +20,7 @@ if (startupMode == "OnPremises")
     var sqlServer = builder.AddSqlServer("sql")
         .WithDataVolume()
         .PublishAsContainer()
-        .AddDatabase("CodebreakerSql");        
+        .AddDatabase("CodebreakerSql");
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
         .AddCosmosDatabase("codebreaker");
@@ -53,6 +56,8 @@ if (startupMode == "OnPremises")
 }
 else
 {
+    builder.AddAzureContainerAppEnvironment("codebreaker-environment");
+
     var logs = builder.AddAzureLogAnalyticsWorkspace("logs");
     var insights = builder.AddAzureApplicationInsights("insights", logs);
     var signalR = builder.AddAzureSignalR("signalr");
@@ -61,9 +66,29 @@ else
     var botQueue = storage.AddQueues("botqueue");
     var blob = storage.AddBlobs("checkpoints");
 
-    var eventHub = builder.AddAzureEventHubs("codebreakerevents");
+    var eventHubs = builder.AddAzureEventHubs("codebreakerevents")
+        .ConfigureInfrastructure(infrastructure =>
+        {
+            var eventHubsNamespace = infrastructure.GetProvisionableResources().OfType<EventHubsNamespace>().Single();
+            eventHubsNamespace.Sku = new EventHubsSku()
+            {
+                Name = EventHubsSkuName.Basic,
+                Tier = EventHubsSkuTier.Basic
+            };
 
-    eventHub.AddHub("games");
+            var eventHub = infrastructure.GetProvisionableResources().OfType<EventHub>().Single();
+            eventHub.RetentionDescription = new RetentionDescription()
+            {
+                CleanupPolicy = CleanupPolicyRetentionDescription.Delete,
+                RetentionTimeInHours = 24
+            };
+        });
+
+    var eventHub = eventHubs.AddHub("games", hubName: "games")
+        .WithProperties(config =>
+    {
+        config.PartitionCount = 1;
+    });
 
     var cosmos = builder.AddAzureCosmosDB("codebreakercosmos")
         .AddCosmosDatabase("codebreaker");
@@ -75,73 +100,113 @@ else
 
     // TODO: fix new eventhub namings
     var gameAPIs = builder.AddProject<Projects.Codebreaker_GameAPIs>("gameapis")
-        .WithReference(cosmos)
-        .WithReference(redis)
-        .WithReference(insights)
-        .WithReference(eventHub)
+        .WithReference(cosmos).WaitFor(cosmos)
+        .WithReference(redis).WaitFor(redis)
+        .WithReference(insights).WaitFor(insights)
+        .WithReference(eventHub).WaitFor(eventHub)
         .WithEnvironment("DataStore", dataStore)
-        .WithEnvironment("StartupMode", startupMode);
+        .WithEnvironment("StartupMode", startupMode)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 2;
+        });
 
     var bot = builder.AddProject<Projects.CodeBreaker_Bot>("bot")
-        .WithReference(insights)
-        .WithReference(botQueue)
-        .WithReference(gameAPIs)
+        .WithReference(insights).WaitFor(insights)
+        .WithReference(botQueue).WaitFor(botQueue)
+        .WithReference(gameAPIs).WaitFor(gameAPIs)
         .WithEnvironment("Bot__Loop", botLoop)
         .WithEnvironment("Bot__Delay", botDelay)
-        .WaitFor(gameAPIs);
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 1;
+        });
 
     // TODO: change to use BotQ with Container App Jobs
+#pragma warning disable ASPIREAZURE002 // PublishAsAzureContainerAppJob is for evaluation purposes
     var botq = builder.AddProject<Projects.Codebreaker_BotQ>("botq")
-        .WithReference(insights)
-        .WithReference(botQueue)
-        .WithReference(gameAPIs)
+        .WithReference(insights).WaitFor(insights)
+        .WithReference(botQueue).WaitFor(botQueue)
+        .WithReference(gameAPIs).WaitFor(gameAPIs)
         .WithEnvironment("Bot__Loop", botLoop)
         .WithEnvironment("Bot__Delay", botDelay)
-        .WaitFor(gameAPIs);
+        .PublishAsAzureContainerAppJob((_, job) =>
+        {
+            job.Configuration.TriggerType = ContainerAppJobTriggerType.Event;
+            job.Configuration.EventTriggerConfig.Scale.MinExecutions = 1;
+            job.Configuration.EventTriggerConfig.Scale.MaxExecutions = 10;
+            job.Configuration.EventTriggerConfig.Parallelism = 1;
+            job.Configuration.EventTriggerConfig.ReplicaCompletionCount = 1;
+            // TODO: specify scale rule on queue trigger
+            //job.Configuration.EventTriggerConfig.Scale.Rules.Add(new ContainerAppJobScaleRule()
+            //{
+            //    QueueName = botQueue.Resource.Name,
+            //    MessageCount = 1
+            //});
+        });
+#pragma warning restore ASPIREAZURE002
 
     var live = builder.AddProject<Projects.Codebreaker_Live>("live")
         .WithReference(insights)
         .WithReference(eventHub)
         .WithReference(signalR)
         .WaitFor(eventHub)
-        .WaitFor(gameAPIs);
+        .WaitFor(gameAPIs)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 1;
+        });
 
     var ranking = builder.AddProject<Projects.Codebreaker_Ranking>("ranking")
         .WithReference(cosmos)
         .WithReference(insights)
-        .WithReference(eventHub)
+        .WithReference(eventHub).WaitFor(eventHub)
         .WithReference(blob)
-        .WaitFor(eventHub)
         .WaitFor(insights)
-        .WaitFor(gameAPIs);
+        .WaitFor(gameAPIs)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 1;
+        });
 
     var users = builder.AddProject<Projects.CodeBreaker_UserService>("users")
         .WithReference(insights)
         .WithReference(userServiceKeyvault)
         .WaitFor(insights)
-        .WaitFor(userServiceKeyvault);
+        .WaitFor(userServiceKeyvault)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 1;
+        });
 
     var gateway = builder.AddProject<Projects.Codebreaker_ApiGateway>("gateway")
         .WithExternalHttpEndpoints()
-        .WithReference(gameAPIs)
-        .WithReference(live)
-        .WithReference(ranking)
-        .WithReference(users)
-        .WithReference(gatewayKeyvault)
-        .WithReference(insights)
-        .WaitFor(gameAPIs)
-        .WaitFor(live)
-        .WaitFor(ranking)
-        .WaitFor(users)
-        .WaitFor(gatewayKeyvault)
-        .WaitFor(insights);
+        .WithReference(gameAPIs).WaitFor(gameAPIs)
+        .WithReference(live).WaitFor(live)
+        .WithReference(ranking).WaitFor(ranking)
+        .WithReference(users).WaitFor(users)
+        .WithReference(gatewayKeyvault).WaitFor(gatewayKeyvault)
+        .WithReference(insights).WaitFor(insights)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 2;
+        });
 
     builder.AddProject<Projects.CodeBreaker_Blazor>("blazor")
         .WithExternalHttpEndpoints()
-        .WithReference(gateway)
-        .WithReference(insights)
-        .WaitFor(gateway)
-        .WaitFor(insights);
+        .WithReference(gateway).WaitFor(gateway)
+        .WithReference(insights).WaitFor(insights)
+        .PublishAsAzureContainerApp((module, app) =>
+        {
+            app.Template.Scale.MinReplicas = 0;
+            app.Template.Scale.MaxReplicas = 1;
+        });
 }
 
 builder.Build().Run();

@@ -25,9 +25,9 @@ jobs:
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2.2.0
       - name: Install .NET Aspire workload
         run: dotnet workload install aspire
 

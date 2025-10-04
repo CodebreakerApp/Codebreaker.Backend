@@ -6,28 +6,29 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Aspire packages -->
-    <PackageVersion Include="Aspire.Azure.Messaging.EventHubs" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Azure.Security.KeyVault" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Azure.Storage.Blobs" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Azure.Storage.Queues" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Confluent.Kafka" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.AppConfiguration" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.EventHubs" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.KeyVault" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.SignalR" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="9.4.2" />
+    <PackageVersion Include="Aspire.Azure.Messaging.EventHubs" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Azure.Security.KeyVault" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Azure.Storage.Blobs" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Azure.Storage.Queues" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Confluent.Kafka" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppConfiguration" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.AppContainers" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.CosmosDB" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.EventHubs" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.KeyVault" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.SignalR" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Sql" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="9.5.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.4.2" />
-    <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="9.4.2" />
-    <PackageVersion Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.4.2" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.Cosmos" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.0" />
+    <PackageVersion Include="Aspire.Pomelo.EntityFrameworkCore.MySql" Version="9.5.0" />
+    <PackageVersion Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.5.0" />
     
     <!-- Azure and other packages -->
     <PackageVersion Include="Azure.Identity" Version="1.16.0" />
@@ -81,8 +82,10 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.3.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.4.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.3" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" Condition="'$(TargetFramework)' == 'net9.0'" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="9.9.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.9" />
@@ -90,14 +93,16 @@
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.2" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.4.2" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.3" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.9" Condition="'$(TargetFramework)' == 'net9.0'" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.5.0" />
     
     <!-- Microsoft UI and Identity packages -->
     <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.1" />
     <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.1" />
-    <PackageVersion Include="Microsoft.Graph" Version="5.92.0" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.77.0" />
+    <PackageVersion Include="Microsoft.Graph" Version="5.93.0" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.77.1" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="3.14.1" />
     <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.14.1" />
     <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.14.1" />
@@ -114,20 +119,20 @@
     <PackageVersion Include="NUnit3TestAdapter" Version="5.1.0" />
     
     <!-- PostgreSQL packages (conditional versions) -->
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" Condition="'$(TargetFramework)' == 'net8.0'" />	
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" Condition="'$(TargetFramework)' == 'net9.0'" />
     
     <!-- OpenTelemetry packages -->
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.10.0-beta.1" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
     
     <!-- Other packages -->
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.4" />
-    <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.4" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.5" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.5" />
     <PackageVersion Include="System.Formats.Asn1" Version="9.0.9" />
     <PackageVersion Include="System.Text.Json" Version="9.0.9" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
@@ -135,7 +140,7 @@
     <!-- xUnit packages -->
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.analyzers" Version="1.21.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="2.0.2" />
   </ItemGroup>
 </Project>
