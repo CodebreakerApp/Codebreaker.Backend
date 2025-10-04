@@ -57,16 +57,37 @@ The Codebreaker platform uses **Microsoft Entra External ID** for identity and a
 
 ### Architecture
 
-```
-┌──────────────┐         ┌──────────────┐         ┌──────────────┐
-│   Clients    │         │   Gateway    │         │  Backend     │
-│  (Various)   │────────▶│   (YARP)     │────────▶│  Services    │
-└──────────────┘         └──────────────┘         └──────────────┘
-   • Blazor                • JWT Validation         • Game APIs
-   • WPF                   • Token Forwarding       • Ranking
-   • MAUI                  • Authorization          • Live
-   • Uno Platform          • API Routing            • User Service
-   • WinUI
+```mermaid
+graph LR
+    subgraph "Client Applications"
+        Blazor[Blazor]
+        WPF[WPF]
+        MAUI[MAUI]
+        Uno[Uno Platform]
+        WinUI[WinUI]
+    end
+    
+    subgraph "Gateway Layer"
+        Gateway[Gateway YARP<br/>• JWT Validation<br/>• Token Forwarding<br/>• Authorization<br/>• API Routing]
+    end
+    
+    subgraph "Backend Services"
+        GameAPIs[Game APIs]
+        Ranking[Ranking]
+        Live[Live]
+        UserService[User Service]
+    end
+    
+    Blazor -->|JWT Tokens| Gateway
+    WPF -->|JWT Tokens| Gateway
+    MAUI -->|JWT Tokens| Gateway
+    Uno -->|JWT Tokens| Gateway
+    WinUI -->|JWT Tokens| Gateway
+    
+    Gateway -->|Authenticated Requests| GameAPIs
+    Gateway -->|Authenticated Requests| Ranking
+    Gateway -->|Authenticated Requests| Live
+    Gateway -->|Authenticated Requests| UserService
 ```
 
 ### Key Components

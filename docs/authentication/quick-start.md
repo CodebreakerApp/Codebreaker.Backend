@@ -69,31 +69,79 @@ var app = PublicClientApplicationBuilder
     .Build();
 ```
 
+### Setup Flow Overview
+
+```mermaid
+flowchart TD
+    Start[Start Setup] --> Azure[1. Azure Portal Setup<br/>2 minutes]
+    Azure --> Gateway[2. Gateway Configuration<br/>1 minute]
+    Gateway --> Client[3. Client Configuration<br/>2 minutes]
+    Client --> Test[Test Implementation]
+    
+    subgraph "Azure Setup"
+        CreateApp[Create App Registration]
+        GetIDs[Get Client ID & Tenant ID]
+        CreateApp --> GetIDs
+    end
+    
+    subgraph "Gateway Setup"
+        AppSettings[Update appsettings.json]
+        ProgramCS[Configure Program.cs]
+        AppSettings --> ProgramCS
+    end
+    
+    subgraph "Client Setup"
+        BlazorConfig[Blazor WASM Config]
+        DesktopConfig[WPF/MAUI Config]
+    end
+    
+    Azure -.-> CreateApp
+    Gateway -.-> AppSettings
+    Client -.-> BlazorConfig
+    Client -.-> DesktopConfig
+```
+
 ## Common Configuration Patterns
 
 ### Pattern 1: Gateway Only Authentication
 
-```
-Client → Gateway (validates JWT) → API (no auth)
+```mermaid
+flowchart LR
+    Client[Client] -->|JWT Token| Gateway[Gateway<br/>validates JWT]
+    Gateway -->|No Auth Header| API[API<br/>no authentication]
+    
+    style Gateway fill:#e1f5fe
+    style API fill:#f3e5f5
 ```
 
-Best for: Internal microservices not exposed publicly
+**Best for**: Internal microservices not exposed publicly
 
 ### Pattern 2: Defense in Depth
 
-```
-Client → Gateway (validates JWT) → API (validates JWT)
+```mermaid
+flowchart LR
+    Client[Client] -->|JWT Token| Gateway[Gateway<br/>validates JWT]
+    Gateway -->|JWT Forwarded| API[API<br/>validates JWT]
+    
+    style Gateway fill:#e1f5fe
+    style API fill:#e8f5e8
 ```
 
-Best for: Production environments, public-facing APIs
+**Best for**: Production environments, public-facing APIs
 
 ### Pattern 3: Hybrid Identity
 
-```
-Client → Gateway (validates JWT + Anonymous) → API (mixed auth)
+```mermaid
+flowchart LR
+    AuthClient[Authenticated Client] -->|JWT Token| Gateway
+    AnonClient[Anonymous Client] -->|No Token| Gateway
+    Gateway[Gateway<br/>JWT + Anonymous] -->|Mixed Auth| API[API<br/>mixed authentication]
+    
+    style Gateway fill:#fff3e0
+    style API fill:#fce4ec
 ```
 
-Best for: Apps supporting both authenticated and anonymous users
+**Best for**: Apps supporting both authenticated and anonymous users
 
 ## Configuration by Platform
 

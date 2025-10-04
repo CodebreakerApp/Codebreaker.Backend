@@ -13,6 +13,52 @@ Microsoft Entra External ID provides a modern identity and access management sol
 
 ### Architecture Components
 
+```mermaid
+graph TB
+    subgraph "Codebreaker Platform"
+        subgraph "Client Layer"
+            Blazor[Blazor Web App]
+            WPF[WPF Desktop]
+            MAUI[.NET MAUI]
+            Uno[Uno Platform]
+            WinUI[WinUI 3]
+        end
+        
+        subgraph "Gateway Layer"
+            Gateway[Gateway YARP<br/>• JWT Validation<br/>• Authorization<br/>• API Routing]
+        end
+        
+        subgraph "Backend Services"
+            GameAPI[Game APIs<br/>• Game Logic<br/>• User Claims]
+            Identity[Identity Service<br/>• Anonymous Users<br/>• User Promotion]
+            Live[Live Service]
+            Ranking[Ranking Service]
+        end
+        
+        subgraph "External Identity"
+            ExternalID[Microsoft Entra External ID<br/>• User Authentication<br/>• Token Issuance<br/>• Social Providers]
+        end
+        
+        Blazor -->|JWT Tokens| Gateway
+        WPF -->|JWT Tokens| Gateway
+        MAUI -->|JWT Tokens| Gateway
+        Uno -->|JWT Tokens| Gateway
+        WinUI -->|JWT Tokens| Gateway
+        
+        Gateway -->|Authenticated Requests| GameAPI
+        Gateway -->|Authenticated Requests| Identity
+        Gateway -->|Authenticated Requests| Live
+        Gateway -->|Authenticated Requests| Ranking
+        
+        Blazor -.->|OIDC/OAuth2| ExternalID
+        WPF -.->|MSAL.NET| ExternalID
+        MAUI -.->|MSAL.NET| ExternalID
+        Uno -.->|MSAL.NET| ExternalID
+        WinUI -.->|MSAL.NET| ExternalID
+    end
+```
+
+**Key Components:**
 - **Gateway (YARP Reverse Proxy)**: Entry point for all API requests, handles JWT validation
 - **Game APIs**: Backend services protected by JWT authentication
 - **Identity Service**: Manages anonymous user creation and promotion
@@ -185,64 +231,40 @@ Understanding the token flow is crucial for proper authentication implementation
 
 ### Authentication Flow Diagram
 
-```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐         ┌─────────────┐
-│   Client    │         │   Gateway    │         │  Game APIs  │         │  External   │
-│ (Web/Native)│         │    (YARP)    │         │  Service    │         │     ID      │
-└──────┬──────┘         └──────┬───────┘         └──────┬──────┘         └──────┬──────┘
-       │                       │                        │                        │
-       │ 1. Initiate Login     │                        │                        │
-       ├──────────────────────>│                        │                        │
-       │                       │                        │                        │
-       │ 2. Redirect to External ID                     │                        │
-       │<──────────────────────┤                        │                        │
-       │                       │                        │                        │
-       │ 3. User authenticates │                        │                        │
-       ├───────────────────────┼────────────────────────┼───────────────────────>│
-       │                       │                        │                        │
-       │ 4. Return JWT token   │                        │                        │
-       │<──────────────────────┼────────────────────────┼────────────────────────┤
-       │                       │                        │                        │
-       │ 5. API Request + JWT  │                        │                        │
-       ├──────────────────────>│                        │                        │
-       │                       │ 6. Validate JWT        │                        │
-       │                       ├──────┐                 │                        │
-       │                       │<─────┘                 │                        │
-       │                       │                        │                        │
-       │                       │ 7. Forward Request + JWT│                       │
-       │                       ├───────────────────────>│                        │
-       │                       │                        │ 8. Optional: Extract   │
-       │                       │                        │    claims from JWT     │
-       │                       │                        ├──────┐                 │
-       │                       │                        │<─────┘                 │
-       │                       │                        │                        │
-       │                       │ 9. Return Response     │                        │
-       │                       │<───────────────────────┤                        │
-       │                       │                        │                        │
-       │ 10. Return to Client  │                        │                        │
-       │<──────────────────────┤                        │                        │
+```mermaid
+sequenceDiagram
+    participant Client as Client<br/>(Web/Native)
+    participant Gateway as Gateway<br/>(YARP)
+    participant GameAPI as Game APIs<br/>Service
+    participant ExternalID as Microsoft Entra<br/>External ID
+
+    Client->>Gateway: 1. Initiate Login
+    Gateway->>Client: 2. Redirect to External ID
+    Client->>ExternalID: 3. User authenticates
+    ExternalID->>Client: 4. Return JWT token
+    
+    Client->>Gateway: 5. API Request + JWT
+    Gateway->>Gateway: 6. Validate JWT
+    Gateway->>GameAPI: 7. Forward Request + JWT
+    GameAPI->>GameAPI: 8. Optional: Extract claims from JWT
+    GameAPI->>Gateway: 9. Return Response
+    Gateway->>Client: 10. Return to Client
 ```
 
 ### Token Propagation from Gateway to APIs
 
 The Gateway automatically forwards the JWT token to backend services. By default, YARP forwards the `Authorization` header with the JWT token:
 
-```csharp
-// In Gateway's appsettings.json - YARP automatically forwards headers
-{
-  "ReverseProxy": {
-    "Routes": {
-      "gamesRoute": {
-        "ClusterId": "gamesapicluster",
-        "AuthorizationPolicy": "playPolicy",
-        "Match": {
-          "Path": "/games/{*any}"
-        }
-        // No special transform needed - Authorization header forwarded automatically
-      }
-    }
-  }
-}
+```mermaid
+flowchart LR
+    Client[Client Application] -->|Authorization: Bearer JWT| Gateway[Gateway YARP]
+    Gateway -->|Automatic Header Forwarding| BackendAPI[Backend APIs]
+    
+    subgraph "YARP Configuration"
+        Config["appsettings.json<br/>• AuthorizationPolicy: playPolicy<br/>• No transforms needed<br/>• Headers forwarded automatically"]
+    end
+    
+    Gateway -.-> Config
 ```
 
 ## Game APIs Service Configuration
