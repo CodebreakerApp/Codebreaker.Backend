@@ -1,6 +1,6 @@
-# Microsoft External ID Architecture Diagrams
+# Microsoft Entra External ID Architecture Diagrams
 
-This document provides visual representations of the authentication flows in the Codebreaker platform.
+This document provides visual representations of the authentication flows in the Codebreaker platform using Microsoft Entra External ID.
 
 ## High-Level Architecture
 
@@ -22,8 +22,8 @@ This document provides visual representations of the authentication flows in the
 │           │                                                            │
 │  ┌────────┴─────────┐                                                 │
 │  │ Microsoft        │                                                  │
-│  │ External ID      │                                                  │
-│  │ (Azure AD B2C)   │                                                  │
+│  │ Entra External   │                                                  │
+│  │ ID               │                                                  │
 │  └──────────────────┘                                                  │
 └────────────────────────────────────────────────────────────────────────┘
 ```
@@ -42,11 +42,11 @@ This document provides visual representations of the authentication flows in the
    ├─────────────────▶│                  │                   │
    │                  │                  │                   │
    │ 2. Redirect to   │                  │                   │
-   │    Login         │                  │                   │
+   │    External ID   │                  │                   │
    │◀─────────────────┤                  │                   │
    │                  │                  │                   │
    │ 3. Authenticate  │                  │                   │
-   ├─────────────────────────────────────▶│                   │
+   ├────────────────────────────────────▶│                   │
    │                  │                  │                   │
    │ 4. Return Auth   │                  │                   │
    │    Code          │                  │                   │
@@ -95,7 +95,7 @@ This document provides visual representations of the authentication flows in the
    │ 2. Check Auth    │                  │                   │
    │                  │                  │                   │
    │ 3. Redirect to   │                  │                   │
-   │    B2C Login     │                  │                   │
+   │    External ID   │                  │                   │
    ├────────────────────────────────────▶│                   │
    │                  │                  │                   │
    │ 4. User Login    │                  │                   │
@@ -227,11 +227,11 @@ This document provides visual representations of the authentication flows in the
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        Microsoft External ID Tenant                      │
+│                   Microsoft Entra External ID Tenant                     │
 │                                                                          │
 │  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐           │
 │  │  User Flow     │  │   App Reg      │  │   App Reg      │           │
-│  │  B2C_1_SUSI    │  │   (Gateway)    │  │   (Blazor)     │           │
+│  │  (Default)     │  │   (Gateway)    │  │   (Blazor)     │           │
 │  │                │  │                │  │                │           │
 │  │  • Sign Up     │  │  Client ID     │  │  Client ID     │           │
 │  │  • Sign In     │  │  Redirect URIs │  │  Redirect URIs │           │
@@ -257,11 +257,11 @@ This document provides visual representations of the authentication flows in the
 │  │  appsettings.json                Program.cs                         ││
 │  │  • Instance                      • AddAuthentication()               ││
 │  │  • Domain                        • AddMicrosoftIdentityWebApi()      ││
-│  │  • ClientId                      • AddAuthorization()                ││
-│  │  • SignUpSignInPolicyId          • AddReverseProxy()                 ││
+│  │  • TenantId                      • AddAuthorization()                ││
+│  │  • ClientId                      • AddReverseProxy()                 ││
 │  │                                                                      ││
 │  │  Key Vault: gateway-keyvault                                        ││
-│  │  • AADB2C-ApiConnector-Password                                     ││
+│  │  • EntraExternalId--ClientSecret                                    ││
 │  └─────────────────────────────────────────────────────────────────────┘│
 │                                                                          │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
@@ -385,8 +385,42 @@ This document provides visual representations of the authentication flows in the
 └──────────────────────────────────────────────────────────────────┘
 ```
 
+## Comparison: Azure AD B2C vs Microsoft Entra External ID
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                   Service Comparison                             │
+│                                                                  │
+│  ┌─────────────────────────┐  ┌──────────────────────────────┐  │
+│  │    Azure AD B2C         │  │  Microsoft Entra External  │  │
+│  │    (Legacy)             │  │  ID (Current)                │  │
+│  └─────────────────────────┘  └──────────────────────────────┘  │
+│                                                                  │
+│  Endpoints:                   Endpoints:                        │
+│  *.b2clogin.com               *.ciamlogin.com                   │
+│                                                                  │
+│  Authority:                   Authority:                        │
+│  https://tenant.b2clogin.com/ https://tenant.ciamlogin.com/    │
+│  tenant.onmicrosoft.com/      tenant-id                        │
+│  B2C_1_SUSI                                                     │
+│                                                                  │
+│  Configuration:               Configuration:                    │
+│  • Instance                   • Instance                       │
+│  • Domain                     • Domain                         │
+│  • ClientId                   • TenantId                       │
+│  • SignUpSignInPolicyId       • ClientId                       │
+│                                                                  │
+│  Features:                    Features:                        │
+│  • Custom policies           • Simplified setup               │
+│  • Complex scenarios         • Modern APIs                    │
+│  • Mature/stable             • Streamlined UX                 │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## See Also
 
-- [Microsoft External ID Configuration Guide](./microsoft-external-id.md)
+- [Microsoft Entra External ID Configuration Guide](./microsoft-external-id.md)
 - [Quick Start Guide](./quick-start.md)
 - [Authentication Overview](./README.md)
+- [Azure AD B2C Migration Guide](./azure-ad-b2c.md)

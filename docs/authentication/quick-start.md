@@ -1,17 +1,17 @@
-# Microsoft External ID Quick Start Guide
+# Microsoft Entra External ID Quick Start Guide
 
-This is a quick reference for setting up Microsoft External ID authentication in Codebreaker projects.
+This is a quick reference for setting up Microsoft Entra External ID authentication in Codebreaker projects.
 
 ## Prerequisites Checklist
 
 - [ ] Azure subscription
 - [ ] Microsoft Entra ID tenant created
-- [ ] External ID configured
+- [ ] External ID for customers configured
 - [ ] App registrations created for each platform
 
 ## 5-Minute Setup
 
-### 1. Azure Portal Setup (2 minutes)
+### 1. Entra External ID Setup (2 minutes)
 
 ```bash
 # Create app registration
@@ -19,8 +19,9 @@ az ad app create --display-name "Codebreaker-Gateway" \
   --sign-in-audience AzureADandPersonalMicrosoftAccount \
   --web-redirect-uris https://localhost:7000/signin-oidc
 
-# Get client ID
+# Get client ID and tenant ID
 az ad app list --display-name "Codebreaker-Gateway" --query "[0].appId" -o tsv
+az account show --query "tenantId" -o tsv
 ```
 
 ### 2. Gateway Configuration (1 minute)
@@ -29,11 +30,11 @@ Add to `appsettings.json`:
 
 ```json
 {
-  "AzureAdB2C": {
-    "Instance": "https://your-tenant.b2clogin.com",
+  "EntraExternalId": {
+    "Instance": "https://your-tenant.ciamlogin.com",
     "Domain": "your-tenant.onmicrosoft.com",
-    "ClientId": "your-client-id",
-    "SignUpSignInPolicyId": "B2C_1_SUSI"
+    "TenantId": "your-tenant-id",
+    "ClientId": "your-client-id"
   }
 }
 ```
@@ -42,7 +43,7 @@ Add to `Program.cs`:
 
 ```csharp
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("EntraExternalId"));
 ```
 
 ### 3. Client Configuration (2 minutes)
@@ -52,8 +53,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 ```csharp
 builder.Services.AddMsalAuthentication(options =>
 {
-    builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
+    builder.Configuration.Bind("EntraExternalId", options.ProviderOptions.Authentication);
     options.ProviderOptions.DefaultAccessTokenScopes.Add("openid");
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("profile");
 });
 ```
 
@@ -62,8 +64,8 @@ builder.Services.AddMsalAuthentication(options =>
 ```csharp
 var app = PublicClientApplicationBuilder
     .Create(clientId)
-    .WithB2CAuthority(authority)
-    .WithRedirectUri(redirectUri)
+    .WithAuthority($"https://tenant.ciamlogin.com/{tenantId}")
+    .WithDefaultRedirectUri()
     .Build();
 ```
 
@@ -101,7 +103,7 @@ Best for: Apps supporting both authenticated and anonymous users
 | Blazor WASM | Microsoft.Authentication.WebAssembly.Msal | `https://host/authentication/login-callback` |
 | WPF | Microsoft.Identity.Client | `https://login.microsoftonline.com/common/oauth2/nativeclient` |
 | MAUI | Microsoft.Identity.Client | `msauth.com.yourapp://auth` |
-| Uno Platform | Microsoft.Identity.Client | `msal<clientid>://auth` |
+| Uno Platform | Microsoft.Identity.Client | `msauth.com.yourapp.xaml://auth` |
 | WinUI | Microsoft.Identity.Client | `https://login.microsoftonline.com/common/oauth2/nativeclient` |
 
 ## Environment-Specific Configuration
@@ -110,7 +112,7 @@ Best for: Apps supporting both authenticated and anonymous users
 
 ```json
 {
-  "AzureAdB2C": {
+  "EntraExternalId": {
     "Instance": "https://localhost:7000",
     "ValidateAuthority": false
   }
@@ -121,8 +123,8 @@ Best for: Apps supporting both authenticated and anonymous users
 
 ```json
 {
-  "AzureAdB2C": {
-    "Instance": "https://your-tenant.b2clogin.com",
+  "EntraExternalId": {
+    "Instance": "https://your-tenant.ciamlogin.com",
     "ValidateAuthority": true
   }
 }
@@ -191,7 +193,7 @@ app.UseCors(policy =>
 
 ### Error: "Redirect URI mismatch"
 
-Check Azure Portal → App Registration → Authentication → Redirect URIs
+Check Microsoft Entra admin center → App Registration → Authentication → Redirect URIs
 
 ### Error: "Token validation failed"
 
@@ -225,6 +227,13 @@ catch (MsalUiRequiredException)
 }
 ```
 
+### Error: "Authority validation failed"
+
+Check that:
+- Tenant ID is correct
+- Using `.ciamlogin.com` endpoint (not `.b2clogin.com`)
+- Authority format: `https://tenant.ciamlogin.com/tenant-id`
+
 ## Code Snippets
 
 ### Minimal Gateway Setup
@@ -233,7 +242,7 @@ catch (MsalUiRequiredException)
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("EntraExternalId"));
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
@@ -252,7 +261,7 @@ app.Run();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("EntraExternalId"));
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -277,7 +286,7 @@ public class AuthService
     {
         _app = PublicClientApplicationBuilder
             .Create(clientId)
-            .WithB2CAuthority(authority)
+            .WithAuthority(authority)
             .Build();
     }
 
@@ -301,6 +310,26 @@ public class AuthService
 }
 ```
 
+## Migration from Azure AD B2C
+
+### Key Changes
+
+| Configuration | Azure AD B2C | Entra External ID |
+|---------------|--------------|-------------------|
+| **Config Section** | `AzureAdB2C` | `EntraExternalId` |
+| **Endpoint** | `*.b2clogin.com` | `*.ciamlogin.com` |
+| **Authority** | `https://tenant.b2clogin.com/tenant.onmicrosoft.com/B2C_1_SUSI` | `https://tenant.ciamlogin.com/tenant-id` |
+| **Required Fields** | Instance, Domain, ClientId, SignUpSignInPolicyId | Instance, Domain, TenantId, ClientId |
+
+### Migration Checklist
+
+- [ ] Update configuration section name
+- [ ] Change endpoint from b2clogin.com to ciamlogin.com
+- [ ] Replace policy ID with tenant ID
+- [ ] Update authority format in client apps
+- [ ] Test all authentication flows
+- [ ] Update redirect URIs if needed
+
 ## Next Steps
 
 1. Read the [comprehensive guide](./microsoft-external-id.md)
@@ -312,5 +341,5 @@ public class AuthService
 ## Support
 
 - [Full Documentation](./microsoft-external-id.md)
-- [Microsoft Identity Platform Docs](https://learn.microsoft.com/en-us/azure/active-directory/develop/)
+- [Microsoft Entra External ID Docs](https://learn.microsoft.com/en-us/entra/external-id/)
 - [GitHub Issues](https://github.com/CodebreakerApp/Codebreaker.Backend/issues)
