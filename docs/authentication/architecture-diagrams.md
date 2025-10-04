@@ -264,66 +264,103 @@ graph TB
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Login: User Initiates Login
+    [*] --> Login
+    Login --> TokenIssuance
+    TokenIssuance --> TokenStorage
+    TokenStorage --> TokenUsage
+    TokenUsage --> TokenRefresh
+    TokenRefresh --> TokenUsage
+    TokenUsage --> TokenRevocation
+    TokenRevocation --> TokenExpiration
+    TokenExpiration --> [*]
     
-    Login --> TokenIssuance: Authenticate with External ID
-    TokenIssuance --> TokenStorage: Store Tokens Securely
+    state Login {
+        [*] --> UserInitiatesLogin
+    }
     
     state TokenIssuance {
-        [*] --> IDToken: ID Token (User Identity)
-        [*] --> AccessToken: Access Token (API Authorization)
-        [*] --> RefreshToken: Refresh Token (Long-lived)
+        [*] --> IDToken
+        [*] --> AccessToken
+        [*] --> RefreshToken
     }
     
     state TokenStorage {
-        [*] --> WebStorage: Web: HttpOnly Cookies/SessionStorage
-        [*] --> DesktopStorage: Desktop: Encrypted Cache (DPAPI/Keychain)
+        [*] --> WebStorage
+        [*] --> DesktopStorage
     }
-    
-    TokenStorage --> TokenUsage: Attach to API Requests
     
     state TokenUsage {
-        [*] --> RequestHeader: Authorization: Bearer <access_token>
-        RequestHeader --> GatewayValidation: Gateway Validates Token
-        
-        state GatewayValidation {
-            [*] --> VerifySignature: Verify Signature (Public Key)
-            VerifySignature --> CheckExpiration: Check Expiration (nbf, exp)
-            CheckExpiration --> ValidateIssuer: Validate Issuer (iss)
-            ValidateIssuer --> ValidateAudience: Validate Audience (aud)
-        }
-        
-        GatewayValidation --> ProcessRequest: Forward to Backend
+        [*] --> RequestHeader
+        RequestHeader --> GatewayValidation
+        GatewayValidation --> ProcessRequest
     }
     
-    TokenUsage --> TokenRefresh: Before Expiration
+    state GatewayValidation {
+        [*] --> VerifySignature
+        VerifySignature --> CheckExpiration
+        CheckExpiration --> ValidateIssuer
+        ValidateIssuer --> ValidateAudience
+    }
     
     state TokenRefresh {
-        [*] --> SilentAcquisition: Try Silent Token Acquisition
-        SilentAcquisition --> UseRefreshToken: Use Refresh Token if Needed
-        UseRefreshToken --> ReAuthenticate: Re-authenticate if Refresh Fails
+        [*] --> SilentAcquisition
+        SilentAcquisition --> UseRefreshToken
+        UseRefreshToken --> ReAuthenticate
     }
-    
-    TokenRefresh --> TokenUsage: Continue with New Token
-    
-    TokenUsage --> TokenRevocation: User Logout
     
     state TokenRevocation {
-        [*] --> ClearCache: Remove from Client Cache
-        ClearCache --> ClearSession: Clear Session
-        ClearSession --> SignOutEndpoint: Redirect to Sign-out Endpoint
+        [*] --> ClearCache
+        ClearCache --> ClearSession
+        ClearSession --> SignOutEndpoint
     }
-    
-    TokenRevocation --> TokenExpiration: Token Becomes Invalid
     
     state TokenExpiration {
-        [*] --> NaturalExpiration: Natural Expiration (1 hour)
-        [*] --> ManualRevocation: Manual Revocation
-        [*] --> SignOut: User Sign-out
+        [*] --> NaturalExpiration
+        [*] --> ManualRevocation
+        [*] --> SignOut
     }
     
-    TokenExpiration --> [*]
+    note right of Login
+        User clicks login button
+        or visits protected resource
+    end note
+    
+    note right of TokenIssuance
+        ID Token: User identity claims
+        Access Token: API authorization
+        Refresh Token: Long-lived renewal
+    end note
+    
+    note right of TokenStorage
+        Web: HttpOnly cookies or SessionStorage
+        Desktop: Encrypted cache (DPAPI/Keychain)
+    end note
+    
+    note right of TokenUsage
+        Authorization: Bearer access_token
+        Gateway validates all requests
+    end note
+    
+    note right of TokenRefresh
+        Before expiration (typically 1 hour)
+        Silent refresh when possible
+    end note
+    
+    note right of TokenRevocation
+        User logout or security event
+        Clear all cached tokens
+    end note
 ```
+
+**Token Lifecycle Stages:**
+
+1. **Login**: User initiates authentication with Microsoft Entra External ID
+2. **Token Issuance**: External ID returns ID, Access, and Refresh tokens
+3. **Token Storage**: Secure storage based on platform (web vs desktop)
+4. **Token Usage**: Tokens attached to API requests for authorization
+5. **Token Refresh**: Silent renewal before expiration using refresh tokens
+6. **Token Revocation**: Manual logout or automatic cleanup
+7. **Token Expiration**: Natural expiration or forced invalidation
 
 ## Comparison: Azure AD B2C vs Microsoft Entra External ID
 

@@ -73,24 +73,24 @@ var app = PublicClientApplicationBuilder
 
 ```mermaid
 flowchart TD
-    Start[Start Setup] --> Azure[1. Azure Portal Setup<br/>2 minutes]
-    Azure --> Gateway[2. Gateway Configuration<br/>1 minute]
-    Gateway --> Client[3. Client Configuration<br/>2 minutes]
+    Start[Start Setup] --> Azure[Step 1: Azure Portal Setup<br/>2 minutes]
+    Azure --> Gateway[Step 2: Gateway Configuration<br/>1 minute]
+    Gateway --> Client[Step 3: Client Configuration<br/>2 minutes]
     Client --> Test[Test Implementation]
     
-    subgraph "Azure Setup"
+    subgraph "Azure Setup Steps"
         CreateApp[Create App Registration]
         GetIDs[Get Client ID & Tenant ID]
         CreateApp --> GetIDs
     end
     
-    subgraph "Gateway Setup"
+    subgraph "Gateway Setup Steps"
         AppSettings[Update appsettings.json]
         ProgramCS[Configure Program.cs]
         AppSettings --> ProgramCS
     end
     
-    subgraph "Client Setup"
+    subgraph "Client Setup Steps"
         BlazorConfig[Blazor WASM Config]
         DesktopConfig[WPF/MAUI Config]
     end
@@ -99,7 +99,18 @@ flowchart TD
     Gateway -.-> AppSettings
     Client -.-> BlazorConfig
     Client -.-> DesktopConfig
+    
+    style Azure fill:#e3f2fd
+    style Gateway fill:#e8f5e8
+    style Client fill:#fff3e0
+    style Test fill:#f3e5f5
 ```
+
+**Setup Timeline:**
+- **Step 1**: Azure Portal Setup (2 minutes)
+- **Step 2**: Gateway Configuration (1 minute)  
+- **Step 3**: Client Configuration (2 minutes)
+- **Total**: ~5 minutes
 
 ## Common Configuration Patterns
 
