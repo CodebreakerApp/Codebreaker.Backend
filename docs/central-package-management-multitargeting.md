@@ -130,6 +130,20 @@ This is intentional because:
 
 ## Understanding Package Sources
 
+### Package Version Strategy
+
+The Codebreaker packages follow a clear versioning and distribution strategy:
+
+**Stable Releases (nuget.org)**:
+- Released versions without preview suffixes (e.g., `3.8.0`, `3.9.0`)
+- Available on the public NuGet feed: https://www.nuget.org/packages?q=cninnovation.codebreaker
+- Used in production and for stable references
+
+**Preview Releases (Azure DevOps)**:
+- Pre-release versions with preview suffixes (e.g., `3.8.0-preview.1.45`, `3.8.0-beta.11`)
+- Available on Azure DevOps feed: https://pkgs.dev.azure.com/cnilearn/codebreakerpackages/_packaging/codebreaker/nuget/v3/index.json
+- Used for testing and development before stable release
+
 ### Public NuGet Feed
 - **URL**: `https://api.nuget.org/v3/index.json`
 - **Purpose**: Standard .NET packages (Microsoft.*, System.*, etc.)
@@ -137,8 +151,10 @@ This is intentional because:
 
 ### Azure DevOps Artifacts Feed  
 - **URL**: `https://pkgs.dev.azure.com/cnilearn/codebreakerpackages/_packaging/codebreaker/nuget/v3/index.json`
-- **Purpose**: Internal Codebreaker packages
-- **Examples**: `CNinnovation.Codebreaker.*` packages
+- **Purpose**: Preview/pre-release Codebreaker packages
+- **Examples**: `CNinnovation.Codebreaker.*` preview packages (e.g., `3.8.0-preview.1.45`)
+
+**Note**: Stable/released versions of `CNinnovation.Codebreaker.*` packages are published to nuget.org and should be retrieved from there.
 
 ## Alternative Solutions
 
@@ -162,11 +178,14 @@ Add package source mapping to `nuget.config`:
       <package pattern="System.*" />
       <package pattern="Aspire.*" />
       <package pattern="Azure.*" />
+      <!-- Stable/released CNinnovation.Codebreaker packages -->
+      <package pattern="CNinnovation.Codebreaker.*" />
       <package pattern="*" />
     </packageSource>
     
-    <!-- Codebreaker packages from Azure DevOps -->
+    <!-- Preview/pre-release Codebreaker packages from Azure DevOps -->
     <packageSource key="codebreaker">
+      <!-- Only preview versions like 3.8.0-preview.1.45 -->
       <package pattern="CNinnovation.Codebreaker.*" />
     </packageSource>
   </packageSourceMapping>
