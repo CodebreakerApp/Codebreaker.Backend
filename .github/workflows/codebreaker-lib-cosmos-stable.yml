@@ -37,7 +37,7 @@ jobs:
         run: dotnet pack -c Release ${{ env.projectfile-path }} -o packages
         
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ env.artifact-name }}
           path: packages/*
