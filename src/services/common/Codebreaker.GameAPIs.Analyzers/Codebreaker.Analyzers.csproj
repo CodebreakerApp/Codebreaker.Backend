@@ -17,6 +17,9 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
     <IsAotCompatible>true</IsAotCompatible>
+    <!-- Suppress NU5017 warning for packages with no dependencies -->
+    <NoWarn>$(NoWarn);NU5017</NoWarn>
+    <MSBuildTreatWarningsAsErrors>false</MSBuildTreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

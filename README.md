@@ -53,6 +53,18 @@ NuGet: https://www.nuget.org/packages/CNinnovation.Codebreaker.GamesClient
 
 ## Builds
 
+### Deterministic Builds
+
+All NuGet packages produced by this repository are built using deterministic builds to ensure reproducible outputs. The deterministic build process is configured with the following MSBuild properties:
+
+- `ContinuousIntegrationBuild=true` - Enables CI-specific build optimizations
+- `Deterministic=true` - Ensures deterministic compilation outputs  
+- `EmbedUntrackedSources=true` - Embeds source files in PDB for better debugging
+- `DebugType=embedded` - Embeds PDB information directly in assemblies
+- `PublishRepositoryUrl=true` - Includes repository information in packages
+
+The deterministic build workflow runs on push and pull requests to main branch, building all library solutions and uploading artifacts for inspection. Individual library workflows also use deterministic build settings.
+
 ### Libraries
 
 #### Preview versions

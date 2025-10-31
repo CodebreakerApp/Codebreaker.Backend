@@ -16,7 +16,6 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageIcon>codebreaker.jpeg</PackageIcon>
 	  <Version>3.9.0</Version>
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
@@ -25,13 +24,8 @@
     <None Include="Images/codebreaker.jpeg" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <!-- Not forcing a .NET 8 client who reference this package to use a newer Microsoft.Extensions.Logging.Abstractions library -->
-  <ItemGroup Condition="'$(TargetFramework)'=='net8.0'">
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
-  </ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net9.0'">
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
 </Project>
