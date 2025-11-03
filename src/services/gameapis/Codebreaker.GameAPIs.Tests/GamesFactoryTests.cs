@@ -38,6 +38,17 @@ public class GamesFactoryTests
     }
 
     [Fact]
+    public void Create5x3GameShouldCreate5x3Game()
+    {
+        Game game = GamesFactory.CreateGame("Game5x3", "Test");
+
+        Assert.Equal("Test", game.PlayerName);
+        Assert.Equal(3, game.Codes.Length);
+        int colors = game.FieldValues["colors"].Count();
+        Assert.Equal(5, colors);
+    }
+
+    [Fact]
     public void Apply6x4MoveShouldAddAMoveToTheGame()
     {
         Game game = GamesFactory.CreateGame("Game6x4", "Test");
@@ -68,6 +79,17 @@ public class GamesFactoryTests
         string color = colors.First();
         string shape = shapes.First();
         string[] guesses = Enumerable.Repeat($"{shape};{color}", 4).ToArray();
+        game.ApplyMove(guesses, 1);
+
+        Assert.Single(game.Moves);
+    }
+
+    [Fact]
+    public void Apply5x3MoveShouldAddAMoveToTheGame()
+    {
+        Game game = GamesFactory.CreateGame("Game5x3", "Test");
+        var values = game.FieldValues["colors"];
+        string[] guesses = Enumerable.Repeat(values.First(), 3).ToArray();
         game.ApplyMove(guesses, 1);
 
         Assert.Single(game.Moves);

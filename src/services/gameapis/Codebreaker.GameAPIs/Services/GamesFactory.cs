@@ -63,6 +63,16 @@ public static class GamesFactory
                     .Select(item => string.Join(';', item.Shape, item.Color))
                     .ToArray()
             };
+
+        Game Create5x3Game() =>
+            new(Guid.NewGuid(), gameType, playerName, DateTime.UtcNow, 3, 10)
+            {
+                FieldValues = new Dictionary<string, IEnumerable<string>>()
+                {
+                    { FieldCategories.Colors, s_colors5 }
+                },
+                Codes = Random.Shared.GetItems(s_colors5, 3)
+            };
         
         return gameType switch
         {
@@ -70,6 +80,7 @@ public static class GamesFactory
             GameTypes.Game6x4 => Create6x4Game(),
             GameTypes.Game8x5 => Create8x5Game(),
             GameTypes.Game5x5x4 => Create5x5x4Game(),
+            GameTypes.Game5x3 => Create5x3Game(),
             _ => throw new CodebreakerException("Invalid game type") { Code = CodebreakerExceptionCodes.InvalidGameType }
         };
     }
@@ -113,6 +124,7 @@ public static class GamesFactory
             GameTypes.Game8x5 => GetColorGameGuessAnalyzerResult(),
             GameTypes.Game6x4Mini => GetSimpleGameGuessAnalyzerResult(),
             GameTypes.Game5x5x4 => GetShapeGameGuessAnalyzerResult(),
+            GameTypes.Game5x3 => GetColorGameGuessAnalyzerResult(),
             _ => throw new CodebreakerException("Invalid game type") { Code = CodebreakerExceptionCodes.InvalidGameType }
         };
 

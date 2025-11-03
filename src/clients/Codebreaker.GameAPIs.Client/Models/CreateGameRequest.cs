@@ -12,6 +12,7 @@ public enum GameType
     Game6x4Mini,
     Game8x5,
     Game5x5x4,
+    Game5x3,
 }
 
 /// <summary>

@@ -17,6 +17,7 @@ public static class StringCodeBreakerAlgorithms
             GameType.Game6x4 => 4,
             GameType.Game8x5 => 5,
             GameType.Game5x5x4 => 4,
+            GameType.Game5x3 => 3,
             _ => 4
         };
 
