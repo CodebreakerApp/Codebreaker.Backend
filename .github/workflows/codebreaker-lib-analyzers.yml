@@ -25,7 +25,7 @@ jobs:
       version-offset: 38
       solutionfile-path: src/Codebreaker.Analyzers.slnx
       projectfile-path: src/services/common/Codebreaker.GameAPIs.Analyzers/Codebreaker.Analyzers.csproj
-      dotnet-version: '9.0.x'
+      dotnet-version: '10.0.x'
       artifact-name: codebreaker-analyzers
       branch-name: main
 

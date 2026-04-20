@@ -24,7 +24,7 @@ jobs:
       version-offset: 10
       solutionfile-path: src/Codebreaker.Backend.SqlServer.slnx
       projectfile-path: src/services/common/Codebreaker.Data.SqlServer/Codebreaker.Data.SqlServer.csproj
-      dotnet-version: '9.0.x'
+      dotnet-version: '10.0.x'
       artifact-name: codebreaker-sqlserver
       branch-name: main
 
