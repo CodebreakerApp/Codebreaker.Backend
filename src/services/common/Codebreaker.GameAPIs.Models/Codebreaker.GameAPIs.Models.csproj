@@ -19,7 +19,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" />
+    <PackageReference Include="CNinnovation.Codebreaker.Analyzers" Condition="'$(UseLocalProjects)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Codebreaker.GameAPIs.Analyzers\Codebreaker.Analyzers.csproj" Condition="'$(UseLocalProjects)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>

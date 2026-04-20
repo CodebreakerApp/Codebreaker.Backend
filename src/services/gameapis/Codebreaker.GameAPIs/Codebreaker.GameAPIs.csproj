@@ -25,7 +25,7 @@
     <PackageReference Include="Grpc.Net.ClientFactory" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" />
+    <PackageReference Include="CNinnovation.Codebreaker.BackendModels" Condition="'$(UseLocalProjects)' != 'true'" />
     <PackageReference Include="Grpc.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
@@ -35,11 +35,14 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
-    <PackageReference Include="CNinnovation.Codebreaker.SqlServer" />
-    <PackageReference Include="CNinnovation.Codebreaker.Cosmos" />
+    <PackageReference Include="CNinnovation.Codebreaker.SqlServer" Condition="'$(UseLocalProjects)' != 'true'" />
+    <PackageReference Include="CNinnovation.Codebreaker.Cosmos" Condition="'$(UseLocalProjects)' != 'true'" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\common\Codebreaker.GameAPIs.Models\Codebreaker.GameAPIs.Models.csproj" Condition="'$(UseLocalProjects)' == 'true'" />
+    <ProjectReference Include="..\..\common\Codebreaker.Data.SqlServer\Codebreaker.Data.SqlServer.csproj" Condition="'$(UseLocalProjects)' == 'true'" />
+    <ProjectReference Include="..\..\common\Codebreaker.Data.Cosmos\Codebreaker.Data.Cosmos.csproj" Condition="'$(UseLocalProjects)' == 'true'" />
     <ProjectReference Include="..\..\common\Codebreaker.ServiceDefaults\Codebreaker.ServiceDefaults.csproj" />
   </ItemGroup>
   <ItemGroup>
