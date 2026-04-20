@@ -77,7 +77,7 @@ jobs:
       contents: read
     steps:
     - name: Azure Login
-      uses: azure/login@v2
+      uses: azure/login@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS_TESTENV }}
     - name: Update DOTNET_ENVIRONMENT for all container apps to Staging
