@@ -36,7 +36,7 @@
     <PackageVersion Include="BlazorApplicationInsights" Version="3.2.1" />
     <!-- Codebreaker packages -->
     <PackageVersion Include="CNinnovation.Codebreaker.Analyzers" Version="3.9.0" />
-    <PackageVersion Include="CNinnovation.Codebreaker.BackendModels" Version="3.8.0" />
+    <PackageVersion Include="CNinnovation.Codebreaker.BackendModels" Version="3.9.0" />
     <PackageVersion Include="CNinnovation.Codebreaker.Cosmos" Version="3.8.0" />
     <PackageVersion Include="CNinnovation.Codebreaker.GamesClient" Version="3.8.0" />
     <PackageVersion Include="CNinnovation.Codebreaker.SqlServer" Version="3.8.0" />
