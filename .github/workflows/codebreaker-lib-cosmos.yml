@@ -23,7 +23,7 @@ jobs:
       version-suffix: preview.1.
       version-number: ${{ github.run_number }}
       version-offset: 10
-      solutionfile-path: src/Codebreaker.Backend.Cosmos.sln
+      solutionfile-path: src/Codebreaker.Backend.Cosmos.slnx
       projectfile-path: src/services/common/Codebreaker.Data.Cosmos/Codebreaker.Data.Cosmos.csproj
       dotnet-version: '10.0.x'
       artifact-name: codebreaker-cosmos
