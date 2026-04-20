@@ -25,7 +25,7 @@ jobs:
       version-offset: 10
       solutionfile-path: src/Codebreaker.Backend.Models.sln
       projectfile-path: src/services/common/Codebreaker.GameAPIs.Models/Codebreaker.GameAPIs.Models.csproj
-      dotnet-version: '9.0.x'
+      dotnet-version: '10.0.x'
       artifact-name: codebreaker-backend-models
       branch-name: main
 

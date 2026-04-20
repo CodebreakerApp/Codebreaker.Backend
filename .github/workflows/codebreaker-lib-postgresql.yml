@@ -24,7 +24,7 @@ jobs:
       version-offset: 5
       solutionfile-path: src/Codebreaker.Backend.Postgres.slnx
       projectfile-path: src/services/common/Codebreaker.Data.Postgres/Codebreaker.Data.Postgres.csproj
-      dotnet-version: '9.0.x'
+      dotnet-version: '10.0.x'
       artifact-name: codebreaker-postgres
       branch-name: main
 
