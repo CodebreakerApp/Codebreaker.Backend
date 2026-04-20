@@ -41,7 +41,7 @@
     <PackageVersion Include="CNinnovation.Codebreaker.GamesClient" Version="3.8.0" />
     <PackageVersion Include="CNinnovation.Codebreaker.SqlServer" Version="3.8.0" />
     <!-- Test and utility packages -->
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.0" />
     <PackageVersion Include="FluentValidation" Version="12.0.0" />
     <PackageVersion Include="Google.Protobuf" Version="3.32.1" />
     <PackageVersion Include="Grpc.AspNetCore" Version="2.71.0" />
@@ -100,7 +100,7 @@
     <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.14.1" />
     <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.14.1" />
     <!-- Testing packages -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.55.0" />
     <PackageVersion Include="Microsoft.Playwright.NUnit" Version="1.55.0" />
     <PackageVersion Include="Microsoft.Testing.Platform" Version="1.7.0" />
