@@ -81,7 +81,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS_TESTENV }}
     - name: Update DOTNET_ENVIRONMENT for all container apps to Staging
-      uses: azure/cli@v2
+      uses: azure/cli@v3
       with:
         azcliversion: latest
         # Stores the container app ids in a variable
