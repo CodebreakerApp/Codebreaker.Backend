@@ -32,8 +32,8 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         int moveNumber = 0;
@@ -43,7 +43,7 @@ public class GameAPIsTests : IAsyncLifetime
         };
 
         string uri = $"/games/{updateGameRequest.Id}";
-        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest);
+        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, updateGameResponse.StatusCode);
     }
@@ -54,8 +54,8 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         int moveNumber = 1;
@@ -65,7 +65,7 @@ public class GameAPIsTests : IAsyncLifetime
         };
 
         string uri = $"/games/{updateGameRequest.Id}";
-        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest);
+        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, updateGameResponse.StatusCode);
     }
@@ -76,8 +76,8 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         int moveNumber = 1;
@@ -87,7 +87,7 @@ public class GameAPIsTests : IAsyncLifetime
         };
 
         string uri = $"/games/{updateGameRequest.Id}";
-        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest);
+        var updateGameResponse = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, updateGameResponse.StatusCode);
     }
@@ -98,8 +98,8 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         // send the first move
@@ -110,14 +110,14 @@ public class GameAPIsTests : IAsyncLifetime
         };
 
         string uri = $"/games/{updateGameRequest.Id}";
-        response = await _client.PatchAsJsonAsync(uri, updateGameRequest);
-        var updateGameResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>();
+        response = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
+        var updateGameResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(updateGameResponse);
 
         // cheat to get the result
         if (!updateGameResponse.IsVictory)
         {
-            Game? game = await _client.GetFromJsonAsync<Game?>(uri);
+            Game? game = await _client.GetFromJsonAsync<Game?>(uri, TestContext.Current.CancellationToken);
             Assert.NotNull(game);
 
             // send the second move
@@ -126,11 +126,11 @@ public class GameAPIsTests : IAsyncLifetime
             {
                 GuessPegs = game.Codes
             };
-            response = await _client.PatchAsJsonAsync(uri, updateGameRequest);
+            response = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
 
             // check the result
             Assert.True(response.IsSuccessStatusCode);
-            updateGameResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>();
+            updateGameResponse = await response.Content.ReadFromJsonAsync<UpdateGameResponse>(TestContext.Current.CancellationToken);
 
             Assert.NotNull(updateGameResponse);
             Assert.True(updateGameResponse.Ended);
@@ -138,7 +138,7 @@ public class GameAPIsTests : IAsyncLifetime
 
         }
         // delete the game
-        response = await _client.DeleteAsync(uri);
+        response = await _client.DeleteAsync(uri, TestContext.Current.CancellationToken);
         Assert.True(response.IsSuccessStatusCode);
     }
 
@@ -149,7 +149,7 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
@@ -159,12 +159,12 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         string uri = $"/games/{gameResponse.Id}";
-        response = await _client.GetAsync(uri);
+        response = await _client.GetAsync(uri, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -174,8 +174,8 @@ public class GameAPIsTests : IAsyncLifetime
         if (_client is null) throw new InvalidOperationException();
 
         CreateGameRequest request = new(GameType.Game6x4, "test");
-        var response = await _client.PostAsJsonAsync("/games", request);
-        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>();
+        var response = await _client.PostAsJsonAsync("/games", request, TestContext.Current.CancellationToken);
+        var gameResponse = await response.Content.ReadFromJsonAsync<CreateGameResponse>(TestContext.Current.CancellationToken);
         Assert.NotNull(gameResponse);
 
         int moveNumber = 1;
@@ -185,9 +185,7 @@ public class GameAPIsTests : IAsyncLifetime
         };
 
         string uri = $"/games/{updateGameRequest.Id}";
-        response = await _client.PatchAsJsonAsync(uri, updateGameRequest);
+        response = await _client.PatchAsJsonAsync(uri, updateGameRequest, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
-
-
 }
