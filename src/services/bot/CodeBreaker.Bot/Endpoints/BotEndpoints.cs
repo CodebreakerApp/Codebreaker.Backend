@@ -35,13 +35,13 @@ public static class BotEndpoints
         })
         .WithName("CreateBot")
         .WithSummary("Starts a bot playing one or more games")
-        .WithOpenApi(x =>
+        .AddOpenApiOperationTransformer((op, ctx, ct) =>
         {
-            x.Parameters[0].Description = "The type of game to play (Game6x4, Game8x5, Game5x5x4).";
-            x.Parameters[1].Description = "The number of games to play.";
-            x.Parameters[2].Description = "The delay between the games (seconds).";
-            x.Parameters[3].Description = "The think time between game moves (seconds).";
-            return x;
+            op.Parameters?[0].Description = "The type of game to play (Game6x4, Game8x5, Game5x5x4).";
+            op.Parameters?[1].Description = "The number of games to play.";
+            op.Parameters?[2].Description = "The delay between the games (seconds).";
+            op.Parameters?[3].Description = "The think time between game moves (seconds).";
+            return Task.CompletedTask;
         });
 
         group.MapGet("/bots/{id}", Results<Ok<StatusResponse>, BadRequest<string>, NotFound>(Guid id) =>
@@ -65,10 +65,10 @@ public static class BotEndpoints
         })
         .WithName("GetBot")
         .WithSummary("Gets the status of a bot")
-        .WithOpenApi(x =>
+        .AddOpenApiOperationTransformer((op, ctx, ct) =>
         {
-            x.Parameters[0].Description = "The id of the bot";
-            return x;
+            op.Parameters?[0].Description = "The id of the bot";
+            return Task.CompletedTask;
         });
 
         group.MapDelete("/bots/{id}", Results<NoContent, NotFound, BadRequest<string>> (Guid id) =>
@@ -90,10 +90,10 @@ public static class BotEndpoints
         })
         .WithName("StopBot")
         .WithSummary("Stops the bot with the given id")
-        .WithOpenApi(x =>
+        .AddOpenApiOperationTransformer((op, ctx, ct) =>
         {
-            x.Parameters[0].Description = "The id of the bot";
-            return x;
+            op.Parameters?[0].Description = "The id of the bot";
+            return Task.CompletedTask;
         });
     }
 }

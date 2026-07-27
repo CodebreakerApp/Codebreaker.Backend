@@ -58,6 +58,11 @@ public class GrpcGamesClient(GrpcGame.GrpcGameClient client, ILogger<GrpcGamesCl
         throw new NotImplementedException();
     }
 
+    public Task<GameInfo> RevealGameAsync(Guid id, string playerName, GameType gameType, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<GameInfo?> GetGameAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try

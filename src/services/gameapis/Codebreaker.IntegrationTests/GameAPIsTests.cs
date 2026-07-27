@@ -12,15 +12,15 @@ public class GameAPIsTests : IAsyncLifetime
     private DistributedApplication? _app;
     private HttpClient? _client;
 
-    public async Task InitializeAsync()
+    async ValueTask IAsyncLifetime.InitializeAsync()
     {
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.Codebreaker_AppHost>();        
+        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.Codebreaker_AppHost>();
         _app = await appHost.BuildAsync();
         await _app.StartAsync();
         _client = _app.CreateHttpClient("gameapis");
     }
 
-    public async Task DisposeAsync()
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (_app is null) throw new InvalidOperationException();
         await _app.DisposeAsync();
@@ -188,4 +188,6 @@ public class GameAPIsTests : IAsyncLifetime
         response = await _client.PatchAsJsonAsync(uri, updateGameRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
+
+
 }
