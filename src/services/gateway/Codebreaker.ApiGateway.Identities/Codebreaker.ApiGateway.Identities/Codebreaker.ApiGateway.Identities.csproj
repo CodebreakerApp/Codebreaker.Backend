@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Yarp.ReverseProxy" />
     <PackageReference Include="Microsoft.Identity.Web" />

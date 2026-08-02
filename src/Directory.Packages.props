@@ -30,7 +30,7 @@
     <PackageVersion Include="Aspire.StackExchange.Redis.DistributedCaching" Version="13.4.6" />
     <!-- Azure and other packages -->
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
-    <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.5.0" />
+    <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.6.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.0" />
     <PackageVersion Include="BlazorApplicationInsights" Version="3.3.0" />
     <!-- Codebreaker packages -->
@@ -78,7 +78,7 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.6.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.15" Condition="'$(TargetFramework)' == 'net9.0'" />
@@ -97,13 +97,13 @@
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.8.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.8.0" />
     <!-- Microsoft UI and Identity packages -->
-    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.14.3" />
-    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.3" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.14.4" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.4" />
     <PackageVersion Include="Microsoft.Graph" Version="6.2.0" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.87.0" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="4.13.2" />
-    <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="4.13.2" />
-    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="4.13.2" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="4.14.2" />
+    <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="4.14.2" />
+    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="4.14.2" />
     <!-- Testing packages -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
@@ -125,6 +125,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
     <!-- Other packages -->
+    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.11" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="10.2.3" />
     <PackageVersion Include="System.Formats.Asn1" Version="9.0.9" />
